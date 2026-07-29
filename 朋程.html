@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朋程科技 (Actron) 電控次系統 3 年發展戰略書 | 黎凱強 (KC)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        accent: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .active-tab {
+            background-color: #2563eb;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Top Header Navigation -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-200/80 backdrop-blur-md bg-white/90">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Badge -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white font-black text-xl shadow-md">
+                        A
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-brand-600 block">Actron Technology</span>
+                        <h1 class="text-base font-bold text-slate-800 leading-none">朋程科技 · 電控次系統 3 年戰略藍圖</h1>
+                    </div>
+                </div>
+
+                <!-- Strategic Author Badge -->
+                <div class="hidden md:flex items-center space-x-3 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200">
+                    <div class="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-bold">
+                        KC
+                    </div>
+                    <div class="text-xs">
+                        <span class="text-slate-500 block">戰略規劃人</span>
+                        <span class="font-bold text-slate-700">黎凱強 KC | 首席動力系統專家</span>
+                    </div>
+                </div>
+
+                <!-- Print / Export Action -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="window.print()" class="px-3.5 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all flex items-center space-x-1.5 border border-slate-200">
+                        <i class="fa-solid fa-print"></i>
+                        <span>列印 / 匯出 PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Hero Executive Summary Banner -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-brand-900 to-slate-900 text-white p-8 sm:p-10 shadow-xl">
+            <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 max-w-3xl space-y-4">
+                <div class="inline-flex items-center space-x-2 bg-brand-500/20 text-brand-300 border border-brand-400/30 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md">
+                    <i class="fa-solid fa-crosshairs text-brand-400"></i>
+                    <span>2026 全球車規級次系統轉型藍圖</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                    從全球車用二極體霸主<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-blue-100 to-emerald-300">
+                        跨足高端「高性價比車規級馬達電控系統」
+                    </span>
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    結合朋程車規級 Tier-1 通路 Credit 與供應鏈底蘊，由自研軟韌體、馬達控制演算法（FOC）與高密度整合技術領軍，搶佔全球 E-Bike 中置電機與車用雨刷/致動器（Actuators）高端藍海市場。
+                </p>
+            </div>
+
+            <!-- Key Metric KPI Cards -->
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10 pt-6 border-t border-slate-700/60">
+                <div class="bg-slate-800/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50">
+                    <span class="text-xs text-slate-400 block font-medium">性能對標</span>
+                    <span class="text-xl sm:text-2xl font-black text-brand-300">95%</span>
+                    <span class="text-xs text-slate-300 block mt-0.5">媲美歐美一線大廠 (Bosch)</span>
+                </div>
+                <div class="bg-slate-800/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50">
+                    <span class="text-xs text-slate-400 block font-medium">價格戰術</span>
+                    <span class="text-xl sm:text-2xl font-black text-emerald-400">80% (8折)</span>
+                    <span class="text-xs text-slate-300 block mt-0.5">極致高性價比 BOM 降本</span>
+                </div>
+                <div class="bg-slate-800/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50">
+                    <span class="text-xs text-slate-400 block font-medium">技術團隊</span>
+                    <span class="text-xl sm:text-2xl font-black text-amber-300">100% 自研</span>
+                    <span class="text-xs text-slate-300 block mt-0.5">掌握底層 FOC/MCU/BMS 核心</span>
+                </div>
+                <div class="bg-slate-800/60 backdrop-blur-md p-4 rounded-2xl border border-slate-700/50">
+                    <span class="text-xs text-slate-400 block font-medium">品質認證</span>
+                    <span class="text-xl sm:text-2xl font-black text-cyan-300">IATF 16949</span>
+                    <span class="text-xs text-slate-300 block mt-0.5">車規 ISO 26262 / DFMEA</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Navigation Tabs -->
+        <section class="flex flex-wrap gap-2 p-1.5 bg-slate-200/70 rounded-2xl border border-slate-300/60 max-w-fit">
+            <button onclick="switchTab('swot')" id="tab-swot" class="active-tab px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center space-x-2 text-slate-600">
+                <i class="fa-solid fa-cube"></i>
+                <span>3維度 SWOT 剖析</span>
+            </button>
+            <button onclick="switchTab('strategy')" id="tab-strategy" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-chess-knight"></i>
+                <span>雙軌攻堅與競爭地圖</span>
+            </button>
+            <button onclick="switchTab('ebike')" id="tab-ebike" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-earth-americas text-brand-600"></i>
+                <span>全球市場與 Tier 1 競品</span>
+            </button>
+            <button onclick="switchTab('stp_algo')" id="tab-stp_algo" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-diagram-project text-purple-600"></i>
+                <span>STP 戰略與第一性原理演算法</span>
+            </button>
+            <button onclick="switchTab('roadmap')" id="tab-roadmap" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-timeline"></i>
+                <span>3 年實施藍圖時間軸</span>
+            </button>
+            <button onclick="switchTab('synergy')" id="tab-synergy" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all flex items-center space-x-2">
+                <i class="fa-solid fa-microchip"></i>
+                <span>KC 專家技術對接矩陣</span>
+            </button>
+        </section>
+
+        <!-- SECTION 1: SWOT THREE DIMENSIONS (TAB CONTENT) -->
+        <div id="content-swot" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">SWOT 三維度戰略剖析 (Three-Dimensional Analysis)</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">從時間軸轉型、水平競爭關係與垂直供應鏈鏈結切入</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Dimension 1: Time -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg mb-4">
+                        1
+                    </div>
+                    <span class="text-xs font-bold text-blue-600 uppercase tracking-widest block mb-1">維度一：時間軸 (Time)</span>
+                    <h4 class="text-lg font-bold text-slate-800 mb-3">元件走向次系統轉型</h4>
+                    
+                    <ul class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                            <span><strong class="text-slate-800">極致優勢 (S)：</strong>手握全球 50%+ 二極體發電機市占，具備 Tier-1 車廠不可替代的 Credit 與品質認證入場券。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+                            <span><strong class="text-slate-800">痛點克服 (W)：</strong>絕不依賴純外包/ODM；建立自研軟韌體、FOC 馬控與 AVL Dyno 測試團隊，避免陷入「拿不到 Know-how 也贏不了」的死局。</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Dimension 2: Horizontal -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-4">
+                        2
+                    </div>
+                    <span class="text-xs font-bold text-purple-600 uppercase tracking-widest block mb-1">維度二：水平軸 (Horizontal)</span>
+                    <h4 class="text-lg font-bold text-slate-800 mb-3">業內競爭與高端定位</h4>
+                    
+                    <ul class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-chess-king text-purple-500 mt-0.5"></i>
+                            <span><strong class="text-slate-800">8折高端戰術 (O)：</strong>避開中國低價殺戮血海，專注攻打歐美大廠 (Bosch) 毛利壟斷區；提供 95% 性能、8 折價格的破局方案。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-shield-halved text-rose-500 mt-0.5"></i>
+                            <span><strong class="text-slate-800">應對威脅 (T)：</strong>以高反應速度與深度的「顧問式客製服務」，破除歐美大廠的專利牆與硬性規矩。</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Dimension 3: Vertical -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-shadow relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mb-4">
+                        3
+                    </div>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-1">維度三：垂直軸 (Vertical)</span>
+                    <h4 class="text-lg font-bold text-slate-800 mb-3">上下游供應鏈整合</h4>
+                    
+                    <ul class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-microchip text-blue-500 mt-0.5"></i>
+                            <span><strong class="text-slate-800">上游晶片搶產能：</strong>針對外購低壓 MCU、Driver IC 與 PCB，以高階總裁級 Forecast 對接，交換產能優先權。</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-handshake-simple text-emerald-500 mt-0.5"></i>
+                            <span><strong class="text-slate-800">下游贏取信任：</strong>以「快速實機 DEMO」與「國際展覽參展」建立視覺信任，以「比客戶更懂終端需求」奪取規格制定權。</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: DUAL-TRACK STRATEGY & COMPETITION MAP (TAB CONTENT) -->
+        <div id="content-strategy" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Dual-Track Strategy Explanation Cards (7 cols) -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">客戶挑選：雙軌攻堅戰術 (Dual-Track Customer Strategy)</h3>
+                        <p class="text-xs text-slate-500 mb-6">解決「練功求經驗」與「規模求營收」的平衡解答</p>
+
+                        <div class="space-y-4">
+                            <!-- Track A -->
+                            <div class="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/60 flex items-start space-x-4">
+                                <div class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                                    軌道 A
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex items-center space-x-2">
+                                        <h4 class="font-bold text-slate-800 text-sm">特有規格 / 創新 OEM (End-to-End 練兵場)</h4>
+                                        <span class="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-md">練功磨練</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        瞄準「歐美大廠不理、小廠做不出來」的特殊需求客戶。由自研團隊提供從零到一 (End-to-End) 的快速軟韌體客製與顧問式服務，把軟韌體與控制 Know-how 練到極致。
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Track B -->
+                            <div class="p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 flex items-start space-x-4">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                                    軌道 B
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex items-center space-x-2">
+                                        <h4 class="font-bold text-slate-800 text-sm">量大穩定 OEM (VAVE 價值工程降本)</h4>
+                                        <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-md">規模營收</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        拿到成熟規格後快速 Copy，發揮朋程「垂直整合與一條龍元件設計封裝」的降本能力。提供極具價格誘惑的模組化次系統，帶來穩定現金流。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Competitor Visual Chart (5 cols) -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800 mb-1">市場競爭定位矩陣 (Price vs. Quality)</h3>
+                        <p class="text-xs text-slate-500 mb-4">朋程 8 折高性價比定位點</p>
+                        <div class="relative w-full h-56 sm:h-64">
+                            <canvas id="competitorChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 flex justify-between items-center">
+                        <span><i class="fa-solid fa-circle text-blue-600"></i> 朋程 (80% 價格/95% 性能)</span>
+                        <span><i class="fa-solid fa-circle text-slate-400"></i> Bosch (100%/100%)</span>
+                        <span><i class="fa-solid fa-circle text-emerald-500"></i> 八方/中國 (40%/60%)</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION 3: GLOBAL E-BIKE MARKET & TIER 1 COMPETITOR MATRIX (TAB CONTENT) -->
+        <div id="content-ebike" class="hidden space-y-6">
+            
+            <!-- Global Market Overview Cards -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200/80">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold mb-2">
+                            <i class="fa-solid fa-earth-americas"></i>
+                            <span>全球 E-Bike 市場與 Tier 1 驅動系統概覽 (2026 最新版)</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">全球區域市場規模與各大品牌 (OEM/OBM) 陣營</h3>
+                        <p class="text-xs text-slate-500 mt-1">從全球 280 億-570 億美元產值走向 2034 年 1,900 億美元的結構化分流趨勢</p>
+                    </div>
+                </div>
+
+                <!-- Regional Market Grid (4 Cards) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Europe -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-200/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-blue-800 uppercase">歐洲 (Europe)</span>
+                            <span class="text-[10px] bg-blue-200 text-blue-800 font-bold px-2 py-0.5 rounded-full">高單價指標</span>
+                        </div>
+                        <div class="text-lg font-black text-slate-800">450萬 - 500萬台/年</div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            產值 ~$202 億美元 (占比 20%-35%)。德國獨佔 210萬台，EN 15194 規範 (250W/25km/h)。以高階中置馬達 Pedelec 為主 (ASP $2,500 - $5,000+)。
+                        </p>
+                    </div>
+
+                    <!-- North America -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-2xl border border-purple-200/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-purple-800 uppercase">北美 (North America)</span>
+                            <span class="text-[10px] bg-purple-200 text-purple-800 font-bold px-2 py-0.5 rounded-full">CAGR 11.6% 最高爆發</span>
+                        </div>
+                        <div class="text-lg font-black text-slate-800">120萬 - 150萬台/年</div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            產值 ~$45-50 億美元。Class 1/2/3 分級制 (允許 500W-750W / 油門 Throttle / 28mph)。Cargo 載物與 e-MTB 強勁需求。
+                        </p>
+                    </div>
+
+                    <!-- APAC & China -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-2xl border border-emerald-200/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-emerald-800 uppercase">亞太/中國 (APAC)</span>
+                            <span class="text-[10px] bg-emerald-200 text-emerald-800 font-bold px-2 py-0.5 rounded-full">全球體量心臟 (>56%)</span>
+                        </div>
+                        <div class="text-lg font-black text-slate-800">> 3,000 萬台/年</div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            營收占比全球 56%-76%。中國年生產 3000萬-4500萬台 (含新國標)。代工出口佔據歐美高階 E-bike 車架與製造 70%+。
+                        </p>
+                    </div>
+
+                    <!-- Emerging Markets -->
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-amber-800 uppercase">東南亞與新興市場</span>
+                            <span class="text-[10px] bg-amber-200 text-amber-800 font-bold px-2 py-0.5 rounded-full">微型移動政策補貼</span>
+                        </div>
+                        <div class="text-lg font-black text-slate-800">快速起飛期</div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            泰國、越南、印尼與印度 (PM E-Drive 補貼) 高速爆發。主打高 CP 值都會通勤與微型共享移動。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Global OEM / OBM Brand Table -->
+                <div class="space-y-3 pt-4">
+                    <h4 class="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                        <i class="fa-solid fa-bicycle text-brand-600"></i>
+                        <span>全球高階 Pedelec 品牌廠 (OEM/OBM) 市佔與年銷量估算</span>
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-2.5 font-bold">品牌廠商 (OEM/OBM)</th>
+                                    <th class="p-2.5 font-bold">主要核心市場</th>
+                                    <th class="p-2.5 font-bold">預估年銷量 (E-Bike)</th>
+                                    <th class="p-2.5 font-bold">全球高階市佔率</th>
+                                    <th class="p-2.5 font-bold">核心戰略與優缺點</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-600">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-bold text-slate-800">Giant (巨大)</td>
+                                    <td class="p-2.5">全球 / 歐美</td>
+                                    <td class="p-2.5 font-mono text-brand-600 font-bold">80萬 - 110萬台</td>
+                                    <td class="p-2.5 font-bold text-slate-800">15% - 20%</td>
+                                    <td class="p-2.5">全球製造龍頭。Maestro 避震，與 Yamaha 合作 SyncDrive 系統。<span class="text-rose-500 font-medium">(缺點: 價格高、系統封閉)</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-bold text-slate-800">Trek</td>
+                                    <td class="p-2.5">北美 / 歐洲</td>
+                                    <td class="p-2.5 font-mono text-brand-600 font-bold">50萬 - 70萬台</td>
+                                    <td class="p-2.5 font-bold text-slate-800">8% - 12%</td>
+                                    <td class="p-2.5">經銷通路霸主。主打 Bosch 智慧系統整合與高階 Cargo 車。<span class="text-rose-500 font-medium">(缺點: 品牌溢價極高)</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-bold text-slate-800">Specialized</td>
+                                    <td class="p-2.5">北美 / 歐洲</td>
+                                    <td class="p-2.5 font-mono text-brand-600 font-bold">40萬 - 60萬台</td>
+                                    <td class="p-2.5 font-bold text-slate-800">6% - 10%</td>
+                                    <td class="p-2.5">極致運動研發。自研 Brose 定制馬達與優異動態演算法。<span class="text-rose-500 font-medium">(缺點: 售價極其昂貴)</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-bold text-slate-800">Merida (美利達)</td>
+                                    <td class="p-2.5">歐洲 / 亞洲</td>
+                                    <td class="p-2.5 font-mono text-brand-600 font-bold">35萬 - 50萬台</td>
+                                    <td class="p-2.5 font-bold text-slate-800">5% - 8%</td>
+                                    <td class="p-2.5">幾何與車架設計強項。全線深度綁定 Shimano STEPS 系統。<span class="text-rose-500 font-medium">(缺點: 自主電控主導權弱)</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-bold text-slate-800">Rad Power Bikes</td>
+                                    <td class="p-2.5">北美 (DTC 龍頭)</td>
+                                    <td class="p-2.5 font-mono text-brand-600 font-bold">25萬 - 40萬台</td>
+                                    <td class="p-2.5 font-bold text-slate-800">10%-15% (北美)</td>
+                                    <td class="p-2.5">主打平價、實用 Cargo 與電輔都會車。<span class="text-rose-500 font-medium">(缺點: 多用輪轂馬達，動態質感差)</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-2.5 font-bold text-slate-800">Yadea (雅迪) / AIMA</td>
+                                    <td class="p-2.5">中國 / 東南亞</td>
+                                    <td class="p-2.5 font-mono text-brand-600 font-bold">> 1,000萬台</td>
+                                    <td class="p-2.5 font-bold text-emerald-600">亞太量能霸主</td>
+                                    <td class="p-2.5">極致規模經濟。專注大眾通勤，近年轉向外銷中高階 Pedelec 中置系統。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tier 1 Mid-Drive System Market Share Chart & Competitors Grid -->
+                <div class="pt-6 border-t border-slate-200/80 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-base font-bold text-slate-800">Tier 1 三電驅動系統廠市佔與規格深剖</h4>
+                            <p class="text-xs text-slate-500">全球中置馬達與電控系統市場規模達 $39.6 億 - $75 億美元 (CAGR 16.1%)</p>
+                        </div>
+                    </div>
+
+                    <!-- Tier 1 Competitors Grid Cards -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <!-- 1. Bosch -->
+                        <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-900 text-white font-bold text-sm flex items-center justify-center shadow">
+                                        B
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-base">Bosch <span class="text-xs text-slate-500 font-normal">(Performance Line CX)</span></h4>
+                                        <span class="text-[10px] font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">全球中置市佔 ~25% (全歐 >50%, 德國 ~70%)</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-400 block">助力比</span>
+                                    <span class="text-sm font-black text-slate-800">340% - 400%</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80 text-center text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">工作電壓</span>
+                                    <span class="font-bold text-slate-700">36V</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">最大扭力</span>
+                                    <span class="font-bold text-brand-600">85 - 90 Nm</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">系統重量</span>
+                                    <span class="font-bold text-slate-700">2.8 kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">踏力響應</span>
+                                    <span class="font-bold text-emerald-600">&lt; 10 ms</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-xs">
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-microchip text-brand-600 mr-1"></i> MCU/FOC 核心架構：</strong>
+                                    <p class="text-slate-600 leading-relaxed">Automotive 級 32-bit MCU，高頻 FOC 向量控制，MOSFET 熱管理極佳。</p>
+                                </div>
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-wave-square text-purple-600 mr-1"></i> 踏力響應與演算法：</strong>
+                                    <p class="text-slate-600 leading-relaxed">Patented eMTB Algorithm：動態多感測器融合，踏力與馬達動力的「無縫閉迴路疊加」，消弭動力突兀感。</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-200/60">
+                                <div class="bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-100">
+                                    <span class="font-bold text-emerald-800 block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> 強項</span>
+                                    <p class="text-emerald-700 text-[11px] leading-tight">極致踩踏自然感、全球售後服務網絡強大。</p>
+                                </div>
+                                <div class="bg-rose-50/80 p-2.5 rounded-xl border border-rose-100">
+                                    <span class="font-bold text-rose-800 block mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i> 痛點</span>
+                                    <p class="text-rose-700 text-[11px] leading-tight">系統極度封閉 (CAN-bus 專有協議)，不容第三方組件。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Shimano -->
+                        <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-900 text-white font-bold text-sm flex items-center justify-center shadow">
+                                        S
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-base">Shimano <span class="text-xs text-slate-500 font-normal">(EP801)</span></h4>
+                                        <span class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">全球中置市佔 ~20% (變速器生態)</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-400 block">助力比</span>
+                                    <span class="text-sm font-black text-slate-800">400%</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80 text-center text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">工作電壓</span>
+                                    <span class="font-bold text-slate-700">36V</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">最大扭力</span>
+                                    <span class="font-bold text-brand-600">85 Nm</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">系統重量</span>
+                                    <span class="font-bold text-slate-700">2.7 kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">高踏頻表現</span>
+                                    <span class="font-bold text-blue-600">Cadence 高原區</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-xs">
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-microchip text-brand-600 mr-1"></i> MCU/FOC 核心架構：</strong>
+                                    <p class="text-slate-600 leading-relaxed">32-bit 高速 FOC 控制器，與 Di2 電子變速實現 CAN-bus 高速連動。</p>
+                                </div>
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-wave-square text-purple-600 mr-1"></i> 踏力響應與演算法：</strong>
+                                    <p class="text-slate-600 leading-relaxed">Autoshift / Freeshift 演算法：傳動與電控協同，自動降扭保護鏈條與齒盤。</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-200/60">
+                                <div class="bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-100">
+                                    <span class="font-bold text-emerald-800 block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> 強項</span>
+                                    <p class="text-emerald-700 text-[11px] leading-tight">電控與機械變速完美聯動，運動手感極佳。</p>
+                                </div>
+                                <div class="bg-rose-50/80 p-2.5 rounded-xl border border-rose-100">
+                                    <span class="font-bold text-rose-800 block mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i> 痛點</span>
+                                    <p class="text-rose-700 text-[11px] leading-tight">MCU 韌體參數開放度極低，OEM 客製化困難。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Bafang -->
+                        <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-600 text-white font-bold text-sm flex items-center justify-center shadow">
+                                        八
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-base">Bafang 八方 <span class="text-xs text-slate-500 font-normal">(M510/M620)</span></h4>
+                                        <span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">全球中置市佔 ~15% (輪轂霸主/高 CP)</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-400 block">助力比</span>
+                                    <span class="text-sm font-black text-amber-600">500%</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80 text-center text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">工作電壓</span>
+                                    <span class="font-bold text-slate-700">43V / 48V</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">最大扭力</span>
+                                    <span class="font-bold text-amber-600">95 - 160 Nm</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">系統重量</span>
+                                    <span class="font-bold text-slate-700">3.0 - 5.3 kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">響應滯後</span>
+                                    <span class="font-bold text-rose-500">50 - 100 ms</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-xs">
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-microchip text-brand-600 mr-1"></i> MCU/FOC 核心架構：</strong>
+                                    <p class="text-slate-600 leading-relaxed">工業級 FOC 控制，大電流耐受設計，硬體散熱冗餘大。</p>
+                                </div>
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-wave-square text-purple-600 mr-1"></i> 踏力響應與演算法：</strong>
+                                    <p class="text-slate-600 leading-relaxed">傳統 PI/PID 控制，初始踩踏有微幅滯後，踩踏停止後會有短暫 Overshoot 拖尾感。</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-200/60">
+                                <div class="bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-100">
+                                    <span class="font-bold text-emerald-800 block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> 強項</span>
+                                    <p class="text-emerald-700 text-[11px] leading-tight">暴力輸出、高 CP 值，硬體改裝彈性極大。</p>
+                                </div>
+                                <div class="bg-rose-50/80 p-2.5 rounded-xl border border-rose-100">
+                                    <span class="font-bold text-rose-800 block mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i> 痛點</span>
+                                    <p class="text-rose-700 text-[11px] leading-tight">踏力線性度差，高瓦數運作下效率衰退快。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. MPS 聯永基 -->
+                        <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 hover:border-blue-300 transition-all space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-teal-600 text-white font-bold text-sm flex items-center justify-center shadow">
+                                        聯
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-base">聯永基 MPS <span class="text-xs text-slate-500 font-normal">(台系 Tier 1)</span></h4>
+                                        <span class="text-[10px] font-bold bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">三電整合 (Motor+BMS+MCU)</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-400 block">助力比</span>
+                                    <span class="text-sm font-black text-slate-800">300% - 350%</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-2 bg-white p-2.5 rounded-xl border border-slate-200/80 text-center text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">工作電壓</span>
+                                    <span class="font-bold text-slate-700">36V / 48V</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">最大扭力</span>
+                                    <span class="font-bold text-brand-600">85 - 95 Nm</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">系統重量</span>
+                                    <span class="font-bold text-slate-700">2.9 kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">踏力響應</span>
+                                    <span class="font-bold text-teal-600">15 - 20 ms</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 text-xs">
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-microchip text-brand-600 mr-1"></i> MCU/FOC 核心架構：</strong>
+                                    <p class="text-slate-600 leading-relaxed">自研 32-bit FOC 核心，高整合度 BMS，體積緊湊。</p>
+                                </div>
+                                <div>
+                                    <strong class="text-slate-800 block mb-0.5"><i class="fa-solid fa-wave-square text-purple-600 mr-1"></i> 踏力響應與演算法：</strong>
+                                    <p class="text-slate-600 leading-relaxed">獨家 Responsive Drive 演算法：消除踏踩死點 (Dead Point) 扭力突兀，提供類似 Bosch 踏感。</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-200/60">
+                                <div class="bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-100">
+                                    <span class="font-bold text-emerald-800 block mb-1"><i class="fa-solid fa-circle-check mr-1"></i> 強項</span>
+                                    <p class="text-emerald-700 text-[11px] leading-tight">三電軟硬體一體化，提供 OEM 深度客製化彈性。</p>
+                                </div>
+                                <div class="bg-rose-50/80 p-2.5 rounded-xl border border-rose-100">
+                                    <span class="font-bold text-rose-800 block mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i> 痛點</span>
+                                    <p class="text-rose-700 text-[11px] leading-tight">歐美品牌知名度與售後服務網絡建立中。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: STP STRATEGY & FIRST-PRINCIPLES ALGORITHM ARCHITECTURE (TAB CONTENT) -->
+        <div id="content-stp_algo" class="hidden space-y-6">
+            
+            <!-- STP Strategy Container -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80 space-y-6">
+                <div>
+                    <div class="inline-flex items-center space-x-2 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-bold mb-2">
+                        <i class="fa-solid fa-bullseye"></i>
+                        <span>STP 市場戰略佈局 (Segmentation, Targeting, Positioning)</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">切入全球 E-Bike 電控市場之 STP 定位藍圖</h3>
+                </div>
+
+                <!-- STP 3 Column Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- 1. Segmentation -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider block">1. 市場細分 (Segmentation)</span>
+                        <ul class="space-y-2 text-xs text-slate-600 leading-relaxed">
+                            <li class="bg-white p-2 rounded-lg border border-slate-200">
+                                <strong class="text-slate-800 block">S1：高階重度越野 (e-MTB/Enduro)</strong>
+                                扭力 >85Nm，對延遲零容忍，單車 >$5,000。
+                            </li>
+                            <li class="bg-white p-2 rounded-lg border border-slate-200 border-l-4 border-l-brand-500">
+                                <strong class="text-brand-700 block">S2：都會輕量/精品 (Urban/Gravel) ★</strong>
+                                隱形電池，車重 <15kg，順暢踏感，價格 $2,000-$3,500。
+                            </li>
+                            <li class="bg-white p-2 rounded-lg border border-slate-200 border-l-4 border-l-emerald-500">
+                                <strong class="text-emerald-700 block">S3：長途載物/家庭 (Cargo E-Bike) ★</strong>
+                                高負載 >180kg，雙電池，要求極高 BMS 散熱防護。
+                            </li>
+                            <li class="bg-white p-2 rounded-lg border border-slate-200">
+                                <strong class="text-slate-800 block">S4：平價大眾代步 (Mass Commute)</strong>
+                                紅海市場，輪轂馬達為主，極致成本敏感 (<$1,200)。
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 2. Targeting -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider block">2. 目標選擇 (Targeting)</span>
+                        <div class="space-y-3 text-xs">
+                            <div class="p-3 bg-brand-50 rounded-xl border border-brand-200 space-y-1">
+                                <span class="font-bold text-brand-800 block text-xs"><i class="fa-solid fa-star text-brand-600 mr-1"></i> 主要目標：S2 智慧輕量都會/礫石車</span>
+                                <p class="text-slate-600 leading-relaxed">
+                                    避開 Bosch/Shimano 壟斷的重度 e-MTB 戰場。發揮高功率密度馬達磁路、車聯網智慧電控與 FOC 閉迴路演算法，打造自然順暢的中置/微型驅動系統。
+                                </p>
+                            </div>
+                            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-1">
+                                <span class="font-bold text-emerald-800 block text-xs"><i class="fa-solid fa-truck-ramp-box text-emerald-600 mr-1"></i> 次要目標：S3 電動載物車 (Cargo E-Bike)</span>
+                                <p class="text-slate-600 leading-relaxed">
+                                    歐美 Cargo 年成長 >20%，對動力系統可靠度與 BMS 電池熱失控防護要求極高，發揮車規級品質優勢。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Positioning -->
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+                        <span class="text-xs font-bold text-purple-600 uppercase tracking-wider block">3. 市場定位 (Positioning)</span>
+                        <div class="bg-slate-900 text-white p-4 rounded-xl space-y-2 text-xs">
+                            <span class="text-amber-300 font-bold block text-[11px]"><i class="fa-solid fa-quote-left mr-1"></i> 定位宣言 (Positioning Statement)</span>
+                            <p class="text-slate-200 italic leading-relaxed text-[11px]">
+                                「為追求極致騎乘感與智慧體驗的現代都市職人，提供比 Bosch 更開放、比 Bafang 更細緻、且完美整合人機耦合演算法的下一代微驅動三電系統。」
+                            </p>
+                        </div>
+
+                        <div class="space-y-1.5 text-xs text-slate-600">
+                            <strong class="text-slate-800 block font-bold">核心價值主張 (Value Proposition)：</strong>
+                            <p class="leading-tight">▸ <strong>人機解耦 FOC 演算法：</strong>前饋補償消除踏踩死點。</p>
+                            <p class="leading-tight">▸ <strong>軟體定義動力 (SDP)：</strong>開放完整參數與 OTA 升級。</p>
+                            <p class="leading-tight">▸ <strong>車規級 BMS 與智慧保護：</strong>傳承動態弱磁與電池熱控。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- First-Principles Algorithm Architecture Block -->
+            <div class="bg-gradient-to-br from-slate-900 via-brand-950 to-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-xl space-y-6 border border-brand-500/30">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 bg-brand-500/20 text-brand-300 border border-brand-400/30 px-3 py-1 rounded-full text-xs font-bold">
+                            <i class="fa-solid fa-code"></i>
+                            <span>首席工程師第一性原理 (First-Principles Algorithm)</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mt-1">三電驅動核心演算法突破架構 (Control Loop Flow)</h3>
+                    </div>
+                    <span class="text-xs text-brand-300 font-mono bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">KC Algorithm Architecture v3.0</span>
+                </div>
+
+                <!-- Control Loop Visual Pipeline -->
+                <div class="bg-slate-950 p-4 sm:p-6 rounded-xl border border-slate-800 overflow-x-auto">
+                    <div class="flex flex-col md:flex-row items-center justify-between min-w-[700px] text-center text-xs space-y-4 md:space-y-0 relative">
+                        <!-- Node 1 -->
+                        <div class="bg-slate-900 border border-slate-700 p-3 rounded-xl w-36 shadow-lg">
+                            <span class="text-[10px] text-slate-400 block mb-1">人體踏力輸入</span>
+                            <strong class="text-brand-300 font-bold block">Human Pedal Input</strong>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-600 hidden md:block"></i>
+
+                        <!-- Node 2 -->
+                        <div class="bg-slate-900 border border-slate-700 p-3 rounded-xl w-36 shadow-lg">
+                            <span class="text-[10px] text-slate-400 block mb-1">感測器採樣</span>
+                            <strong class="text-emerald-300 font-bold block">Torque / Cadence Sensor</strong>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-600 hidden md:block"></i>
+
+                        <!-- Node 3 -->
+                        <div class="bg-purple-900/60 border border-purple-500 p-3 rounded-xl w-40 shadow-lg relative">
+                            <span class="text-[10px] text-purple-300 block mb-1">軟體觀測器</span>
+                            <strong class="text-white font-bold block">EKF / SMO Observer</strong>
+                            <span class="text-[9px] text-purple-200 block mt-0.5">(電流/轉速反饋)</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-600 hidden md:block"></i>
+
+                        <!-- Node 4 -->
+                        <div class="bg-blue-900/60 border border-blue-500 p-3 rounded-xl w-44 shadow-lg">
+                            <span class="text-[10px] text-blue-300 block mb-1">前饋漣波抑制</span>
+                            <strong class="text-white font-bold block">Feedforward Torque Ripple Mitigation</strong>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-600 hidden md:block"></i>
+
+                        <!-- Node 5 -->
+                        <div class="bg-slate-900 border border-slate-700 p-3 rounded-xl w-36 shadow-lg">
+                            <span class="text-[10px] text-slate-400 block mb-1">向量控制</span>
+                            <strong class="text-cyan-300 font-bold block">Fast-Response FOC</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 Major Algorithm Breakthrough Points -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-xs">
+                    
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                        <span class="text-brand-300 font-bold block text-sm"><i class="fa-solid fa-wave-square mr-1"></i> 1. 踏力 Torque Ripple 消除機制</span>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            利用 MIL 模型建構人體腳踏物理力矩（360度曲柄角力量）與馬達力矩耦合方程。透過 FOC 在 <span class="font-mono text-amber-300">i_q</span> 軸注入動態反向諧波，精準抵消死點震動。
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                        <span class="text-purple-300 font-bold block text-sm"><i class="fa-solid fa-eye mr-1"></i> 2. 無感/低成本扭力估測器</span>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            使用擴展卡爾曼濾波器 (EKF) 或滑模觀測器 (SMO)，透過馬達 <span class="font-mono text-amber-300">i_d, i_q</span> 與轉速變化反推 Rider 踩踏功率，節省昂貴硬體扭力感測器成本 (>$30-$50 USD)。
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                        <span class="text-emerald-300 font-bold block text-sm"><i class="fa-solid fa-bolt mr-1"></i> 3. 高轉速動態弱磁 (Flux Weakening)</span>
+                        <p class="text-slate-300 leading-relaxed text-[11px]">
+                            在高踏頻 (Cadence > 110 rpm) 下，反電動勢逼近 36V 母線電壓。寫入動態 <span class="font-mono text-amber-300">i_d</span> 負向注入演算法，拓寬高效率高原區，確保高速踩踏動力不失速。
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SECTION 5: 3-YEAR EXECUTION TIMELINE (TAB CONTENT) -->
+        <div id="content-roadmap" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-slate-800">3 年實施藍圖與關鍵里程碑 (Execution Roadmap)</h3>
+                    <p class="text-xs text-slate-500 mt-1">從團隊組建、DEMO 參展到 VAVE 規模化生產</p>
+                </div>
+
+                <div class="relative border-l-2 border-brand-200 ml-4 sm:ml-8 space-y-10">
+                    <!-- Year 1 -->
+                    <div class="relative pl-6 sm:pl-8">
+                        <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                            Y1
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-2">
+                            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Phase 1 · 第一年：團隊建構與樣品驗證</span>
+                            <h4 class="text-base font-bold text-slate-800">核心馬控團隊組建 & 第一代 BLDC/MCU 車規 DEMO 發表</h4>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside leading-relaxed">
+                                <li>recruit 與組建自研軟韌體、Microchip MCU 及 FOC 演算法核心團隊。</li>
+                                <li>建置車用雨刷與 E-bike 中置電機測試台（AVL Dyno），打造第一代快速實機 DEMO。</li>
+                                <li>對接上游晶片廠（uC / Driver IC / PCB）高層，簽訂長期 Forecast 配額。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Year 2 -->
+                    <div class="relative pl-6 sm:pl-8">
+                        <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                            Y2
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-2">
+                            <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Phase 2 · 第二年：國際參展與特有規格練功</span>
+                            <h4 class="text-base font-bold text-slate-800">國際大展實機展示 & 攻堅高端創新 OEM (Track A)</h4>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside leading-relaxed">
+                                <li>進軍 Taipei Cycle / Eurobike 國際展覽，公開發表高端高性價比電控次系統。</li>
+                                <li>鎖定 2-3 家特有規格客戶進行 End-to-End 客製開發，磨練軟韌體與規格制定能力。</li>
+                                <li>完成 ISO 26262 功能安全與 DFMEA 體系全面覆蓋。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Year 3 -->
+                    <div class="relative pl-6 sm:pl-8">
+                        <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow">
+                            Y3
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-2">
+                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Phase 3 · 第三年：規模量產與 SiC/GaN 整合</span>
+                            <h4 class="text-base font-bold text-slate-800">VAVE 降本複製 (Track B) & 次世代高密度模組化</h4>
+                            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside leading-relaxed">
+                                <li>針對成熟量大規格進行 VAVE 一條龍降本，實現規模營收與穩定現金流。</li>
+                                <li>結合朋程 SiC / GaN 功率模組，推出業界高密度 ACF/Inverter 整合控制器。</li>
+                                <li>奠定朋程在國際 E-bike 與車用 Actuator 電控次系統的 Tier-1 品牌地位。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: KC TECHNICAL SYNERGY MATRIX (TAB CONTENT) -->
+        <div id="content-synergy" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80 space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">黎凱強 (KC) 15年經驗對接矩陣</h3>
+                    <p class="text-xs text-slate-500 mt-1">如何將過去 15+ 年 Gogoro & 八達創新硬核資歷，轉化為朋程勝勢</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Synergy Card 1 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-brand-600 uppercase">朋程職缺需求</span>
+                            <span class="text-[10px] bg-brand-100 text-brand-700 font-bold px-2 py-0.5 rounded">100% 契合</span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">Microchip MCU & BLDC / FOC 驅控開發</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong class="text-slate-800">KC 經驗轉譯：</strong>早期於八達創新親手開發 E-Bike 中置高功率驅動 MCU Bare-metal 韌體，於 Gogoro 突破角度感測器校正演算法與齒槽轉矩 (Cogging Torque) 優化。
+                        </p>
+                    </div>
+
+                    <!-- Synergy Card 2 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-purple-600 uppercase">朋程職缺需求</span>
+                            <span class="text-[10px] bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded">100% 契合</span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">AVL Dyno 特徵曲線 & T-N 驗證</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong class="text-slate-800">KC 經驗轉譯：</strong>熟練運用 AVL Dyno 進行發電機台特徵曲線量測、Efficiency Map 繪製與實車熱負載調校，能完美精準對接車用雨刷大負載與 E-bike 騎乘感。
+                        </p>
+                    </div>
+
+                    <!-- Synergy Card 3 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-emerald-600 uppercase">朋程職缺需求</span>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">100% 契合</span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">高整合電控與車規安全 (DFMEA/FTA)</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong class="text-slate-800">KC 經驗轉譯：</strong>主導過業界首創 5kW 輪轂馬達控制器 (125W ACF DC-DC + Inverter)，並帶領首次 Keyless 三合一鎖頭與整車車規級 DFMEA 與可靠度對策。
+                        </p>
+                    </div>
+
+                    <!-- Synergy Card 4 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/80 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-600 uppercase">朋程職缺需求</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded">100% 契合</span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">團隊領導 (10-50人) & CEO Roadmap 決策</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong class="text-slate-800">KC 經驗轉譯：</strong>作為 Gogoro 首席工程師兼部門主管，直連 CEO 匯報技術 Roadmap，並主導 Luna 專案 10 變 5 平台化收斂，具備大局觀與高階對接能力。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>朋程科技 (Actron) 電控次系統 3 年戰略書 · 機密文件 | 簡報擬定人：黎凱強 (KC)</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Script Section -->
+    <script>
+        // Tab Switcher Logic
+        function switchTab(tabName) {
+            const tabs = ['swot', 'strategy', 'ebike', 'stp_algo', 'roadmap', 'synergy'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const content = document.getElementById(`content-${t}`);
+                if (btn && content) {
+                    if (t === tabName) {
+                        btn.classList.add('active-tab');
+                        btn.classList.remove('text-slate-600');
+                        content.classList.remove('hidden');
+                    } else {
+                        btn.classList.remove('active-tab');
+                        btn.classList.add('text-slate-600');
+                        content.classList.add('hidden');
+                    }
+                }
+            });
+
+            if (tabName === 'strategy') {
+                renderChart();
+            }
+        }
+
+        // Chart.js Scatter Positioning Chart
+        let chartInstance = null;
+        function renderChart() {
+            if (chartInstance) return;
+
+            const ctx = document.getElementById('competitorChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: [
+                        {
+                            label: '朋程 (Actron 戰略位)',
+                            data: [{ x: 80, y: 95, r: 14 }],
+                            backgroundColor: 'rgba(37, 99, 235, 0.85)',
+                            borderColor: '#1d4ed8',
+                        },
+                        {
+                            label: '歐美巨頭 (Bosch等)',
+                            data: [{ x: 100, y: 100, r: 12 }],
+                            backgroundColor: 'rgba(148, 163, 184, 0.7)',
+                            borderColor: '#64748b',
+                        },
+                        {
+                            label: '中國廠商 (八方等)',
+                            data: [{ x: 40, y: 60, r: 12 }],
+                            backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                            borderColor: '#16a34a',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: 價格 ${context.raw.x}%, 性能 ${context.raw.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: '相對價格 (Price %)', font: { size: 10 } },
+                            min: 20, max: 110
+                        },
+                        y: {
+                            title: { display: true, text: '性能/品質 (Quality %)', font: { size: 10 } },
+                            min: 40, max: 110
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
