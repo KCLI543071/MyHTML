@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 花蓮白鮑溪溯溪、瑞穗溫泉與遠雄海洋夜宿 - 數位互動行程表</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS & JS for custom coordinates marker mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+        }
+
+        .leaflet-container {
+            border-radius: 1.5rem;
+            font-family: 'Noto Sans TC', sans-serif;
+            box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.06);
+        }
+
+        .tab-active {
+            border-bottom: 4px solid #0284c7; /* sky-600 */
+            color: #0369a1;
+            font-weight: 800;
+        }
+
+        .dish-card {
+            background: #ffffff;
+            border-left: 4px solid #0284c7;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .dish-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+<div class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
+    <!-- Header -->
+    <header class="text-center mb-8">
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 bg-sky-50 text-sky-800 rounded-full text-sm font-bold mb-3 border border-sky-100 shadow-sm">
+            <span>🌊</span>
+            <span>2026 家族花蓮東海岸暨縱谷自駕行</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mb-3">白鮑溪摸寶石 • 瑞穗溫泉探親 • 遠雄海洋夜宿</h1>
+        <p class="text-base sm:text-lg text-slate-600 font-medium">
+            📅 9/23 (三) ~ 9/25 (五) • <span class="bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md font-bold">新莊出發 2 大 2 幼 (5歲 & 8歲) 3日遊</span>
+        </p>
+    </header>
+
+    <!-- SECTION 1: Climate & Driving Distance Dual-Pane Dashboard -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+        <!-- Left Pane: Temperature & Driving Elevation/Fatigue Curve (5 cols) -->
+        <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-md border border-slate-100 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold flex items-center text-slate-900">
+                        <span class="mr-2">📈</span> 駕駛體力與車程里程分析
+                    </h2>
+                    <a href="https://www.cwa.gov.tw/V8/C/L/Town/Town.html?County=10015" target="_blank" class="text-xs bg-sky-100 text-sky-700 px-3 py-1.5 rounded-full font-bold hover:bg-sky-200 transition-colors inline-flex items-center">
+                        <span class="mr-1">🔗</span> 氣象局即時預報
+                    </a>
+                </div>
+                <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                    首日 05:00 自新莊出發，沿蘇花改南下花蓮壽豐，<b>全程約 160 公里（約 3.5~4 小時）</b>。駕駛人宜於蘇澳休息站補給，確保溯溪體力：
+                </p>
+                <div class="chart-container mb-4">
+                    <canvas id="drivingStressChart"></canvas>
+                </div>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-2xl border border-amber-100 flex items-start space-x-2">
+                <span class="text-lg">🚨</span>
+                <p class="text-amber-950 text-xs leading-relaxed font-medium">
+                    <b>自駕與親子防護提醒：</b>溯溪後全身濕透，請將<b>乾淨衣物包與毛巾預先放在車內好拿取處</b>；高山縱谷紫外線較強，請準備兒童防曬乳與涼感透氣外套。
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Pane: CWA 3-Day Hualien Forecast Table (7 cols) -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-6 shadow-md border border-slate-100 flex flex-col justify-between">
+            <div>
+                <h2 class="text-xl font-bold flex items-center text-slate-900 mb-2">
+                    <span class="mr-2">⛅</span> 花蓮縱谷與海岸 一週氣候趨勢
+                </h2>
+                <p class="text-xs text-slate-500 mb-4">
+                    數據依據中央氣象局 (CWA) 9 月歷史平均氣溫與趨勢分析，請預先確認出遊日天氣：
+                </p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-600 border-b border-slate-100">
+                                <th class="py-2 px-1 font-bold">日期</th>
+                                <th class="py-2 px-1 font-bold">09/21 (一)</th>
+                                <th class="py-2 px-1 font-bold">09/22 (二)</th>
+                                <th class="py-2 px-1 bg-sky-50 text-sky-900 font-black border-x border-sky-100">09/23 (三) D1</th>
+                                <th class="py-2 px-1 bg-indigo-50 text-indigo-900 font-black border-x border-indigo-100">09/24 (四) D2</th>
+                                <th class="py-2 px-1 bg-emerald-50 text-emerald-900 font-black border-x border-emerald-100">09/25 (五) D3</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="py-3 px-1 font-bold text-slate-500 bg-slate-50/50">白天 (縱谷/海岸)</td>
+                                <td class="py-3 px-1">☀️ 29°C<br><span class="text-[10px] text-slate-400">晴朗 10%</span></td>
+                                <td class="py-3 px-1">⛅ 28°C<br><span class="text-[10px] text-slate-400">多雲 20%</span></td>
+                                <td class="py-3 px-1 bg-sky-50 font-semibold border-x border-sky-100">🌤️ 28°C<br><span class="text-[10px] text-sky-700">白鮑溪微涼</span></td>
+                                <td class="py-3 px-1 bg-indigo-50 font-semibold border-x border-indigo-100">☀️ 29°C<br><span class="text-[10px] text-indigo-700">海洋公園晴</span></td>
+                                <td class="py-3 px-1 bg-emerald-50 font-semibold border-x border-emerald-100">⛅ 28°C<br><span class="text-[10px] text-emerald-700">午後局部陣雨</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-1 font-bold text-slate-500 bg-slate-50/50">入夜 (瑞穗/海洋)</td>
+                                <td class="py-3 px-1">🌙 23°C<br><span class="text-[10px] text-slate-400">舒適</span></td>
+                                <td class="py-3 px-1">🌙 22°C<br><span class="text-[10px] text-slate-400">舒適</span></td>
+                                <td class="py-3 px-1 bg-sky-50/70 border-x border-sky-100">♨️ 22°C<br><span class="text-[10px] text-sky-800">溫泉泉質極佳</span></td>
+                                <td class="py-3 px-1 bg-indigo-50/70 border-x border-indigo-100">🐠 24°C<br><span class="text-[10px] text-indigo-800">水族館恆溫</span></td>
+                                <td class="py-3 px-1 bg-emerald-50/70 border-x border-emerald-100">🌙 23°C<br><span class="text-[10px] text-slate-500">北返國5順暢</span></td>
+                            </tr>
+                            <tr class="bg-slate-50/30">
+                                <td class="py-2 px-1 font-bold text-slate-500">紫外線指數</td>
+                                <td class="py-2 px-1 text-purple-600 font-bold">10 (高)</td>
+                                <td class="py-2 px-1 text-purple-600 font-bold">10 (高)</td>
+                                <td class="py-2 px-1 bg-sky-50 text-red-600 font-bold border-x border-sky-100">11 (極強)</td>
+                                <td class="py-2 px-1 bg-indigo-50 text-red-600 font-bold border-x border-indigo-100">12 (危險)</td>
+                                <td class="py-2 px-1 bg-emerald-50 text-purple-600 font-bold border-x border-emerald-100">9 (高)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap gap-2 text-[11px] text-slate-500 border-t border-slate-100 pt-3">
+                <span class="inline-flex items-center px-2 py-1 bg-slate-100 rounded-md">⭐ 白鮑溪水溫：約 21~23°C (體感極為清涼)</span>
+                <span class="inline-flex items-center px-2 py-1 bg-slate-100 rounded-md">⭐ 瑞穗山下的厝：黃金湯泉 (富含礦物質)</span>
+                <span class="inline-flex items-center px-2 py-1 bg-slate-100 rounded-md">⭐ 海洋夜宿：水族館館內恆溫 22~24°C</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Geography & Interactive Coordinates Map -->
+    <section class="mb-10">
+        <div class="bg-white rounded-3xl p-6 shadow-md border border-slate-100">
+            <div class="flex flex-wrap justify-between items-center mb-2">
+                <h2 class="text-2xl font-bold flex items-center text-slate-900">
+                    <span class="mr-2">🗺️</span> 花蓮縱谷與海洋路網精準 GPS 座標
+                </h2>
+                <span class="text-xs bg-sky-100 text-sky-800 font-bold px-3 py-1 rounded-full">包含所有行程推薦餐廳與景點</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-6">
+                我們將本次 3 天行程的<b>所有景點與推薦餐廳</b>皆標註於下方。點擊卡片可讓地圖平滑聚焦，並提供一鍵開啟 Google Maps 導航功能：
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Map Area (6 cols) -->
+                <div class="lg:col-span-6">
+                    <div id="interactiveMap" class="w-full h-[520px] bg-slate-100 rounded-2xl relative z-10"></div>
+                </div>
+
+                <!-- Navigation List Area (6 cols) -->
+                <div class="lg:col-span-6 flex flex-col justify-between space-y-3">
+                    <div class="space-y-2 max-h-[440px] overflow-y-auto pr-1">
+                        
+                        <!-- Marker Card 1 -->
+                        <div class="p-3 bg-sky-50 hover:bg-sky-100 border border-sky-100 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">💎</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-sky-900">1. 白鮑溪生態戲水區 (狂人出動溯溪)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.8820, 121.5035, 14)" class="text-[10px] bg-sky-200 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=白鮑溪生態戲水區" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-sky-800 font-mono mt-0.5">座標：23.8820, 121.5035</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D1 09:00 壽豐鄉玉石體驗，找尋台灣墨玉與豐田玉。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 2 -->
+                        <div class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🦪</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-amber-900">2. 立川漁場 (五餅二魚黃金蜆餐)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.8647, 121.5160, 15)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=立川漁場" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-amber-800 font-mono mt-0.5">座標：23.8647, 121.5160</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D1 午餐熱門提案，孩童可下水「摸蜊仔兼洗褲」。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 3 -->
+                        <div class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🍗</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-amber-900">3. 遺忘的故鄉 月廬食堂 (鳳林梅子雞)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.7648, 121.4398, 15)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=遺忘的故鄉月廬食堂" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-amber-800 font-mono mt-0.5">座標：23.7648, 121.4398</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D1 午餐景觀首選，半山腰俯瞰縱谷景色與招牌梅子雞。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 4 -->
+                        <div class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🏰</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-amber-900">4. Mr. Sam 山姆先生咖啡館</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.8341, 121.5011, 15)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=Mr.Sam山姆先生咖啡館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-amber-800 font-mono mt-0.5">座標：23.8341, 121.5011</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D1 點心備選，魔戒童話風格哈比人小屋。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 5 -->
+                        <div class="p-3 bg-slate-50 hover:bg-sky-50 border border-slate-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">♨️</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-slate-800">5. 瑞穗山下的厝溫泉民宿 (已訂房)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.4988, 121.3665, 15)" class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold hover:bg-slate-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=瑞穗山下的厝溫泉民宿" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-500 font-mono mt-0.5">座標：23.4988, 121.3665</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D1 15:30 Check-in，瑞穗黃金溫泉與露天湯池。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 6 -->
+                        <div class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">👵</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-amber-900">6. 瑞穗阿罵家 & 瑞穗市區美食</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.4975, 121.3760, 15)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=瑞穗火車站" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-amber-800 font-mono mt-0.5">座標：23.4975, 121.3760</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D1 晚餐探親共聚，周邊有綠茶肉圓、塗媽媽肉粽。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 7 -->
+                        <div class="p-3 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🐬</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-indigo-900">7. 遠雄海洋公園 (海洋夜宿-水族版)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.9015, 121.6033, 14)" class="text-[10px] bg-indigo-200 text-indigo-900 px-2 py-0.5 rounded font-bold hover:bg-indigo-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=遠雄海洋公園" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-indigo-800 font-mono mt-0.5">座標：23.9015, 121.6033</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D2 09:30 一早入園暢玩，13:30 前報到展開夜宿水族館！</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 8 -->
+                        <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🥟</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-emerald-900">8. 液香扁食 / 戴記扁食</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.9740, 121.6068, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=液香扁食" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-emerald-800 font-mono mt-0.5">座標：23.9740, 121.6068</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D3 午餐推薦，花蓮數十年經典肉餡皮薄扁食。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 9 -->
+                        <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🍣</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-emerald-900">9. 耕壽司 花蓮總店</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.9765, 121.6062, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=耕壽司花蓮總店" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-emerald-800 font-mono mt-0.5">座標：23.9765, 121.6062</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D3 午餐推薦，超人氣炙燒鮭魚握壽司。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 10 -->
+                        <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🍜</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-emerald-900">10. 欣欣麵館 (海鮮熱炒)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.9743, 121.6095, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=欣欣麵館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-emerald-800 font-mono mt-0.5">座標：23.9743, 121.6095</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D3 午餐推薦，「不是麵館」的冷氣房海鮮名店。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 11 -->
+                        <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🍳</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-emerald-900">11. 炸彈蔥油餅 黃車</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.9788, 121.6088, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=炸彈蔥油餅黃車" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-emerald-800 font-mono mt-0.5">座標：23.9788, 121.6088</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D3 花蓮市區復興街排隊美食，半熟爆漿蛋汁。</p>
+                            </div>
+                        </div>
+
+                        <!-- Marker Card 12 -->
+                        <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
+                            <span class="text-xl mt-1">🛍️</span>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="text-xs font-black text-emerald-900">12. 花蓮縣餅 中華門市 (奶油酥條)</h4>
+                                    <div class="flex space-x-1">
+                                        <button onclick="focusLocation(23.9758, 121.6042, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                                        <a href="https://www.google.com/maps/search/?api=1&query=花蓮縣餅中華門市" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-emerald-800 font-mono mt-0.5">座標：23.9758, 121.6042</p>
+                                <p class="text-[11px] text-slate-600 mt-1">D3 13:30 返程前採買伴手禮，奶油酥條與漂流木餅。</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Logistics Tip -->
+                    <div class="p-3 bg-sky-50 border border-sky-100 rounded-2xl">
+                        <h4 class="text-xs font-black text-sky-900 flex items-center">
+                            <span class="mr-1">ℹ️</span> 導航與時間節點守則：
+                        </h4>
+                        <p class="text-[11px] text-slate-600 leading-relaxed mt-1">
+                            點擊上方各項目的<b>「🗺️ 導航」</b>即可直接開啟手機 Google Maps App；點擊<b>「📍 定位」</b>地圖會將視角平滑聚焦至該點並顯示詳細說明。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Dynamic Multi-Day Interactive Itinerary -->
+    <section class="mb-10">
+        <div class="flex justify-center space-x-4 sm:space-x-12 mb-6 border-b border-slate-200">
+            <button onclick="switchItineraryTab(1)" id="tab-day1" class="pb-3 text-base sm:text-xl transition-all tab-active">Day 1 (9/23 三)</button>
+            <button onclick="switchItineraryTab(2)" id="tab-day2" class="pb-3 text-base sm:text-xl transition-all text-slate-400">Day 2 (9/24 四)</button>
+            <button onclick="switchItineraryTab(3)" id="tab-day3" class="pb-3 text-base sm:text-xl transition-all text-slate-400">Day 3 (9/25 五)</button>
+        </div>
+
+        <!-- Day 1 Segment -->
+        <div id="itinerary-day1" class="space-y-6">
+            <div class="relative pl-8 border-l-2 border-sky-400 ml-4">
+                
+                <!-- Node 1 -->
+                <div class="absolute -left-[9px] top-0 w-4 h-4 bg-sky-600 rounded-full ring-4 ring-sky-100"></div>
+                <div class="mb-10">
+                    <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-1 rounded">05:00 - 08:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🚗 凌晨新莊出發 → 國3/國5/蘇花改 → 花蓮壽豐</h3>
+                    <p class="text-slate-600 text-sm mt-1">凌晨行車車流順暢，建議於蘇澳服務區短暫休息 15 分鐘換手或讓孩子補眠。預計 08:30 抵達白鮑溪集合點。</p>
+                </div>
+
+                <!-- Node 2 -->
+                <div class="absolute -left-[9px] top-[140px] w-4 h-4 bg-sky-600 rounded-full ring-4 ring-sky-100"></div>
+                <div class="mb-10">
+                    <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-1 rounded">09:00 - 12:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">💎 【狂人出動】白鮑溪溯溪與玉石 DIY 體驗</h3>
+                    <p class="text-slate-600 text-sm mt-1">專業教練隨行帶領，極度適合 5 歲與 8 歲孩童安全下水踩水、觀察生態與尋找台灣墨玉/豐田玉。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <a href="https://www.wilds.com.tw/river-trekking/baibao-jade-experience" target="_blank" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-md font-medium inline-block">🔗 活動官網</a>
+                        <button onclick="focusLocation(23.8820, 121.5035, 14)" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://www.google.com/maps/search/?api=1&query=白鮑溪生態戲水區" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+                <!-- Node 3 (Lunch options) -->
+                <div class="absolute -left-[9px] top-[290px] w-4 h-4 bg-amber-500 rounded-full ring-4 ring-amber-100"></div>
+                <div class="mb-10">
+                    <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-1 rounded">12:30 - 14:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🍽️ 壽豐/鳳林 特色景觀與好玩午餐提案 (備選二選一)</h3>
+                    <p class="text-slate-500 text-xs mt-1 mb-4">溯溪完補充熱量，推薦以下適合親子好玩或景色絕佳的餐廳：</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 dish-card rounded-2xl shadow-sm border-l-4 border-amber-500">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-sm font-black text-slate-900">方案 A：立川漁場 (五餅二魚)</h4>
+                                <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">摸蜊仔兼洗褲</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-2">招牌黃金炒蜆、鹽烤活力鯛。飯後孩子可付費體驗摸蜊仔，適合親子同樂。</p>
+                            <div class="mt-3 flex space-x-2">
+                                <button onclick="focusLocation(23.8647, 121.5160, 15)" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-900 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                                <a href="https://www.google.com/maps/search/?api=1&query=立川漁場" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                            </div>
+                        </div>
+                        <div class="p-4 dish-card rounded-2xl shadow-sm border-l-4 border-sky-500">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-sm font-black text-slate-900">方案 B：月廬食堂 / 山姆先生</h4>
+                                <span class="text-xs bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">縱谷美景梅子雞</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-2">月廬食堂招牌梅子雞（需預約），半山腰俯瞰縱谷景色；山姆先生童話魔戒小屋極具童趣。</p>
+                            <div class="mt-3 flex space-x-2">
+                                <button onclick="focusLocation(23.7648, 121.4398, 15)" class="text-[11px] bg-sky-100 hover:bg-sky-200 text-sky-800 px-2.5 py-1 rounded-md font-medium inline-block">📍 月廬定位</button>
+                                <a href="https://www.google.com/maps/search/?api=1&query=遺忘的故鄉月廬食堂" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Node 4 -->
+                <div class="absolute -left-[9px] top-[540px] w-4 h-4 bg-sky-600 rounded-full ring-4 ring-sky-100"></div>
+                <div class="mb-10">
+                    <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-1 rounded">15:30 - 16:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🏡 入住【瑞穗山下的厝溫泉民宿】放置行李</h3>
+                    <p class="text-slate-600 text-sm mt-1">辦理 Check-in，盥洗更衣放鬆。感受瑞穗山晨氣息與黃金湯池準備。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.4988, 121.3665, 15)" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://www.google.com/maps/search/?api=1&query=瑞穗山下的厝溫泉民宿" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+                <!-- Node 5 -->
+                <div class="absolute -left-[9px] top-[680px] w-4 h-4 bg-emerald-600 rounded-full ring-4 ring-emerald-100"></div>
+                <div>
+                    <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">17:00 - 20:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">👵 瑞穗阿罵家探親共進晚餐 (20:00 前返回民宿)</h3>
+                    <p class="text-slate-600 text-sm mt-1">前往阿罵家聚餐聊天，溫馨親情時光。20:00 前返抵民宿，享用黃金溫泉泡湯，讓孩子早點休息。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.4975, 121.3760, 15)" class="text-[11px] bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://www.google.com/maps/search/?api=1&query=瑞穗火車站" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Day 2 Segment (Hidden by default) -->
+        <div id="itinerary-day2" class="space-y-6 hidden">
+            <div class="relative pl-8 border-l-2 border-indigo-300 ml-4">
+                
+                <!-- Node 1 -->
+                <div class="absolute -left-[9px] top-0 w-4 h-4 bg-indigo-500 rounded-full"></div>
+                <div class="mb-8">
+                    <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2 py-1 rounded">08:00 - 09:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🥣 瑞穗早餐辦理退房 ➔ 開車前往遠雄海洋公園</h3>
+                    <p class="text-slate-600 text-sm mt-1">享用早餐後退房，沿台9線/台11線北上直達遠雄海洋公園（車程約 50 分鐘）。</p>
+                </div>
+
+                <!-- Node 2: Early Entrance -->
+                <div class="absolute -left-[9px] top-[120px] w-4 h-4 bg-amber-500 rounded-full ring-4 ring-amber-100"></div>
+                <div class="mb-8">
+                    <span class="text-xs font-bold bg-amber-100 text-amber-900 px-2 py-1 rounded">09:30 - 13:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🎢 【一早入園暢玩】主題樂園遊樂設施與表演秀</h3>
+                    <p class="text-slate-600 text-sm mt-1">提早入園！先帶 5 歲與 8 歲孩子暢玩探險島、海豚海獅秀、水晶城堡劇場與晴空纜車。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.9015, 121.6033, 14)" class="text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://www.google.com/maps/search/?api=1&query=遠雄海洋公園" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+                <!-- Node 3 (Lunch options) -->
+                <div class="absolute -left-[9px] top-[290px] w-4 h-4 bg-amber-500 rounded-full ring-4 ring-amber-100"></div>
+                <div class="mb-10">
+                    <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-1 rounded">12:30 - 14:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🍽️ 壽豐/鳳林 特色景觀與好玩午餐提案 (備選二選一)</h3>
+                    <p class="text-slate-500 text-xs mt-1 mb-4">溯溪完補充熱量，推薦以下適合親子好玩或景色絕佳的餐廳：</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 dish-card rounded-2xl shadow-sm border-l-4 border-amber-500">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-sm font-black text-slate-900">方案 A：立川漁場 (五餅二魚)</h4>
+                                <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">摸蜊仔兼洗褲</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-2">招牌黃金炒蜆、鹽烤活力鯛。飯後孩子可付費體驗摸蜊仔，適合親子同樂。</p>
+                            <div class="mt-3 flex space-x-2">
+                                <button onclick="focusLocation(23.8647, 121.5160, 15)" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-900 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                                <a href="https://maps.google.com/?q=23.8647,121.5160" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                            </div>
+                        </div>
+                        <div class="p-4 dish-card rounded-2xl shadow-sm border-l-4 border-sky-500">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-sm font-black text-slate-900">方案 B：月廬食堂 / 山姆先生</h4>
+                                <span class="text-xs bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">縱谷美景梅子雞</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-2">月廬食堂招牌梅子雞（需預約），半山腰俯瞰縱谷景色；山姆先生童話魔戒小屋極具童趣。</p>
+                            <div class="mt-3 flex space-x-2">
+                                <button onclick="focusLocation(23.7648, 121.4398, 15)" class="text-[11px] bg-sky-100 hover:bg-sky-200 text-sky-800 px-2.5 py-1 rounded-md font-medium inline-block">📍 月廬定位</button>
+                                <a href="https://maps.google.com/?q=23.7648,121.4398" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Node 4 -->
+                <div class="absolute -left-[9px] top-[540px] w-4 h-4 bg-sky-600 rounded-full ring-4 ring-sky-100"></div>
+                <div class="mb-10">
+                    <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-1 rounded">15:30 - 16:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🏡 入住【瑞穗山下的厝溫泉民宿】放置行李</h3>
+                    <p class="text-slate-600 text-sm mt-1">辦理 Check-in，盥洗更衣放鬆。感受瑞穗山晨氣息與黃金湯池準備。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.4988, 121.3665, 15)" class="text-[11px] bg-sky-50 hover:bg-sky-100 text-sky-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://maps.google.com/?q=23.4988,121.3665" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+                <!-- Node 5 -->
+                <div class="absolute -left-[9px] top-[680px] w-4 h-4 bg-emerald-600 rounded-full ring-4 ring-emerald-100"></div>
+                <div>
+                    <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">17:00 - 20:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">👵 瑞穗阿罵家探親共進晚餐 (20:00 前返回民宿)</h3>
+                    <p class="text-slate-600 text-sm mt-1">前往阿罵家聚餐聊天，溫馨親情時光。20:00 前返抵民宿，享用黃金溫泉泡湯，讓孩子早點休息。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.4975, 121.3760, 15)" class="text-[11px] bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://maps.google.com/?q=23.4975,121.3760" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Day 2 Segment (Hidden by default) -->
+        <div id="itinerary-day2" class="space-y-6 hidden">
+            <div class="relative pl-8 border-l-2 border-indigo-300 ml-4">
+                
+                <!-- Node 1 -->
+                <div class="absolute -left-[9px] top-0 w-4 h-4 bg-indigo-500 rounded-full"></div>
+                <div class="mb-8">
+                    <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-2 py-1 rounded">08:00 - 09:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🥣 瑞穗早餐辦理退房 ➔ 開車前往遠雄海洋公園</h3>
+                    <p class="text-slate-600 text-sm mt-1">享用早餐後退房，沿台9線/台11線北上直達遠雄海洋公園（車程約 50 分鐘）。</p>
+                </div>
+
+                <!-- Node 2: Early Entrance -->
+                <div class="absolute -left-[9px] top-[120px] w-4 h-4 bg-amber-500 rounded-full ring-4 ring-amber-100"></div>
+                <div class="mb-8">
+                    <span class="text-xs font-bold bg-amber-100 text-amber-900 px-2 py-1 rounded">09:30 - 13:30</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🎢 【一早入園暢玩】主題樂園遊樂設施與表演秀</h3>
+                    <p class="text-slate-600 text-sm mt-1">提早入園！先帶 5 歲與 8 歲孩子暢玩探險島、海豚海獅秀、水晶城堡劇場與晴空纜車。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.9015, 121.6033, 14)" class="text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 地圖定位</button>
+                        <a href="https://maps.google.com/?q=23.9015,121.6033" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+                <!-- Official Ocean Nightstay Timeline Section -->
+                <div class="p-4 bg-indigo-50/70 border border-indigo-200 rounded-2xl mb-6">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="text-xl">🌙</span>
+                        <h4 class="text-base font-black text-indigo-950">遠雄海洋夜宿（水族版）官方預定流程表</h4>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">13:30 前</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">官方報到 (5F 驗票中心)</b>
+                                <p class="text-slate-600">領取夜宿識別證、放置專屬行李房。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">15:00</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">夜未眠前說明會 (海趣空間)</b>
+                                <p class="text-slate-600">認識專屬夜宿指導員、小組分組與行前簡報。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">15:30</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">鰭開得勝 (海獅見面會)</b>
+                                <p class="text-slate-600">近距離觀察海獅，探索海獅不為人知的一面。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">16:00</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">探險家的初航</b>
+                                <p class="text-slate-600">從食人魚到鯊魚，解開海洋神秘面紗與後場育客區。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-amber-900 w-16 shrink-0">17:00</span>
+                            <div class="flex-1">
+                                <b class="text-amber-950">太平洋晚餐之約 (沙木里餐廳)</b>
+                                <p class="text-slate-600">享用精緻套餐或晚餐自助吧，補足元氣。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">18:00</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">夜間探險去</b>
+                                <p class="text-slate-600">探訪夜晚暗黑水族館，觀察海洋生物夜間夜棲生態。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">19:30</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">洗澎澎 (舒適淋浴)</b>
+                                <p class="text-slate-600">男女分開衛浴淋浴間，放鬆盥洗更衣。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-indigo-800 w-16 shrink-0">21:00</span>
+                            <div class="flex-1">
+                                <b class="text-slate-900">海洋搖籃曲</b>
+                                <p class="text-slate-600">鋪床、刷牙洗臉，準備在魚群圍繞下就寢。</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <span class="font-bold text-sky-800 w-16 shrink-0">22:00</span>
+                            <div class="flex-1">
+                                <b class="text-sky-950">Good Night (與魚兒共眠)</b>
+                                <p class="text-slate-600">海底隧道 / 大洋池夜宿體驗，祝好夢。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Day 3 Segment (Hidden by default) -->
+        <div id="itinerary-day3" class="space-y-6 hidden">
+            <div class="relative pl-8 border-l-2 border-emerald-300 ml-4">
+                
+                <!-- Node 1 -->
+                <div class="absolute -left-[9px] top-0 w-4 h-4 bg-emerald-500 rounded-full"></div>
+                <div class="mb-8">
+                    <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">07:30 - 11:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🐬 海洋夜宿 Day 2 晨間活動 ➔ 親親水族版結營</h3>
+                    <p class="text-slate-600 text-sm mt-1">07:30 晨喚盥洗 ➔ 08:30 活力早餐 ➔ 09:45 海洋大明星 ➔ 10:00 親親水族版冷知識解密 ➔ 11:00 順利結營。</p>
+                </div>
+
+                <!-- Node 2 (Lunch Options Card Grid) -->
+                <div class="absolute -left-[9px] top-[120px] w-4 h-4 bg-emerald-600 rounded-full ring-4 ring-emerald-100"></div>
+                <div class="mb-8">
+                    <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">11:30 - 13:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🍱 花蓮市區在地名店午餐精選提案</h3>
+                    <p class="text-slate-500 text-xs mt-1 mb-4">返回市區享用花蓮經典美食（均提供獨立地圖定位與 Google Map 導航）：</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <!-- Restaurant 1 -->
+                        <div class="p-3 dish-card rounded-2xl shadow-sm text-center">
+                            <span class="text-xl">🥟</span>
+                            <h4 class="text-xs font-black mt-1">液香 / 戴記扁食</h4>
+                            <p class="text-[10px] text-slate-500 mt-0.5 mb-2">湯頭清甜皮薄餡實。</p>
+                            <div class="flex justify-center space-x-1">
+                                <button onclick="focusLocation(23.9740, 121.6068, 15)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">📍 定位</button>
+                                <a href="https://www.google.com/maps/search/?api=1&query=液香扁食" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold">🗺️ 導航</a>
+                            </div>
+                        </div>
+
+                        <!-- Restaurant 2 -->
+                        <div class="p-3 dish-card rounded-2xl shadow-sm text-center border-sky-500 border">
+                            <span class="text-xl">🍣</span>
+                            <h4 class="text-xs font-black mt-1 text-sky-800">耕壽司 (花蓮總店)</h4>
+                            <p class="text-[10px] text-slate-500 mt-0.5 mb-2">炙燒鮭魚握壽司首選。</p>
+                            <div class="flex justify-center space-x-1">
+                                <button onclick="focusLocation(23.9765, 121.6062, 15)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">📍 定位</button>
+                                <a href="https://www.google.com/maps/search/?api=1&query=耕壽司花蓮總店" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold">🗺️ 導航</a>
+                            </div>
+                        </div>
+
+                        <!-- Restaurant 3 -->
+                        <div class="p-3 dish-card rounded-2xl shadow-sm text-center">
+                            <span class="text-xl">🍜</span>
+                            <h4 class="text-xs font-black mt-1">欣欣麵館 (海鮮熱炒)</h4>
+                            <p class="text-[10px] text-slate-500 mt-0.5 mb-2">海鮮熱炒與冷氣房麵食。</p>
+                            <div class="flex justify-center space-x-1">
+                                <button onclick="focusLocation(23.9743, 121.6095, 15)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">📍 定位</button>
+                                <a href="https://www.google.com/maps/search/?api=1&query=欣欣麵館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold">🗺️ 導航</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Node 3 -->
+                <div class="absolute -left-[9px] top-[360px] w-4 h-4 bg-emerald-600 rounded-full ring-4 ring-emerald-100"></div>
+                <div>
+                    <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">13:00 - 18:00</span>
+                    <h3 class="text-lg font-bold mt-2 text-slate-950">🛍️ 採買花蓮縣餅奶油酥條 ➔ 蘇花改/國5 順利賦歸新莊</h3>
+                    <p class="text-slate-600 text-sm mt-1">採買花蓮縣餅奶油酥條、曾記麻糬。14:00 前順走蘇花改北返，避開國5尖峰，平安返回新莊。</p>
+                    <div class="mt-2 flex space-x-2">
+                        <button onclick="focusLocation(23.9758, 121.6042, 15)" class="text-[11px] bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md font-medium inline-block">📍 花蓮縣餅定位</button>
+                        <a href="https://www.google.com/maps/search/?api=1&query=花蓮縣餅中華門市" target="_blank" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md font-medium inline-block">🗺️ Google Map 導航</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Area and Contacts -->
+    <footer class="mt-16 pt-8 border-t border-slate-200">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-8">
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">溯溪體驗</p>
+                <p class="text-sm font-black mt-1 text-sky-900">狂人出動 (白鮑溪)</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Day 1 住宿</p>
+                <p class="text-sm font-black mt-1 text-amber-900">山下的厝溫泉民宿</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Day 2 住宿</p>
+                <p class="text-sm font-black mt-1 text-indigo-900">遠雄海洋公園 (夜宿)</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">返航目的地</p>
+                <p class="text-sm font-black mt-1 text-slate-900">新莊住家</p>
+            </div>
+        </div>
+        <div class="text-center text-xs text-slate-400">
+            <p>2026 花蓮親子動態旅遊行程表 • 全域生活架構師 (安妮) 規劃編製</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    let map;
+    let markers = [];
+
+    window.onload = function() {
+        initDrivingStressChart();
+        initInteractiveMap();
+    };
+
+    function initDrivingStressChart() {
+        const ctx = document.getElementById('drivingStressChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['新莊出發', '國5/蘇澳', '白鮑溪溯溪', '立川/月廬', '瑞穗山下的厝'],
+                datasets: [{
+                    label: '駕駛體力負荷與精力指標 (%)',
+                    data: [100, 85, 60, 80, 95],
+                    borderColor: '#0284c7',
+                    backgroundColor: 'rgba(2, 132, 199, 0.08)',
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderWidth: 3,
+                    pointBorderColor: '#0369a1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 40,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) { return value + '%'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) { return `駕駛精力：${ctx.parsed.y}%`; }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function initInteractiveMap() {
+        map = L.map('interactiveMap').setView([23.75, 121.50], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const coordinatesList = [
+            { id: 1, name: "💎 白鮑溪溯溪 (狂人出動)", lat: 23.8820, lng: 121.5035, searchName: "白鮑溪生態戲水區", note: "D1 09:00 玉石尋寶" },
+            { id: 2, name: "🦪 立川漁場 (五餅二魚)", lat: 23.8647, lng: 121.5160, searchName: "立川漁場", note: "D1 午餐與摸蜊仔" },
+            { id: 3, name: "🍗 遺忘的故鄉 月廬食堂", lat: 23.7648, lng: 121.4398, searchName: "遺忘的故鄉月廬食堂", note: "D1 午餐 (梅子雞/縱谷美景)" },
+            { id: 4, name: "🏰 Mr. Sam 山姆先生", lat: 23.8341, lng: 121.5011, searchName: "Mr.Sam山姆先生咖啡館", note: "D1 魔戒哈比人童話小屋" },
+            { id: 5, name: "♨️ 瑞穗山下的厝溫泉民宿", lat: 23.4988, lng: 121.3665, searchName: "瑞穗山下的厝溫泉民宿", note: "D1 住宿 (黃金溫泉)" },
+            { id: 6, name: "👵 瑞穗阿罵家", lat: 23.4975, lng: 121.3760, searchName: "瑞穗火車站", note: "D1 晚餐探親共聚" },
+            { id: 7, name: "🐬 遠雄海洋公園 (海洋夜宿)", lat: 23.9015, lng: 121.6033, searchName: "遠雄海洋公園", note: "D2 09:30 一早入園 13:30 報到" },
+            { id: 8, name: "🥟 液香/戴記扁食", lat: 23.9740, lng: 121.6068, searchName: "液香扁食", note: "D3 午餐在地名店" },
+            { id: 9, name: "🍣 耕壽司 花蓮總店", lat: 23.9765, lng: 121.6062, searchName: "耕壽司花蓮總店", note: "D3 午餐炙燒鮭魚握壽司" },
+            { id: 10, name: "🍜 欣欣麵館 (海鮮熱炒)", lat: 23.9743, lng: 121.6095, searchName: "欣欣麵館", note: "D3 午餐海鮮料理" },
+            { id: 11, name: "🍳 炸彈蔥油餅 黃車", lat: 23.9788, lng: 121.6088, searchName: "炸彈蔥油餅黃車", note: "D3 復興街排隊名店" },
+            { id: 12, name: "🛍️ 花蓮縣餅 中華門市", lat: 23.9758, lng: 121.6042, searchName: "花蓮縣餅中華門市", note: "D3 奶油酥條伴手禮" }
+        ];
+
+        coordinatesList.forEach(item => {
+            const marker = L.marker([item.lat, item.lng]).addTo(map)
+                .bindPopup(`
+                    <b style="font-size:12px;color:#0f172a;">${item.name}</b><br>
+                    <span style="font-size:11px;color:#64748b;">${item.note}<br><b>座標：${item.lat}, ${item.lng}</b></span><br>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.searchName)}" target="_blank" style="display:inline-block;margin-top:4px;padding:2px 6px;background:#059669;color:#ffffff;border-radius:4px;font-size:10px;text-decoration:none;font-weight:bold;">🗺️ 開啟 Google Maps 導航</a>
+                `, { closeButton: false });
+            markers.push({ id: item.id, lat: item.lat, lng: item.lng, instance: marker });
+        });
+
+        const bounds = L.latLngBounds(coordinatesList.map(c => [c.lat, c.lng]));
+        map.fitBounds(bounds, { padding: [30, 30] });
+    }
+
+    function focusLocation(lat, lng, zoomLevel) {
+        if (map) {
+            map.flyTo([lat, lng], zoomLevel, {
+                animate: true,
+                duration: 1.5
+            });
+            
+            const target = markers.find(m => Math.abs(m.lat - lat) < 0.001 && Math.abs(m.lng - lng) < 0.001);
+            if (target) {
+                setTimeout(() => {
+                    target.instance.openPopup();
+                }, 1500);
+            }
+        }
+    }
+
+    function switchItineraryTab(day) {
+        const d1Content = document.getElementById('itinerary-day1');
+        const d2Content = document.getElementById('itinerary-day2');
+        const d3Content = document.getElementById('itinerary-day3');
+        
+        const tab1 = document.getElementById('tab-day1');
+        const tab2 = document.getElementById('tab-day2');
+        const tab3 = document.getElementById('tab-day3');
+
+        d1Content.classList.add('hidden');
+        d2Content.classList.add('hidden');
+        d3Content.classList.add('hidden');
+
+        tab1.classList.remove('tab-active');
+        tab1.classList.add('text-slate-400');
+        tab2.classList.remove('tab-active');
+        tab2.classList.add('text-slate-400');
+        tab3.classList.remove('tab-active');
+        tab3.classList.add('text-slate-400');
+
+        if (day === 1) {
+            d1Content.classList.remove('hidden');
+            tab1.classList.add('tab-active');
+            tab1.classList.remove('text-slate-400');
+        } else if (day === 2) {
+            d2Content.classList.remove('hidden');
+            tab2.classList.add('tab-active');
+            tab2.classList.remove('text-slate-400');
+        } else {
+            d3Content.classList.remove('hidden');
+            tab3.classList.add('tab-active');
+            tab3.classList.remove('text-slate-400');
+        }
+    }
+</script>
+</body>
+</html>
