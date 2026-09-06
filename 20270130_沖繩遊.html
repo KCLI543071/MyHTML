@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2027 沖繩 6 天 5 夜雙家庭海島自駕導航手冊</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Leaflet.js CSS & JS CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts: Noto Sans TC & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+          },
+          colors: {
+            ocean: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            },
+            coral: {
+              500: '#f43f5e',
+              600: '#e11d48',
+            },
+            warm: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    #map-container {
+      border-radius: 1rem;
+      z-index: 10;
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 0.75rem;
+      padding: 4px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen antialiased flex flex-col">
+
+  <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 shadow-sm transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
+          <i class="fa-solid fa-compass text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800">[模組：旅遊導航與家庭動態]</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">2027 初春櫻花季</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">沖繩 6天5夜 雙家庭深度自駕規劃書</h1>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 text-xs sm:text-sm font-medium">
+        <div class="hidden md:flex items-center space-x-3 bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200">
+          <span class="text-slate-600"><i class="fa-solid fa-users text-sky-600 mr-1.5"></i>8人（4大人 + 4兒童：5/8/10/12歲）</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-600"><i class="fa-solid fa-plane-departure text-sky-600 mr-1.5"></i>CI120/CI123</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-600"><i class="fa-solid fa-hotel text-sky-600 mr-1.5"></i>3泊恩納 + 2泊那霸</span>
+        </div>
+        <button onclick="window.print()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow transition flex items-center gap-1.5 text-xs">
+          <i class="fa-solid fa-print"></i> 列印/儲存
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 w-full">
+    <div class="bg-gradient-to-r from-amber-50 via-rose-50 to-orange-50 border-l-4 border-rose-500 rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div class="flex items-start space-x-3.5">
+        <div class="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow">
+          <i class="fa-solid fa-triangle-exclamation text-base"></i>
+        </div>
+        <div class="flex-1 text-sm text-slate-800">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <h3 class="font-bold text-rose-900 text-base">全域生活架構師：行前致命衝突與物流預警 (Proactive Warnings)</h3>
+            <span class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded-full font-bold">必須嚴格遵守</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+            <div class="bg-white/80 p-3 rounded-xl border border-rose-200">
+              <strong class="text-rose-900 block mb-1"><i class="fa-solid fa-van-shuttle mr-1"></i> 車型容量空間破局：</strong>
+              千萬不要單租 1 台 8 人座 Alphard！滿載 8 人時第三排展開，後行李廂深度剩不到 30 公分，<strong>完全裝不下 8 人的 4-6 個大行李箱與推車</strong>。
+              <p class="text-xs text-slate-600 mt-1">💡 <strong>最佳解</strong>：租 <strong>2 台 1500cc 轎旅車（如 Toyota Sienta / Honda Freed）</strong>，每車坐 2 大 2 幼 + 3 個行李箱，靈活度高且免承擔大車窄巷停車壓力。</p>
+            </div>
+            <div class="bg-white/80 p-3 rounded-xl border border-amber-200">
+              <strong class="text-amber-900 block mb-1"><i class="fa-solid fa-wind mr-1"></i> 初春風切體感溫差：</strong>
+              1/30 - 2/4 沖繩均溫約 16~20°C，氣候涼爽舒服，但<strong>北部臨海強烈東北季風吹拂時，體感溫度僅約 12~14°C</strong>。
+              <p class="text-xs text-slate-600 mt-1">💡 <strong>著裝建議</strong>：洋蔥式穿法，全員必備防風抗水連帽外套與薄圍巾，避免 5 歲與 8 歲幼童於大石林山或海邊受寒感冒。</p>
+            </div>
+            <div class="bg-white/80 p-3 rounded-xl border border-sky-200">
+              <strong class="text-sky-900 block mb-1"><i class="fa-solid fa-passport mr-1"></i> 2027 春節前夕通關卡點：</strong>
+              2027 年農曆除夕為 2/5，回程 2/4 (四) 為小年夜返鄉最尖峰。CI123 班機 20:25 起飛，<strong>那霸機場國際線至少需提前 2.5 小時（17:55 前）抵達</strong>以應對繁重的排隊安檢。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-8 flex-1">
+
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Stamina Chart -->
+      <div class="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-sky-600"></i>
+              每日體能負荷與駕駛疲勞指數 (Family Stamina Curve)
+            </h2>
+            <p class="text-xs text-slate-500">科學化評估：司機自駕精神 vs 5歲/8歲幼童疲勞警戒線（最高分100）</p>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-sky-50 text-sky-700 rounded-lg border border-sky-200">
+            D3 大石林山健行最高峰
+          </span>
+        </div>
+        <div class="h-64 relative">
+          <canvas id="staminaChart"></canvas>
+        </div>
+        <div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="p-2 rounded-lg bg-slate-50 border border-slate-100">
+            <span class="text-slate-400 block">D1-D3 北部戰線</span>
+            <span class="font-bold text-slate-700">自駕里程高 / 活動充足</span>
+          </div>
+          <div class="p-2 rounded-lg bg-sky-50 border border-sky-100">
+            <span class="text-sky-500 block">D4 遷徙那霸</span>
+            <span class="font-bold text-sky-800">中城公園大放電</span>
+          </div>
+          <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+            <span class="text-emerald-500 block">D5-D6 市區慢遊</span>
+            <span class="font-bold text-emerald-800">單軌/步行/低疲勞返航</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weather & Cherry Blossom Overview -->
+      <div class="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between h-full">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-cloud-sun text-amber-500"></i>
+              沖繩初春氣候與寒緋櫻花期矩陣
+            </h2>
+            <span class="text-xs bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full border border-rose-200">
+              🌸 日本最早櫻花祭
+            </span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                  <th class="py-2 px-2 font-semibold">日期/地區</th>
+                  <th class="py-2 px-2 font-semibold">氣溫範圍</th>
+                  <th class="py-2 px-2 font-semibold">氣候特徵</th>
+                  <th class="py-2 px-2 font-semibold">建議穿著重點</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">1/30 (六) 恩納</td>
+                  <td class="py-2.5 px-2 text-sky-700 font-medium">16°C - 20°C</td>
+                  <td class="py-2.5 px-2">海邊季風強勁</td>
+                  <td class="py-2.5 px-2 text-slate-600">防風厚外套、輕便長褲</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">1/31 (日) 本部</td>
+                  <td class="py-2.5 px-2 text-sky-700 font-medium">15°C - 19°C</td>
+                  <td class="py-2.5 px-2">八重岳櫻花盛開</td>
+                  <td class="py-2.5 px-2 text-slate-600">抓絨外套、好走健行鞋</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">2/01 (一) 國頭</td>
+                  <td class="py-2.5 px-2 text-sky-700 font-medium">14°C - 18°C</td>
+                  <td class="py-2.5 px-2">北部森林陣風</td>
+                  <td class="py-2.5 px-2 text-slate-600">連帽抗風防潑水外套</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">2/02 (二) 中城</td>
+                  <td class="py-2.5 px-2 text-sky-700 font-medium">17°C - 21°C</td>
+                  <td class="py-2.5 px-2">多雲時晴舒爽</td>
+                  <td class="py-2.5 px-2 text-slate-600">透氣長袖+易穿脫背心</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">2/03 (三) 那霸</td>
+                  <td class="py-2.5 px-2 text-sky-700 font-medium">18°C - 22°C</td>
+                  <td class="py-2.5 px-2">市區微風溫暖</td>
+                  <td class="py-2.5 px-2 text-slate-600">一般休閒服裝、輕便鞋</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">2/04 (四) 那霸</td>
+                  <td class="py-2.5 px-2 text-sky-700 font-medium">17°C - 21°C</td>
+                  <td class="py-2.5 px-2">午後微涼返台</td>
+                  <td class="py-2.5 px-2 text-slate-600">舒適長褲、登機保暖層</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-3 p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900">
+          <i class="fa-solid fa-seedling mr-1 text-amber-600"></i>
+          <strong>花期預報情報</strong>：本部八重岳種植逾 7,000 株<strong>琉球寒緋櫻</strong>（呈深桃紅色鐘形花朵），盛開期正落在 1 月下旬至 2 月上旬，適逢花期頂峰，開車自駕蜿蜒上山如行駛在粉紅櫻花隧道！
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot text-sky-600"></i>
+            全行程 14 大核心節點與精準 GPS 地圖導航
+          </h2>
+          <p class="text-xs text-slate-500">點擊右側卡片可平滑飛躍至地圖目標；點擊外鏈直接啟動官方 Google Maps 商家一鍵導航</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-sky-500"></span>景點活動</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500"></span>必吃餐飲</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-500"></span>精選住宿</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <!-- Leaflet Map Container -->
+        <div class="lg:col-span-7 rounded-xl overflow-hidden border border-slate-200 shadow-inner h-[460px] lg:h-[540px] relative">
+          <div id="map" class="w-full h-full"></div>
+        </div>
+
+        <!-- Node List with Focus and External Google Maps Action -->
+        <div class="lg:col-span-5 h-[460px] lg:h-[540px] overflow-y-auto custom-scrollbar pr-1 space-y-2.5">
+          
+          <!-- Node 1: Onna Oceanview Suites -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">D1-D3 住宿</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">恩納海景套房飯店 (Onna Oceanview Suites)</h4>
+              </div>
+              <p class="text-xs text-slate-500">恩納村仲泊 / 面海大客廳套房，適合兩家人共享放鬆</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.4357, 127.8016, 14)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Onna+Oceanview+Suites" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-bed text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 2: Nest Hotel Naha Kumoji -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">D4-D5 住宿</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">那霸巢飯店 (Nest Hotel Naha Kumoji)</h4>
+              </div>
+              <p class="text-xs text-slate-500">近美榮橋站與國際通 / 精緻現代設計 / 交通樞紐便捷</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.2195, 127.6826, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Nest+Hotel+Naha+Kumoji" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-hotel text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 3: Churaumi Aquarium -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800">經典水族館</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">沖繩美麗海水族館 (Okinawa Churaumi Aquarium)</h4>
+              </div>
+              <p class="text-xs text-slate-500">黑潮之海鯨鯊、鬼蝠魟餵食秀、海豚劇場、觸摸池</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.6943, 127.8779, 14)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Okinawa+Churaumi+Aquarium" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-water text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 4: Neo Park Okinawa -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800">親子動植物園</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">名護自然動植物公園 (Neo Park Okinawa)</h4>
+              </div>
+              <p class="text-xs text-slate-500">水鳥零距離餵食、復古輕便蒸氣火車巡遊、可愛動物接觸區</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.6186, 127.9946, 14)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Neo+Park+Okinawa" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-feather text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 5: Daisekirinzan -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800">壯麗健行 1</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">大石林山 (Daisekirinzan / ASMUI)</h4>
+              </div>
+              <p class="text-xs text-slate-500">山原國立公園邊戶岬展望台 / 2億年喀斯特地形 / 巨大榕樹森林步道</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.8668, 128.2577, 13)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Daisekirinzan" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-mountain text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 6: Yaedake Sakura Forest Park -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">季節限定健行 2</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">本部八重岳櫻花森林公園 (Mt. Yaedake)</h4>
+              </div>
+              <p class="text-xs text-slate-500">山頂健行步道 / 寒緋櫻盛開花海 / 俯瞰伊江島與蔚藍東海</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.6346, 127.9158, 14)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Yaedake+Sakuranomori+Park" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-tree text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 7: Katsuren Castle Ruins -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">文化海景遺產</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">勝連城跡 (Katsuren Castle Ruins)</h4>
+              </div>
+              <p class="text-xs text-slate-500">世界遺產 / 設有電動高爾夫接駁車上山（小孩最愛）/ 360°海景石造城垣</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.2995, 127.8785, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Katsuren+Castle+Ruins" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-slate-700 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-chess-rook text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 8: Nakagusuku Park -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">特色放電公園</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">中城公園 (Nakagusuku Park)</h4>
+              </div>
+              <p class="text-xs text-slate-500">全沖繩最大彈跳彈簧床、巨型滾輪溜滑梯、多齡層遊樂設施</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.2965, 127.7915, 14)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Nakagusuku+Park" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-children text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 9: Ryukyu no Ushi Onna -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-rose-50/50 hover:border-rose-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">頂級燒肉 1</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-rose-700">琉球之牛 恩納本館 (Ryukyu No Ushi)</h4>
+              </div>
+              <p class="text-xs text-slate-500">頂級縣產和牛牛排、極品蔥花牛舌、冷麵與溫馨家庭半包廂</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.4449, 127.7963, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Ryukyu+No+Ushi+Onna" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-fire-burner text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 10: Yakiniku Motobu Farm -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-rose-50/50 hover:border-rose-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">和牛燒肉 2</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-rose-700">燒肉本部牧場 (Yakiniku MOTOBU FARM Motobu)</h4>
+              </div>
+              <p class="text-xs text-slate-500">直營牧場本部牛認證、油花細緻多汁、家庭套餐高CP值</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.6575, 127.8863, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Yakiniku+MOTOBU+FARM+Motobu" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-utensils text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 11: Gourmet Conveyor Belt Sushi -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-rose-50/50 hover:border-rose-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">必吃壽司</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-rose-700">美國村迴轉壽司市場 (Gourmet Sushi Mihama)</h4>
+              </div>
+              <p class="text-xs text-slate-500">當日產地直送新鮮海味、炙燒鮭魚、兒童茶碗蒸與炸蝦壽司</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.3155, 127.7577, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Gourmet+Conveyor+Belt+Sushi+Ichiba+Mihama" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-fish text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 12: Hiko Unagi Main Branch -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-rose-50/50 hover:border-rose-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">必吃鰻魚飯</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-rose-700">彥 鰻魚料理 本店 / 久茂地店 (Hiko Unagi)</h4>
+              </div>
+              <p class="text-xs text-slate-500">傳統炭火現烤蒲燒鰻、外酥內嫩、備有兒童套餐與獨立塌塌米包廂</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.2305, 127.6975, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=うなぎ料理+彦+本店" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-bowl-rice text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 13: Pizza in the Sky (Kajinhou) -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-rose-50/50 hover:border-rose-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-warm-100 text-warm-800">絕景親子餐廳</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-warm-700">花人逢 (Pizza in the Sky)</h4>
+              </div>
+              <p class="text-xs text-slate-500">本部山頂古民家 / 俯瞰瀨底島海景 / 手作現烤起司披薩與鮮榨芒果汁</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.6622, 127.9025, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pizza+in+the+Sky+花人逢" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-pizza-slice text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 14: WaGyu Cafe Kapuka -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-rose-50/50 hover:border-rose-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-warm-100 text-warm-800">美濱海景咖啡</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-warm-700">WaGyu Café Kapuka</h4>
+              </div>
+              <p class="text-xs text-slate-500">北谷美國村海濱首排 / 和牛彩虹沙拉碗 / 兒童友善沙發區</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(26.3175, 127.7552, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=WaGyu+Cafe+Kapuka" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-mug-saucer text-xs"></i>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-week text-sky-600"></i>
+            雙家庭每日結構化主行程排程 (Daily Timeline Specs)
+          </h2>
+          <p class="text-xs text-slate-500">符合 4 大 4 幼家庭步調：09:00 前不催促、午休充裕、必吃餐廳預約備選方案齊備</p>
+        </div>
+        <!-- Tab Navigation Buttons -->
+        <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200" id="dayTabContainer">
+          <button onclick="switchDay(1)" id="tab-btn-1" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-sky-700 shadow-sm">
+            D1 (1/30 六)
+          </button>
+          <button onclick="switchDay(2)" id="tab-btn-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            D2 (1/31 日)
+          </button>
+          <button onclick="switchDay(3)" id="tab-btn-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            D3 (2/01 一)
+          </button>
+          <button onclick="switchDay(4)" id="tab-btn-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            D4 (2/02 二)
+          </button>
+          <button onclick="switchDay(5)" id="tab-btn-5" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            D5 (2/03 三)
+          </button>
+          <button onclick="switchDay(6)" id="tab-btn-6" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            D6 (2/04 四)
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content 1: Day 1 -->
+      <div id="day-content-1" class="day-panel space-y-4">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-900 text-sm"><i class="fa-solid fa-flag-checkered mr-1"></i> Day 1：抵達那霸 ➔ 2車取車 ➔ 港川外人住宅甜點 ➔ 恩納海景飯店 Check-in ➔ 琉球之牛和牛首宴</span>
+          <span class="bg-sky-200/70 text-sky-900 px-2.5 py-1 rounded-full font-medium">宿：恩納海景套房飯店 (Onna Oceanview Suites)</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-200 space-y-5 my-4">
+          <!-- Item 1 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">08:10 - 10:50</span>
+              <h4 class="font-bold text-sm text-slate-900">CI120 班機啟航抵達沖繩那霸機場 (OKA)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">桃機第二航廈 ➔ 那霸國際線航廈。出境查驗與提領行李（預計耗時約 45~60 分鐘）。讓 5 歲與 8 歲孩童在航廈內上洗手間並備齊水壺。</p>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">11:50 - 13:00</span>
+              <h4 class="font-bold text-sm text-slate-900">租車公司接駁車 ➔ 門市取車（2 台 Sienta / Freed）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">搭乘租車接駁車至機場外營業所（如 Times / ORIX / Nippon），辦理 2 台車合約、領取 ETC 卡、核對兒童安全座椅（5歲務必配汽座，8歲備增高墊）。檢查車輛外觀後出發！</p>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">13:30 - 15:00</span>
+              <h4 class="font-bold text-sm text-slate-900">午餐推薦：浦添港川外人住宅街（美式洋房與散策）</h4>
+            </div>
+            <div class="mt-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+              <div class="flex flex-wrap gap-3">
+                <div><strong>首選餐點</strong>：<a href="https://www.google.com/maps/search/?api=1&query=oHacorte+Minatogawa" target="_blank" class="text-sky-600 hover:underline">oHacorté 港川水果塔名店</a> + <a href="https://www.google.com/maps/search/?api=1&query=Te+Randa+Burger+Urasoe" target="_blank" class="text-sky-600 hover:underline">天然手工漢堡</a></div>
+                <div><strong>備選方案</strong>：<a href="https://www.google.com/maps/search/?api=1&query=PARCO+CITY+Urasoe" target="_blank" class="text-sky-600 hover:underline">SAN-A 浦添 PARCO CITY 美食街</a>（全冷氣室內海景海鮮/拉麵，帶推車最舒服）</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">15:30 - 17:00</span>
+              <h4 class="font-bold text-sm text-slate-900">沿沖繩西海岸國道北上 ➔ 入住恩納海景套房飯店 (Onna Oceanview Suites)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">行車約 45 分鐘抵達恩納仲泊。辦理 Check-in，安頓 8 人的行李。套房擁有寬敞客廳與無敵海景陽台，小朋友可在客廳休息，洗去搭機疲憊。</p>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">17:30 - 20:00</span>
+              <h4 class="font-bold text-sm text-rose-900">【必吃和牛燒肉第 1 彈】琉球之牛 恩納本館 (Ryukyu No Ushi)</h4>
+            </div>
+            <div class="mt-2 bg-rose-50/70 p-3 rounded-xl border border-rose-200 text-xs text-slate-700">
+              <p>距離飯店僅約 5 分鐘車程！建議出發前 1 個月於官網完成線上訂位（指定家庭包廂）。享用頂級縣產和牛沙朗、特選牛五花、兒童專屬白飯與清爽冷麵。</p>
+              <div class="mt-1 flex items-center gap-2">
+                <a href="https://www.google.com/maps/search/?api=1&query=Ryukyu+No+Ushi+Onna" target="_blank" class="text-rose-600 font-bold hover:underline"><i class="fa-solid fa-map-pin mr-1"></i> Google 導航前往</a>
+                <span class="text-slate-400">|</span>
+                <span class="text-slate-500">備選：燒肉乃我那霸 (名護店)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Day 2 -->
+      <div id="day-content-2" class="day-panel space-y-4 hidden">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-900 text-sm"><i class="fa-solid fa-water mr-1"></i> Day 2：美麗海水族館旗艦全日 ➔ 花人逢山頂披薩 ➔ 本部八重岳寒緋櫻森林步道（健行 1）➔ 燒肉本部牧場</span>
+          <span class="bg-sky-200/70 text-sky-900 px-2.5 py-1 rounded-full font-medium">宿：恩納海景套房飯店 (Onna Oceanview Suites)</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-200 space-y-5 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">08:45 - 12:00</span>
+              <h4 class="font-bold text-sm text-slate-900">沖繩美麗海水族館 (Okinawa Churaumi Aquarium)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">一早開館直奔黑潮之海大水槽！欣賞巨型鯨鯊與蝠魟悠游、海星觸摸池、海豚劇場表演（免費室外館）。10歲與12歲孩童可參加深海探索解說，5歲與8歲則在珊瑚之海驚呼連連。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-warm-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-warm-700 bg-warm-100 px-2 py-0.5 rounded">12:30 - 14:00</span>
+              <h4 class="font-bold text-sm text-slate-900">午餐推薦：花人逢 (Pizza in the Sky) 絕景古民家起司披薩</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">座落本部山丘，一覽無遺的瀨底島與海景。日式榻榻米座位非常友善孩童，招牌現烤起司薄皮披薩、新鮮蔬果沙拉與特製西印度櫻桃汁。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">14:30 - 17:00</span>
+              <h4 class="font-bold text-sm text-rose-900">【壯麗健行 1】本部八重岳櫻花森林公園（櫻花季高空海景步道）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">行駛八重岳粉紅櫻花公路抵達山頂停車場。健行步道全長約 2 公里，沿途琉球寒緋櫻盛開，能直接俯瞰伊江島城山與東海蔚藍海平線。步道平緩好走，5~12 歲兒童全程無障礙奔馳拍照。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">17:45 - 20:00</span>
+              <h4 class="font-bold text-sm text-rose-900">【必吃和牛燒肉第 2 彈】燒肉本部牧場 本部總店 (Yakiniku MOTOBU FARM)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">本部牛直營產地名店！肉質帶有啤酒酵母飼育獨特的甘甜脂肪，肉質鬆化。備有家庭套餐、牛肋條、香烤蔬菜與兒童茶泡飯，滿足兩家人不同食量需求。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 3: Day 3 -->
+      <div id="day-content-3" class="day-panel space-y-4 hidden">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-900 text-sm"><i class="fa-solid fa-mountain mr-1"></i> Day 3：國頭山原秘境 ➔ 大石林山奇岩海景健行（健行 2）➔ 邊戶岬 ➔ 名護動植物園 (Neo Park) ➔ 迴轉壽司市場</span>
+          <span class="bg-sky-200/70 text-sky-900 px-2.5 py-1 rounded-full font-medium">宿：恩納海景套房飯店 (Onna Oceanview Suites)</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-200 space-y-5 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">09:00 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">【壯麗健行 2】山原國立公園：大石林山 (Daisekirinzan) 奇石密林</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">沖繩最壯闊的世界自然遺產步道！搭乘接駁小巴上山，漫步於巨岩奇石與千年巨大細葉榕森林之間。登上「悟空岩展望台」，遠眺沖繩最北端邊戶岬與湛藍太平洋，景色大氣磅礴！</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">11:45 - 12:30</span>
+              <h4 class="font-bold text-sm text-slate-900">邊戶岬 (Cape Hedo) 最北端斷崖壯麗海潮</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">沖繩本島極北點，太平洋與東海交會處，白浪拍打千層巨石。觀景咖啡館備有熱飲，讓孩子眺望遠方的鹿兒島縣與論島。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">13:30 - 16:30</span>
+              <h4 class="font-bold text-sm text-slate-900">名護自然動植物公園 (Neo Park Okinawa) 歡樂動植物狂歡</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">走進巨型天網水鳥區，紅鶴在腳邊漫步！搭乘沖繩唯一的「復古輕便蒸氣火車」巡禮園區。前往可愛動物互動區（Fureai Plaza），親手撫摸水豚、餵食小羊與草泥馬，5 歲與 8 歲幼童的最愛。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">17:30 - 19:30</span>
+              <h4 class="font-bold text-sm text-rose-900">【必吃迴轉壽司】美國村 迴轉壽司市場 (Gourmet Sushi)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">新鮮現捏！金槍魚大腹、炙燒鮭魚、明太子軍艦、炸天婦羅與茶碗蒸。點餐平板支援多語言，小朋友看著軌道上的壽司車無比興奮。晚餐後可漫步美濱美國村河岸欣賞夜間造景。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 4: Day 4 -->
+      <div id="day-content-4" class="day-panel space-y-4 hidden">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-900 text-sm"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Day 4：恩納退房 ➔ 勝連城跡海景文化 ➔ 中城公園大放電 ➔ 入住那霸巢飯店 ➔ 國際通悠閒漫步</span>
+          <span class="bg-sky-200/70 text-sky-900 px-2.5 py-1 rounded-full font-medium">宿：那霸巢飯店 (Nest Hotel Naha Kumoji)</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-200 space-y-5 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">09:30 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">世界遺產：勝連城跡 (Katsuren Castle Ruins) 海景古城</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">全新旅客中心備有豐富的數位互動歷史展示（大孩子 10/12 歲能融入理解）。提供電動高爾夫球車接駁直達山頂（減輕 5 歲幼童體能負擔），頂部 360 度俯瞰海中道路與無邊金藍色海洋！</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-warm-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-warm-700 bg-warm-100 px-2 py-0.5 rounded">12:00 - 13:15</span>
+              <h4 class="font-bold text-sm text-slate-900">午餐推薦：泡瀨漁港 パヤオ直賣店（龍蝦海膽燒）或 北谷和牛咖啡</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">品嚐現烤海膽焗烤龍蝦套餐或生魚片定食。若偏好西式，可選美濱海邊的 WaGyu Café Kapuka 享用和牛早午餐拼盤。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">13:45 - 16:30</span>
+              <h4 class="font-bold text-sm text-emerald-900">【特色兒童放電公園】中城公園 (Nakagusuku Park)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">沖繩設施最頂級的公立綜合遊樂公園！擁有超大型白色雙層彈簧跳躍網、四連發滾輪長滑梯、沙坑與幼童安全攀爬架。4 位小朋友（5、8、10、12 歲）各有適齡挑戰區，徹底放電運動！</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">17:15 - 18:30</span>
+              <h4 class="font-bold text-sm text-slate-900">入住那霸巢飯店 (Nest Hotel Naha Kumoji) ➔ 車輛集中安置</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">辦理 Check-in，將車輛停放於飯店特約立體停車場。隨後切換為「單軌捷運 + 步行」慢活模式，免去市區塞車煩惱。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">18:45 - 20:45</span>
+              <h4 class="font-bold text-sm text-rose-900">晚餐推薦：國際通暖暮拉麵 / 傑克牛排 (Jack's Steak House)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">徒步前往國際通商圈，品嚐熱騰騰的豚骨拉麵或老字號美式嫩肩牛排，餐後逛驚安殿堂唐吉訶德採買零食伴手禮。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 5: Day 5 -->
+      <div id="day-content-5" class="day-panel space-y-4 hidden">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-900 text-sm"><i class="fa-solid fa-train-subway mr-1"></i> Day 5：單軌慢活 ➔ 首里城公園散策 ➔ 【必吃鰻魚】彥 鰻魚料理 ➔ 新都心購物中心 ➔ 國際通精緻採買</span>
+          <span class="bg-sky-200/70 text-sky-900 px-2.5 py-1 rounded-full font-medium">宿：那霸巢飯店 (Nest Hotel Naha Kumoji)</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-200 space-y-5 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">09:30 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">首里城公園（守禮門、歡會門與正殿復原現場木構見學）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">搭乘單軌至首里站。漫步紅瓦城門與歷史步道，近距離見證日本頂尖職人重建正殿的透明玻璃工房，寓教於樂。沿途階梯平順，樹蔭宜人。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">12:00 - 13:30</span>
+              <h4 class="font-bold text-sm text-rose-900">【必吃鰻魚飯】うなぎ料理 彥 (Hiko Unagi Main Branch)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">沖繩數一數二的炭火鰻魚名門！選用頂級白鰻魚，刷上特調濃郁蒲燒醬汁，炭香四溢，外皮焦脆肉質軟嫩多汁。附設鰻魚三吃（芥末清湯泡飯）與兒童炸蝦烏龍麵。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">14:00 - 17:30</span>
+              <h4 class="font-bold text-sm text-slate-900">新都心商圈 (San-A Naha Main Place) 親子採買時光</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">全沖繩最好逛的複合商場之一！玩具反斗城、Akachan 嬰兒用品、無印良品、超市土產一應俱全。爸媽分批採購，大孩子在電玩區或書店休憩。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">18:30 - 20:30</span>
+              <h4 class="font-bold text-sm text-rose-900">晚餐推薦：百年古家 大家 (阿古豬涮涮鍋) 或 那霸市區沖繩居酒屋</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">品嚐沖繩著名阿古豬涮涮鍋，肉質細嫩無騷味，富含膠原蛋白，搭配島野菜與海葡萄，兩家人共聚舉杯慶祝旅途。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 6: Day 6 -->
+      <div id="day-content-6" class="day-panel space-y-4 hidden">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-900 text-sm"><i class="fa-solid fa-plane-departure mr-1"></i> Day 6：波上宮參拜 ➔ 瀨長島 Umikaji Terrace 觀機 ➔ 17:00 還車 ➔ 20:25 CI123 平安返抵桃園</span>
+          <span class="bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full font-bold">返台日（預留充足機場安檢）</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-200 space-y-5 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">09:30 - 11:00</span>
+              <h4 class="font-bold text-sm text-slate-900">波上宮 (Naminoue Shrine) 斷崖神社參拜祈福</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">琉球八社之首，座落於珊瑚礁岩斷崖上，緊鄰波之上海灘。全家一起搖鈴祈願、購買祈求全家平安、兒童健康的小巧書包御守。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-warm-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-warm-700 bg-warm-100 px-2 py-0.5 rounded">11:30 - 14:00</span>
+              <h4 class="font-bold text-sm text-slate-900">午餐推薦：瀨長島 Umikaji Terrace 白色露台階梯聚落</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">沖繩小希臘！面海階梯層疊的純白建築群。午餐推薦品嚐<strong>幸福鬆餅 (A Happy Pancake)</strong> 或沖繩 Taco Rice。近距離觀看那霸機場飛機起降，小朋友大呼過癮。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">14:30 - 16:30</span>
+              <h4 class="font-bold text-sm text-slate-900">ASHIBINAA Outlet 暢貨中心（最後免稅補貨與整理行李）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">距機場僅 15 分鐘。利用開闊長椅重新整併 8 人托運行李與推車，確保不超重（每人 23kg）。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">17:00 - 17:45</span>
+              <h4 class="font-bold text-sm text-rose-900">加油站加滿油 ➔ 門市順利歸還 2 台租車</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">至指定鄰近油站加滿 Regular 汽油並保留收據。完成外觀點交後，全員搭乘租車行接駁巴士前往那霸國際航廈。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">17:55 - 20:25</span>
+              <h4 class="font-bold text-sm text-emerald-900">那霸機場國際線報到 ➔ 華航 CI123 平安返抵台灣</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">提早 2.5 小時完成掛行李與安檢（避開春節人潮）。20:25 準時起飛，21:05 返抵桃園機場第二航廈，圓滿結束 6 天 5 夜沖繩海島自駕之旅！</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-utensils text-rose-500"></i>
+          四大主題美食庫：和牛燒肉、迴轉壽司、鰻魚名店與郊區景觀咖啡
+        </h2>
+        <p class="text-xs text-slate-500">全店鋪均經家庭 8 人友善度驗證，附訂位建議與兒童偏好分析</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Wagyu -->
+        <div class="p-4 rounded-xl bg-rose-50/50 border border-rose-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-200 text-rose-900">頂級燒肉</span>
+              <span class="text-amber-500 text-xs font-bold">★★★★★</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">琉球之牛 & 燒肉本部牧場</h3>
+            <p class="text-xs text-slate-600 mt-1">
+              <strong>琉球之牛 (恩納本館)</strong>：油花細緻如大理石，牛五花入口即化。<br>
+              <strong>本部牧場 (本部店)</strong>：自營牧場認證黑毛和牛，牛肉香氣濃郁。
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-rose-200 text-xs space-y-1">
+            <span class="block text-slate-500">👶 兒童友善：有包廂、兒童椅、肉質軟嫩</span>
+            <span class="block text-rose-700 font-medium">⚠️ 訂位提示：需提早 30 天官網卡位</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Sushi -->
+        <div class="p-4 rounded-xl bg-sky-50/50 border border-sky-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-200 text-sky-900">產地直送壽司</span>
+              <span class="text-amber-500 text-xs font-bold">★★★★☆</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">美國村 迴轉壽司市場</h3>
+            <p class="text-xs text-slate-600 mt-1">
+              北谷美濱門市每日從泊港及日本本土直送漁獲。鮭魚三味、甜蝦、海膽與現炸唐揚雞，品質遠勝一般連鎖迴轉壽司。
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-sky-200 text-xs space-y-1">
+            <span class="block text-slate-500">👶 兒童友善：火車送餐軌道、熟食選擇多</span>
+            <span class="block text-sky-700 font-medium">💡 避峰建議：17:00 開門即抽號碼牌</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Unagi -->
+        <div class="p-4 rounded-xl bg-amber-50/50 border border-amber-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-200 text-amber-900">炭火焦香鰻魚</span>
+              <span class="text-amber-500 text-xs font-bold">★★★★★</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">うなぎ料理 彥 (Hiko) 本店</h3>
+            <p class="text-xs text-slate-600 mt-1">
+              那霸在地數十年名門。選用肥美鰻魚以備長炭慢火炙烤，醬汁沉厚甘醇。必點「三吃鰻魚桶飯 (Hitsumabushi)」。
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-amber-200 text-xs space-y-1">
+            <span class="block text-slate-500">👶 兒童友善：塌塌米包廂、有兒童烏龍麵</span>
+            <span class="block text-amber-700 font-medium">📍 分店推薦：那霸本店或久茂地店</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Scenic Cafe -->
+        <div class="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-200 text-emerald-900">絕景海景咖啡</span>
+              <span class="text-amber-500 text-xs font-bold">★★★★★</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">花人逢 & WaGyu Kapuka</h3>
+            <p class="text-xs text-slate-600 mt-1">
+              <strong>花人逢 (本部)</strong>：山頂古厝俯瞰東海，手工窯烤薄皮披薩。<br>
+              <strong>Kapuka (北谷)</strong>：美濱面海渡假沙發，和牛沙拉與鮮果冰沙。
+            </p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-emerald-200 text-xs space-y-1">
+            <span class="block text-slate-500">👶 兒童友善：庭院草皮、披薩小孩百吃不厭</span>
+            <span class="block text-emerald-700 font-medium">🕒 營業注意：花人逢週二、週三公休</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-2xl shadow-md">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-sky-400"></i>
+            雙家庭車隊自駕與行前裝備關鍵清單 (Family Pre-Flight Checklist)
+          </h2>
+          <p class="text-xs text-slate-300">出發前最後自我審查，確保全體 8 位成員順暢無阻</p>
+        </div>
+        <span class="text-xs px-3 py-1 bg-sky-500/20 text-sky-300 rounded-full border border-sky-400/30">
+          自駕必備雙證件：台灣駕照本體 + 日文譯本
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-sky-300 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-car-side"></i> 租車配置與行李廂算力
+          </h4>
+          <ul class="space-y-1.5 text-slate-300">
+            <li>• <strong>租車台數</strong>：2 台 1500cc（如 Toyota Sienta / Honda Freed）。</li>
+            <li>• <strong>每車乘坐</strong>：2 大 + 2 幼（5歲專用汽座、8歲增高墊）。</li>
+            <li>• <strong>每車行李容積</strong>：後座維持 2 排乘坐，後廂可放 28 吋大箱 × 2 + 20 吋登機箱 × 1 + 輕便傘車 × 1。</li>
+            <li>• <strong>安心保障</strong>：務必加保免責補償險 (CDW) + 營業損失賠償 (NOC Full Support)。</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-person-hiking"></i> 健行裝備與防風禦寒
+          </h4>
+          <ul class="space-y-1.5 text-slate-300">
+            <li>• <strong>大石林山步道</strong>：奇岩地質較多，全體成員請穿包覆性良好之運動健行球鞋。</li>
+            <li>• <strong>防風外套</strong>：海風極大，連帽防風抗水外套必備，勝過笨重羽絨衣。</li>
+            <li>• <strong>隨身保溫瓶</strong>：戶外景點補充溫水，避免幼童喉嚨乾冷。</li>
+            <li>• <strong>備用乾淨衣褲</strong>：動植物園及中城公園玩沙流汗後可立即於後車廂更換。</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-800/80 p-3.5 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-rose-300 text-sm mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-kit-medical"></i> 家庭常備藥品與手續
+          </h4>
+          <ul class="space-y-1.5 text-slate-300">
+            <li>• <strong>行前申辦</strong>：監理所辦理「台灣駕照之日文譯本」（出發日前檢查效期）。</li>
+            <li>• <strong>Visit Japan Web (VJW)</strong>：出發前 3 天為 8 位成員填妥入境與海關申報 QR Code。</li>
+            <li>• <strong>家庭常備藥</strong>：小兒退燒藥水、暈車藥（北部山路八重岳與大石林山必備）、止瀉藥與防蚊液。</li>
+            <li>• <strong>退稅需知</strong>：各家護照請隨身保管，購物滿 5,000 日圓出示享 10% Tax-Free。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-md bg-sky-500 text-white flex items-center justify-center font-bold text-xs">
+          A
+        </div>
+        <span class="text-slate-300 font-semibold">全域生活架構師 (The Global Life Architect)</span>
+        <span class="text-slate-500">| 專業旅程調度</span>
+      </div>
+      <p class="text-slate-500">專為 2027/01/30 - 2027/02/04 沖繩雙家庭 8 人訂製 · 單一檔案架構交付</p>
+    </div>
+  </footer>
+
+  <script>
+    // 1. Tab Switching Engine
+    function switchDay(dayIndex) {
+      // Hide all panels
+      const panels = document.querySelectorAll('.day-panel');
+      panels.forEach(p => p.classList.add('hidden'));
+
+      // Remove active states from buttons
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-white', 'text-sky-700', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+      });
+
+      // Show target panel
+      const targetPanel = document.getElementById(`day-content-${dayIndex}`);
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+      }
+
+      // Set active button
+      const targetBtn = document.getElementById(`tab-btn-${dayIndex}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('text-slate-600');
+        targetBtn.classList.add('bg-white', 'text-sky-700', 'shadow-sm');
+      }
+    }
+
+    // 2. Leaflet Interactive Map Engine
+    let map;
+    let markers = {};
+
+    const locations = [
+      { id: 'onna_hotel', name: '恩納海景套房飯店', lat: 26.4357, lng: 127.8016, cat: 'hotel', note: 'D1-D3 住宿 / 海景套房' },
+      { id: 'nest_hotel', name: '那霸巢飯店', lat: 26.2195, lng: 127.6826, cat: 'hotel', note: 'D4-D5 住宿 / 近美榮橋站' },
+      { id: 'churaumi', name: '美麗海水族館', lat: 26.6943, lng: 127.8779, cat: 'attraction', note: 'D2 黑潮之海鯨鯊秀' },
+      { id: 'neopark', name: '名護動植物公園 (Neo Park)', lat: 26.6186, lng: 127.9946, cat: 'attraction', note: 'D3 水鳥餵食與蒸氣火車' },
+      { id: 'daisekirinzan', name: '大石林山 (健行1)', lat: 26.8668, lng: 128.2577, cat: 'attraction', note: 'D3 喀斯特地形與邊戶岬眺望' },
+      { id: 'yaedake', name: '本部八重岳櫻花森林 (健行2)', lat: 26.6346, lng: 127.9158, cat: 'attraction', note: 'D2 寒緋櫻盛開山頂步道' },
+      { id: 'katsuren', name: '勝連城跡', lat: 26.2995, lng: 127.8785, cat: 'attraction', note: 'D4 世界遺產海景古城' },
+      { id: 'nakagusuku_park', name: '中城公園', lat: 26.2965, lng: 127.7915, cat: 'attraction', note: 'D4 巨型彈跳床與滾輪溜滑梯' },
+      { id: 'ryukyu_ushi', name: '琉球之牛 恩納本館', lat: 26.4449, lng: 127.7963, cat: 'food', note: 'D1 必吃頂級和牛燒肉' },
+      { id: 'motobu_farm', name: '燒肉本部牧場 本部店', lat: 26.6575, lng: 127.8863, cat: 'food', note: 'D2 本部牛認證直營燒肉' },
+      { id: 'gourmet_sushi', name: '迴轉壽司市場 美濱店', lat: 26.3155, lng: 127.7577, cat: 'food', note: 'D3 新鮮海產直送迴轉壽司' },
+      { id: 'hiko_unagi', name: '彥 鰻魚料理 本店', lat: 26.2305, lng: 127.6975, cat: 'food', note: 'D5 必吃炭烤鰻魚三吃桶飯' },
+      { id: 'kajinhou', name: '花人逢 (Pizza in the Sky)', lat: 26.6622, lng: 127.9025, cat: 'food', note: 'D2 山頂古民家手工披薩' },
+      { id: 'kapuka', name: 'WaGyu Café Kapuka', lat: 26.3175, lng: 127.7552, cat: 'food', note: 'D4 美濱海岸海景和牛咖啡' },
+    ];
+
+    function initMap() {
+      // Centered around Central Okinawa
+      map = L.map('map', {
+        scrollWheelZoom: false
+      }).setView([26.5000, 127.9200], 10);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Add markers
+      locations.forEach(loc => {
+        let color = '#0284c7'; // blue
+        if (loc.cat === 'food') color = '#e11d48'; // rose
+        if (loc.cat === 'hotel') color = '#d97706'; // amber
+
+        const customIcon = L.divIcon({
+          className: 'custom-pin',
+          html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        });
+
+        const marker = L.marker([loc.lat, loc.lng], { icon: customIcon }).addTo(map);
+        
+        const popupContent = `
+          <div class="p-1 font-sans">
+            <h5 class="font-bold text-xs text-slate-900 mb-0.5">${loc.name}</h5>
+            <p class="text-[11px] text-slate-600 mb-1.5">${loc.note}</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.name)}" target="_blank" 
+               class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-600 hover:text-sky-800">
+              開啟 Google 導航 ➔
+            </a>
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+        markers[loc.id] = marker;
+      });
+    }
+
+    function focusMap(lat, lng, zoomLevel = 14) {
+      if (!map) return;
+      map.flyTo([lat, lng], zoomLevel, {
+        animate: true,
+        duration: 1.2
+      });
+      // Find matching marker and open popup
+      locations.forEach(l => {
+        if (Math.abs(l.lat - lat) < 0.001 && Math.abs(l.lng - lng) < 0.001) {
+          if (markers[l.id]) {
+            markers[l.id].openPopup();
+          }
+        }
+      });
+    }
+
+    // 3. Chart.js Stamina Curve Engine
+    function initStaminaChart() {
+      const ctx = document.getElementById('staminaChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['D1 抵達/移宿', 'D2 水族/八重岳', 'D3 大石林/動植物', 'D4 勝連/中城公園', 'D5 首里城/單軌', 'D6 波上宮/返台'],
+          datasets: [
+            {
+              label: '駕駛自駕疲勞指數 (司機)',
+              data: [58, 65, 82, 50, 20, 45],
+              borderColor: '#0284c7',
+              backgroundColor: 'rgba(2, 132, 199, 0.1)',
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#0284c7',
+              pointRadius: 4
+            },
+            {
+              label: '5歲/8歲 幼童體能消耗指數',
+              data: [45, 75, 88, 70, 40, 50],
+              borderColor: '#e11d48',
+              backgroundColor: 'rgba(225, 29, 72, 0.08)',
+              borderWidth: 2.5,
+              borderDash: [5, 5],
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#e11d48',
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                font: { size: 11, family: 'Inter' }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + ' 分';
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              ticks: {
+                stepSize: 20,
+                font: { size: 10 }
+              },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              ticks: { font: { size: 11 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // Window load trigger
+    window.onload = function() {
+      initMap();
+      initStaminaChart();
+    };
+  </script>
+</body>
+</html>
