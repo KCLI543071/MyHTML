@@ -1,0 +1,1360 @@
+<!--
+  專案名稱: Gogoro 睿能 PTFW 動力系統韌體部門 11月平日團建一日遊企劃
+  檔案版本: v1.5
+  更新日期: 2026-10-18
+  變更說明: 
+    1. 【方案 E 重大升級】：陽明山擎天崗健行後改走陽明山北面（台2甲陽金公路）下山至金山。
+    2. 【全新海線動線】：金山老街廟口鴨肉午餐 ➔ 台2線跳石海岸/石門 ➔ 三芝淺水灣公雞咖啡小憩 ➔ 體驗 2026 全新通車之「淡江大橋」機車專用道跨越淡水河口直達八里。
+    3. 【嚴格落實 30 分鐘法則】：金山、三芝、淡水各設休憩與 GoStation 站點，各段騎乘控制在 20~28 分鐘以內。
+    4. 【預算再優化】：午餐改金山在地合菜，省下預算重押林口藏王和牛極上鍋，人均 NT$ 1,850 完美合規。
+    5. 【地圖與導航擴充】：新增陽金公路、中油金山換電站、金山老街、三芝淺水灣、淡江大橋景點標記與 ESRI 地圖連動。
+-->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gogoro PTFW 動力韌體部 11月團建企劃書 (v1.5 淡江大橋海線版)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+          },
+          colors: {
+            gogoro: {
+              400: '#00e5a3',
+              500: '#00c389',
+              600: '#009e6d',
+              dark: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    #map {
+      height: 500px;
+      border-radius: 1rem;
+      z-index: 10;
+    }
+    .tab-btn.active {
+      background-color: #0f172a;
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased">
+  <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+          <i class="fa-solid fa-motorcycle text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">睿能 PTFW 部門專屬</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-900 text-white">v1.5 (淡江大橋跨海巡航旗艦版)</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">動力系統韌體部 (PTFW) 一日遊團建企劃書</h1>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 text-xs sm:text-sm font-medium">
+        <div class="hidden md:flex items-center space-x-3 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+          <span class="text-slate-600"><i class="fa-solid fa-users text-emerald-600 mr-1.5"></i>5人 (4男1女)</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-600"><i class="fa-solid fa-bolt-lightning text-emerald-600 mr-1.5"></i>5台公司公務車隊同巡</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-600 font-bold text-emerald-700"><i class="fa-solid fa-wallet text-emerald-600 mr-1.5"></i>預算：&le; $2,000/人</span>
+        </div>
+        <button onclick="window.print()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow transition flex items-center gap-1.5 text-xs font-semibold">
+          <i class="fa-solid fa-print"></i> 列印 / 匯出
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 w-full">
+    <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 border-l-4 border-emerald-500 rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div class="flex items-start space-x-3.5">
+        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow">
+          <i class="fa-solid fa-bridge text-base"></i>
+        </div>
+        <div class="flex-1 text-sm text-slate-800">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <h3 class="font-bold text-emerald-950 text-base">v1.5 焦點亮點：陽明山北面降金山 × 台2海線 × 2026 全新通車【淡江大橋】跨海捷徑</h3>
+            <span class="bg-emerald-200/60 text-emerald-900 text-xs px-2 py-0.5 rounded-full font-bold">工程車隊跨山越海極限版</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+            <div class="bg-white/90 p-3 rounded-xl border border-emerald-200">
+              <strong class="text-emerald-900 block mb-1"><i class="fa-solid fa-mountain mr-1"></i> 陽金公路北面降坡：</strong>
+              擎天崗結束直接由陽明山北側（陽金公路台2甲）順暢下坡至金山，全程享受地熱硫磺山谷與再生煞車回充，免走回頭市區塞車！
+            </div>
+            <div class="bg-white/90 p-3 rounded-xl border border-teal-200">
+              <strong class="text-teal-900 block mb-1"><i class="fa-solid fa-water mr-1"></i> 台2線濱海 × 三芝海景歇息：</strong>
+              沿台2線巡航石門跳石海岸，中午在三芝淺水灣露天海景咖啡享受微風，單次騎乘嚴格切割在 22~26 分鐘，體能手腕無負擔。
+            </div>
+            <div class="bg-white/90 p-3 rounded-xl border border-sky-200">
+              <strong class="text-sky-900 block mb-1"><i class="fa-solid fa-archway mr-1"></i> 淡江大橋機車專用道首發：</strong>
+              行駛 2026 全新完工的世界級單塔斜張橋【淡江大橋】，專屬獨立機車道避開塞車，僅花 6 分鐘跨越淡水河口直達八里卡丁車！
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-8 flex-1">
+    
+    <!-- Map & Location Selector Section -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
+            PTFW 基地出發與全境 GPS 地圖導航 (HQ Radar Map)
+          </h2>
+          <p class="text-xs text-slate-500">已全面切換至 ESRI 高清免授權圖資（支援即時縮放、衛星空照與雙北山海全境巡航節點）</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <!-- Layer Switch Buttons -->
+          <div class="bg-slate-100 p-0.5 rounded-lg border border-slate-200 flex items-center">
+            <button onclick="changeTileLayer('topo')" id="btn-layer-topo" class="px-2 py-1 bg-white shadow-sm font-bold text-emerald-800 rounded text-[11px] transition">
+              <i class="fa-solid fa-mountain-sun"></i> 地形街道
+            </button>
+            <button onclick="changeTileLayer('satellite')" id="btn-layer-sat" class="px-2 py-1 text-slate-600 hover:text-slate-900 font-medium rounded text-[11px] transition">
+              <i class="fa-solid fa-satellite"></i> 衛星空照
+            </button>
+          </div>
+          <button onclick="resetMapView()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold transition flex items-center gap-1">
+            <i class="fa-solid fa-arrows-rotate"></i> 重置全景
+          </button>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span>出發基地</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-cyan-500"></span>GoStation</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-sky-500"></span>擎天崗</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-500"></span>淡江大橋</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500"></span>卡丁車</span>
+          <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-500"></span>美食/和牛鍋</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <!-- Interactive Leaflet Map -->
+        <div class="lg:col-span-7 rounded-xl overflow-hidden border border-slate-200 shadow-inner h-[500px] relative">
+          <div id="map" class="w-full h-full"></div>
+        </div>
+
+        <!-- Node List -->
+        <div class="lg:col-span-5 h-[500px] overflow-y-auto custom-scrollbar pr-1 space-y-2.5" id="poiList">
+          <!-- Item 0: Gogoro HQ -->
+          <div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">出發基地</span>
+                <h4 class="font-bold text-sm text-slate-900">Gogoro 睿能創意總部</h4>
+              </div>
+              <p class="text-xs text-slate-600">龜山區頂湖路33號 / 08:30 集合領取 5 台公務車整備發車</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.0445, 121.3688, 16)" class="text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Gogoro+睿能創意+龜山區頂湖路33號" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-building text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: GoStation Fulin -->
+          <div class="p-3 rounded-xl border border-cyan-200 bg-cyan-50/60 hover:bg-cyan-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-cyan-700 text-white">換電節點 1</span>
+                <h4 class="font-bold text-sm text-slate-900">GoStation 中油福林加油站</h4>
+              </div>
+              <p class="text-xs text-slate-600">士林區中山北路五段465號 / 仰德大道入口，攻頂前 5 車全員換滿 100% 電池</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.0913, 121.5280, 16)" class="text-cyan-700 hover:text-cyan-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=中油福林站+Gogoro換電站" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-cyan-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-bolt text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: Qingtiangang -->
+          <div class="p-3 rounded-xl border border-sky-200 bg-sky-50/60 hover:bg-sky-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-600 text-white">高山草原健行</span>
+                <h4 class="font-bold text-sm text-slate-900">陽明山 擎天崗大草原步道</h4>
+              </div>
+              <p class="text-xs text-slate-600">海拔約 770m / 遼闊大草原、野化水牛群、環形步道漫步 1.5 小時舒活身心</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.1668, 121.5745, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=陽明山擎天崗草原" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-mountain text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: Jinshan Duck -->
+          <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-600 text-white">金山在地午宴</span>
+                <h4 class="font-bold text-sm text-slate-900">金包里廟口鴨肉 (金山老街)</h4>
+              </div>
+              <p class="text-xs text-slate-600">金山區金包里街104號 / 自端熱炒經典名店、鮮嫩多汁鹽水鴨、炒海瓜子與炸花枝蝦捲（週一 10:00-18:00 正常營業）</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.2218, 121.6372, 16)" class="text-amber-700 hover:text-amber-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=金包里鴨肉+金山老街" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-utensils text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: GoStation Jinshan -->
+          <div class="p-3 rounded-xl border border-cyan-200 bg-cyan-50/60 hover:bg-cyan-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-cyan-700 text-white">換電節點 2</span>
+                <h4 class="font-bold text-sm text-slate-900">GoStation 中油金山農會站 / 金山站</h4>
+              </div>
+              <p class="text-xs text-slate-600">金山區環金路462號 / 台2線入口，下陽金公路後換上滿電，準備巡航北海岸</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.2185, 121.6330, 16)" class="text-cyan-700 hover:text-cyan-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=中油金山站+Gogoro換電站" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-cyan-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-bolt text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: Le coq Cafe -->
+          <div class="p-3 rounded-xl border border-sky-200 bg-sky-50/60 hover:bg-sky-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-700 text-white">海景咖啡小憩</span>
+                <h4 class="font-bold text-sm text-slate-900">Le coq 公雞咖啡 (三芝淺水灣)</h4>
+              </div>
+              <p class="text-xs text-slate-600">三芝北勢子45-16號 / 淺水灣海岸第一排、日式復古海景戶外露台、特調水果茶與咖啡（週一 11:00-19:00 正常營業）</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.2505, 121.4725, 16)" class="text-sky-700 hover:text-sky-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=公雞咖啡+三芝淺水灣" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-mug-saucer text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: Danjiang Bridge -->
+          <div class="p-3 rounded-xl border border-purple-200 bg-purple-50/60 hover:bg-purple-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-700 text-white">2026 全新跨海地標</span>
+                <h4 class="font-bold text-sm text-slate-900">淡江大橋 (Danjiang Bridge)</h4>
+              </div>
+              <p class="text-xs text-slate-600">札哈·哈蒂設計世界最大單塔斜張橋 / 獨立機車專用道直通八里，免繞行關渡大橋節省 25 分鐘！</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.1760, 121.4165, 14)" class="text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=淡江大橋" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-archway text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: Love Kart -->
+          <div class="p-3 rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white">動力卡丁競速</span>
+                <h4 class="font-bold text-sm text-slate-900">八里樂福卡丁車場 (Love Kart)</h4>
+              </div>
+              <p class="text-xs text-slate-600">八里博物館路 / 400m 戶外賽道、測時排名賽、週一 11:00-19:00 正常營運</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.1585, 121.4050, 16)" class="text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=八里樂福卡丁車場" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-flag-checkered text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Item: Zao Shabu -->
+          <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/60 hover:bg-amber-100/60 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-600 text-white">慶功和牛鍋</span>
+                <h4 class="font-bold text-sm text-slate-900">藏王 極上鍋物 (林口昕境店)</h4>
+              </div>
+              <p class="text-xs text-slate-600">林口文化三路一段402巷2號 / 全台肉品最強火鍋、日本A5和牛拼盤、頂級海陸、舒適包廂好聊天</p>
+              <div class="flex items-center gap-2 text-[11px] pt-1">
+                <button onclick="focusMap(25.0718, 121.3712, 16)" class="text-amber-700 hover:text-amber-900 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=藏王極上鍋物林口店" target="_blank" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-bowl-food text-xs"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Budget Breakdown Section (Per person <= 2000 NTD) -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-100">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-emerald-600"></i>
+            5 人團隊每人 NT$ 2,000 預算精算透明表 (Budget Control Matrix)
+          </h2>
+          <p class="text-xs text-slate-500">借用 5 台公務車免油資，午餐改金山老街高 CP 值合菜，晚餐極上和牛火鍋預算更充裕！</p>
+        </div>
+        <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 self-start sm:self-auto">
+          預算達成率：100% 綠燈達標
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700">
+              <th class="py-2.5 px-3 font-bold rounded-l-lg">企劃方案</th>
+              <th class="py-2.5 px-3 font-bold">車輛/交通 (每人)</th>
+              <th class="py-2.5 px-3 font-bold">活動/門票 (每人)</th>
+              <th class="py-2.5 px-3 font-bold">精選午餐 (每人)</th>
+              <th class="py-2.5 px-3 font-bold">下午咖啡/點心</th>
+              <th class="py-2.5 px-3 font-bold">慶功晚餐 (每人)</th>
+              <th class="py-2.5 px-3 font-bold">預估人均總計</th>
+              <th class="py-2.5 px-3 font-bold rounded-r-lg">預算結餘</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <!-- Plan E Highlight Row (Updated for v1.5) -->
+            <tr class="hover:bg-emerald-50/50 bg-emerald-50/40 font-medium">
+              <td class="py-3 px-3 font-bold text-slate-900 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-300"></span>
+                <span class="text-emerald-950 font-black">方案 E (陽金北降/淡江大橋跨海)</span>
+                <span class="bg-purple-600 text-white text-[10px] px-1.5 py-0.2 rounded font-bold">2026通車升級</span>
+              </td>
+              <td class="py-3 px-3 text-slate-600">5台公務車 $0 + 停車費均攤 $20</td>
+              <td class="py-3 px-3 text-rose-600 font-semibold">八里卡丁車 1 回合 $400 + 擎天崗/淡江大橋 $0</td>
+              <td class="py-3 px-3 text-slate-700">金山老街廟口鴨肉合菜 $320</td>
+              <td class="py-3 px-3 text-slate-700">三芝淺水灣海景咖啡 $180</td>
+              <td class="py-3 px-3 text-slate-700">林口藏王極上海陸和牛鍋 $930</td>
+              <td class="py-3 px-3 font-black text-emerald-700 text-sm">NT$ 1,850</td>
+              <td class="py-3 px-3 font-bold text-emerald-600">+ NT$ 150 充裕達標</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-3 font-bold text-slate-900 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>方案 D (硬漢大滿貫)
+              </td>
+              <td class="py-3 px-3 text-slate-600">自駕油資 + GoShare $110</td>
+              <td class="py-3 px-3 text-rose-600 font-semibold">八里卡丁車 $400 + 閃動格子 $350</td>
+              <td class="py-3 px-3 text-slate-700">五股山莊土雞合菜 $380</td>
+              <td class="py-3 px-3 text-slate-400">-</td>
+              <td class="py-3 px-3 text-slate-700">乾杯和牛燒肉 $740</td>
+              <td class="py-3 px-3 font-black text-emerald-700 text-sm">NT$ 1,980</td>
+              <td class="py-3 px-3 font-bold text-emerald-600">+ NT$ 20 壓線達標</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-3 font-bold text-slate-900 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>方案 A (卡丁極速案)
+              </td>
+              <td class="py-3 px-3 text-slate-600">自駕油資約 $60/人</td>
+              <td class="py-3 px-3 text-rose-600 font-semibold">八里卡丁車 2 回合 $750</td>
+              <td class="py-3 px-3 text-slate-700">八里水岸合菜/披薩 $350</td>
+              <td class="py-3 px-3 text-slate-400">-</td>
+              <td class="py-3 px-3 text-slate-700">林口乾杯居酒屋 $750</td>
+              <td class="py-3 px-3 font-black text-rose-600 text-sm">NT$ 1,910</td>
+              <td class="py-3 px-3 font-bold text-emerald-600">+ NT$ 90 綠燈</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-3 font-bold text-slate-900 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span>方案 B (沉浸科技案)
+              </td>
+              <td class="py-3 px-3 text-slate-600">自駕油資約 $80/人</td>
+              <td class="py-3 px-3 text-purple-600 font-semibold">青埔閃動格子 60m $350</td>
+              <td class="py-3 px-3 text-slate-700">鶯歌厚道排骨飯套餐 $220</td>
+              <td class="py-3 px-3 text-slate-400">-</td>
+              <td class="py-3 px-3 text-slate-700">青埔精品個人和牛火鍋 $980</td>
+              <td class="py-3 px-3 font-black text-purple-600 text-sm">NT$ 1,630</td>
+              <td class="py-3 px-3 font-bold text-emerald-600">+ NT$ 370 充裕</td>
+            </tr>
+
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-3 font-bold text-slate-900 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-sky-500"></span>方案 C (近郊放鬆案)
+              </td>
+              <td class="py-3 px-3 text-slate-600">自駕油資約 $40/人</td>
+              <td class="py-3 px-3 text-sky-600 font-semibold">青年公園芬多精 $0 (免費)</td>
+              <td class="py-3 px-3 text-slate-700">新莊景觀咖啡輕食 $380</td>
+              <td class="py-3 px-3 text-slate-400">-</td>
+              <td class="py-3 px-3 text-slate-700">林口點水樓/精緻私房菜 $950</td>
+              <td class="py-3 px-3 font-black text-sky-600 text-sm">NT$ 1,370</td>
+              <td class="py-3 px-3 font-bold text-emerald-600">+ NT$ 630 最寬裕</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GoStation Strategy Card -->
+    <section class="bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-blue-500/10 p-5 rounded-2xl border border-cyan-200">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl bg-cyan-600 text-white flex items-center justify-center flex-shrink-0 shadow">
+          <i class="fa-solid fa-charging-station text-lg"></i>
+        </div>
+        <div class="space-y-2 text-xs">
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-slate-900 text-sm">⚡ PTFW 5台公務車隊：陽金公路北降 ➔ 台2線海線 ➔ 淡江大橋 GoStation 換電拓撲規劃</h3>
+            <span class="bg-cyan-700 text-white px-2 py-0.5 rounded text-[10px] font-bold">動能回充 × 滿電戰略</span>
+          </div>
+          <p class="text-slate-700 leading-relaxed">
+            身為動力系統韌體工程師，親自騎乘 5 台公務車由陽明山北降金山、沿台2線海線巡航並穿越 2026 淡江大橋，是全台灣景緻最壯闊的機車路線！全程落實「單次騎乘不超過 30 分鐘」之 4 大換電與休憩節點配置：
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 pt-1">
+            <div class="p-3 bg-white rounded-xl border border-slate-200">
+              <strong class="text-slate-900 block mb-1 text-cyan-800"><i class="fa-solid fa-battery-full mr-1"></i> 1. 上山攻頂滿電站</strong>
+              <span class="text-slate-600 leading-relaxed">
+                <strong>士林中油福林加油站</strong>：上仰德大道前的超級換電站，5 車同時換滿 100% 電池，爬坡扭力輸出最飽滿。
+              </span>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200">
+              <strong class="text-slate-900 block mb-1 text-cyan-800"><i class="fa-solid fa-arrow-down-long mr-1"></i> 2. 陽金公路下坡再生</strong>
+              <span class="text-slate-600 leading-relaxed">
+                <strong>陽金公路北降段</strong>：下坡長達 18 公里，充分體驗 Gogoro Regenerative Braking（煞車動能回充），抵達金山時電池依然充沛！
+              </span>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200">
+              <strong class="text-slate-900 block mb-1 text-cyan-800"><i class="fa-solid fa-gas-pump mr-1"></i> 3. 金山/三芝濱海補給</strong>
+              <span class="text-slate-600 leading-relaxed">
+                <strong>中油金山農會站 / 三芝站</strong>：於金山老街吃完鴨肉後全員補滿電，愜意沿台2線跳石海岸吹風巡航。
+              </span>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200">
+              <strong class="text-slate-900 block mb-1 text-cyan-800"><i class="fa-solid fa-bridge mr-1"></i> 4. 八里/台61西濱節點</strong>
+              <span class="text-slate-600 leading-relaxed">
+                <strong>八里中華路站 / 廖添丁廟</strong>：淡江大橋跨海後、玩完卡丁車換上滿電，直奔台61線平面側車道回林口。
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Plan Tabs Section -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-emerald-600"></i>
+            五大專屬一日遊行程細節（點選切換完整時程）
+          </h2>
+          <p class="text-xs text-slate-500">主揪自駕、GoShare 或 5 台公務車隊同遊任選，動線流暢、兼顧男女同仁體力與乾爽度</p>
+        </div>
+        
+        <!-- Tab Navigation Buttons -->
+        <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200">
+          <button onclick="switchPlan(5)" id="plan-btn-5" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition">
+            方案 E：公務車隊 (擎天崗/陽金/淡江大橋/卡丁/和牛鍋) ⭐
+          </button>
+          <button onclick="switchPlan(4)" id="plan-btn-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            方案 D：硬漢大滿貫 (自駕+GoShare)
+          </button>
+          <button onclick="switchPlan(1)" id="plan-btn-1" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            方案 A：熱血競速 (八里卡丁)
+          </button>
+          <button onclick="switchPlan(2)" id="plan-btn-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            方案 B：科技沉浸 (閃動格子)
+          </button>
+          <button onclick="switchPlan(3)" id="plan-btn-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            方案 C：近郊森活 (新莊青年公園)
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan E Details (UPDATED & ACTIVE) -->
+      <div id="plan-content-5" class="plan-panel space-y-5">
+        <div class="bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-3 border-l-4 border-purple-400">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-purple-400 text-slate-950 font-black text-xs">2026 跨海新幹線</span>
+              <h3 class="font-bold text-base">方案 E：5台公務車 ➔ 陽明山擎天崗 ➔ 陽金公路北降 ➔ 金山鴨肉 ➔ 台2線海景咖啡 ➔ 淡江大橋跨海 ➔ 八里卡丁 ➔ 台61海線 ➔ 林口藏王和牛鍋</h3>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">「單次騎乘 &le; 28 分鐘 ＋ 滿電攻頂 ＋ 擎天崗草原 ＋ 陽金降坡回充 ＋ 金山老街 ＋ 淺水灣看海 ＋ 淡江大橋機車道首跨 ＋ 賽道對決 ＋ 西濱夕陽 ＋ 頂級和牛火鍋」：PTFW 部門工程靈魂的極致巡航！</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-300 block">人均花費 (預算 &le; 2000)</span>
+            <span class="text-lg font-black text-emerald-400">NT$ 1,850 / 人</span>
+          </div>
+        </div>
+
+        <!-- Timeline Steps -->
+        <div class="relative pl-6 border-l-2 border-purple-400 space-y-6 my-4">
+          <!-- Step 1 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">08:30 - 09:00</span>
+              <h4 class="font-bold text-sm text-slate-900">【起點】龜山頂湖路 HQ 集合 ➔ 領取 5 台公司 Gogoro 公務車</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              檢查胎壓、煞車手感與電量，隊長進行車隊編隊與對講機測試。全員著防風外套與手套，09:00 準時出發！
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-cyan-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded">09:00 - 09:26</span>
+              <h4 class="font-bold text-sm text-slate-900">【騎行段 1：車程 26 分鐘】頂湖路 ➔ 士林福林站（首座 GoStation 滿電換電）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              順行青山路/新北大道，接士林百齡橋直達<strong>「中油福林加油站 GoStation」</strong>。5 車同時換滿 100% 電池，上洗手間補水 10 分鐘，動動手腕。
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">09:35 - 10:03</span>
+              <h4 class="font-bold text-sm text-slate-900">【騎行段 2：車程 28 分鐘】士林 ➔ 仰德大道 ➔ 陽明山擎天崗機車停車場</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              沿仰德大道順暢上山，經菁山路與冷水坑直達擎天崗（剛好 28 分鐘），實際感受雙馬達上坡爬坡的強大扭力輸出！停好公務車。
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">10:05 - 11:35</span>
+              <h4 class="font-bold text-sm text-slate-900">【草原健行】擎天崗大草原環形步道健行 ＆ 眺望水牛群（免門票）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              漫步在海拔 770 公尺的高山草原碎石平緩步道，欣賞金黃芒草與悠閒野化水牛群，眺望七星山與竹篙山。男女同仁輕鬆漫步 1.5 小時，呼吸林間純淨芬多精，活動筋骨拍全體合照！
+            </p>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-cyan-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded">11:45 - 12:10</span>
+              <h4 class="font-bold text-sm text-slate-900">【騎行段 3：車程 25 分鐘】冷水坑 ➔ 中湖戰備道 ➔ 陽金公路（台2甲）北面降坡至金山</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              <strong>【重點新動線】</strong>不走回頭路！車隊自中湖戰備道轉入陽金公路北向降坡。沿途欣賞小油坑地熱噴氣孔、馬槽橋山谷與竹子山景緻。長下坡正好實測 Gogoro 電能回充煞車再生系統（Regenerative Braking），下到金山平地幾乎不耗電！
+            </p>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">12:15 - 13:30</span>
+              <h4 class="font-bold text-sm text-slate-900">【在地午宴】金包里廟口鴨肉 (金山老街) ＋ 中油金山站滿電交換</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              先至環金路「中油金山農會站 GoStation」把 5 車電量換滿 100%。接著漫步進入金山老街，品嚐全台最知名「廟口鴨肉」（週一正常營業），現切鮮嫩鹹香鴨肉、熱炒海瓜子、炸紅糟肉、炒麵與芋頭小吃，人均約 $320，份量十足又省荷包！
+            </p>
+          </div>
+
+          <!-- Step 7 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">13:35 - 14:00</span>
+              <h4 class="font-bold text-sm text-slate-900">【騎行段 4：車程 25 分鐘】金山 ➔ 經台2線跳石海岸/石門 ➔ 三芝淺水灣</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              沿著蔚藍的北部濱海公路（台2線）一路向西巡航，途經著名的跳石海濱公車亭與石門風力發電風車，海天一線令人心曠神怡，車程恰好 25 分鐘抵達三芝淺水灣。
+            </p>
+          </div>
+
+          <!-- Step 8 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">14:00 - 14:45</span>
+              <h4 class="font-bold text-sm text-slate-900">【海景咖啡小憩】Le coq 公雞咖啡 (三芝淺水灣)</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              淺水灣海景第一排超人氣名店（週一 11:00 正常營運）。坐在露天木棧道看海放空，品嚐新鮮水果冰沙或手沖咖啡（人均約 $180），讓手腕徹底放鬆、吹拂初冬涼爽海風。
+            </p>
+          </div>
+
+          <!-- Step 9 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">14:50 - 15:15</span>
+              <h4 class="font-bold text-sm text-slate-900">【騎行段 5：車程 22 分鐘】三芝 ➔ 淡海新市鎮 ➔ 跨越 2026 最新【淡江大橋】➔ 八里</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              <strong>【2026 劃時代新體驗】</strong>經台2乙銜接淡水沙崙路，直接登上 2026 全新完工啟用的<strong>「淡江大橋」機車專用道</strong>！作為全球最大單塔不對稱斜張橋，車隊伴隨淡水河出海口浩瀚波光直接跨海，避開過去關渡大橋漫長塞車，僅花 6 分鐘跨海直達八里博物館路！
+            </p>
+          </div>
+
+          <!-- Step 10 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">15:15 - 16:45</span>
+              <h4 class="font-bold text-sm text-slate-900">【速度對決】八里樂福卡丁車場 (Love Kart) 測時計時賽</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              抵達下橋旁的<strong>「八里樂福卡丁車場」</strong>（週一 11:00-19:00 正常營運）。換上賽車防護帽，下場展開 400m 專業戶外賽道測時對決（每人 $400），由工程師比拼精準油門與 Apex 彎道切線！賽後於頒獎台合影留念。
+            </p>
+          </div>
+
+          <!-- Step 11 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-cyan-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded">17:00 - 17:26</span>
+              <h4 class="font-bold text-sm text-slate-900">【騎行段 6：車程 26 分鐘】八里換電 ➔ 沿「台61平面側車道」落日海線巡航至林口</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              八里中華路換上滿電電池，出發行駛<strong>台61平面側車道（合法白牌機車專用路網，非高架快速公路）</strong>。沿途伴隨台灣海峽浩瀚夕陽餘暉與巨大白色風車，迎著傍晚微風，26 分鐘順暢上抵林口文化路特區！
+            </p>
+          </div>
+
+          <!-- Step 12 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">17:40 - 19:40</span>
+              <h4 class="font-bold text-sm text-slate-900">【慶功晚餐】藏王 極上鍋物 (林口昕境店) 頂級海陸和牛極品饗宴</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              抵達林口昕境廣場旁「藏王極上鍋物」（全台肉品最強火鍋名店，人均預算大幅拉升至 $930）。享用個人獨立鍋，品嚐日本 A5 和牛雪花、安格斯黑牛與澎湃野生大蝦，熱氣騰騰洗去騎車疲憊，大夥暢聊今日山海長征的心得與韌體數據！
+            </p>
+          </div>
+
+          <!-- Step 13 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">19:50 - 20:00</span>
+              <h4 class="font-bold text-sm text-slate-900">【賦歸】林口文化三路 ➔ 返抵龜山頂湖路 HQ 歸還公務車</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              車程僅 10 分鐘順行回到公司，將 5 台公務車停妥、鑰匙與車輛點交，結束充實無比、極致熱血的 PTFW 山海大滿貫團建！
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan D Details -->
+      <div id="plan-content-4" class="plan-panel space-y-5 hidden">
+        <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-3 border-l-4 border-emerald-400">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black text-xs">客製自駕推薦</span>
+              <h3 class="font-bold text-base">方案 D：觀音山硬漢嶺 ➔ 碧瑤/天山鄉土雞 ➔ 樂福卡丁車 ➔ 青埔閃動格子 ➔ 乾杯燒肉</h3>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">「登頂硬漢嶺百萬風景 ＋ 賽道極速 ＋ 室內電競闖關 ＋ 和牛慶功宴」：行程緊湊豐富，體能、動力與凝聚力一次滿足！</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-300 block">人均花費 (預算 &le; 2000)</span>
+            <span class="text-lg font-black text-emerald-400">NT$ 1,980 / 人</span>
+          </div>
+        </div>
+
+        <!-- Timeline Steps -->
+        <div class="relative pl-6 border-l-2 border-emerald-300 space-y-6 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">08:30 - 09:00</span>
+              <h4 class="font-bold text-sm text-slate-900">龜山頂湖路 HQ 出發 ➔ 自駕 1 車直達觀音山凌雲寺登山口</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">走台64線約 25 分鐘車程直達登山口停車場。車內可放置更換衣物與毛巾。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">09:00 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">觀音山硬漢嶺步道健行攻頂（海拔 616m 考驗韌性）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              挑戰「走路要找難路走，挑擔要揀重擔挑」硬漢精神！山頂硬漢碑俯瞰台北港、淡水河出海口與大台北盆地 270 度全景！
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">11:45 - 13:15</span>
+              <h4 class="font-bold text-sm text-slate-900">午餐饗宴：碧瑤山莊庭園餐廳 / 天山鄉土雞城</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              品嚐外皮金黃的多汁白斬閹雞、觀音山產綠竹筍排骨湯與山產野菜（若週一出遊則無縫改訂週一無休的「天山鄉土雞城」）。
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">13:45 - 15:15</span>
+              <h4 class="font-bold text-sm text-slate-900">【速度對決】八里樂福卡丁車場 (Love Kart) 測時競速</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              從山上下來車程僅 15 分鐘！戶外 400m 專業賽道下場測時 1 回合（每人 $400），由工程師體驗過彎極限與抓地力回饋！
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">16:00 - 17:30</span>
+              <h4 class="font-bold text-sm text-slate-900">閃動格子 CyberCube (青埔環球店 5F) 團體體能挑戰</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              開車直抵青埔環球 A19，包場 60 分鐘挑戰踩格子連線、重力反應與雷區跳躍（人均約 $350），考驗 PTFW 邏輯與瞬間反應！
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">17:45 - 18:15</span>
+              <h4 class="font-bold text-sm text-slate-900">【特色移動】青埔特區 GoShare 巡航騎行（自選體驗）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              青埔為 GoShare 營運熱點。同仁租借 Gogoro 車款巡航於青埔寬敞林蔭大道（約 15 分鐘，每人約 $50），交流韌體馬達操控與動力曲線！
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">18:30 - 20:30</span>
+              <h4 class="font-bold text-sm text-slate-900">慶功晚宴：乾杯 燒肉居酒屋 (中壢大江店) ➔ 返回頂湖路總部</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              前往大江購物中心乾杯燒肉（預算人均抓 $740），享用炭火特選和牛與牛五花拼盤，歡聚慶祝整日硬漢挑戰大成功！
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan A Details -->
+      <div id="plan-content-1" class="plan-panel space-y-5 hidden">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-rose-500 text-white font-bold text-xs">工程師熱血首選</span>
+              <h3 class="font-bold text-base">方案 A：觀音山林梢悠遊 ➔ 八里海景午宴 ➔ 樂福卡丁車極速 ➔ 林口乾杯燒肉</h3>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">「動力韌體工程師的機械對決」：上午平緩漫步森林吸芬多精、下午親自握方向盤感受過彎 G 值！</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-300 block">人均花費 (預算 &le; 2000)</span>
+            <span class="text-lg font-black text-emerald-400">NT$ 1,910 / 人</span>
+          </div>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-emerald-300 space-y-6 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">09:00 - 09:30</span>
+              <h4 class="font-bold text-sm text-slate-900">頂湖路基地出發 ➔ 主揪 1 車直達觀音山遊客中心</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">5 位同仁一部車，車程約 25 分鐘，免日曬吹風，行李外套放置後車廂輕鬆出遊。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-sky-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">09:30 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">觀音山林梢步道漫步 ＆ 眺望台北港海景</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">走在森林樹冠層鋼構步道，免去陡峭階梯，男女同仁毫無體力負擔。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">12:00 - 13:30</span>
+              <h4 class="font-bold text-sm text-slate-900">八里渡船頭 / 左岸海景特色午餐</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">品嚐現烤海鮮、脆皮烤雞或左岸景觀餐廳，預算抓 $350/人，享受愜意海風。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">14:00 - 16:30</span>
+              <h4 class="font-bold text-sm text-slate-900">八里樂福卡丁車場 (Love Kart) 測時競速對決</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">下場 2 回合（專業測時系統），工程師比拼精準油門控制與 Apex 彎道切線！</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">17:30 - 20:00</span>
+              <h4 class="font-bold text-sm text-slate-900">林口聚餐慶功：乾杯燒肉居酒屋</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">返回林口（距公司僅 10 分鐘），大口享用優質燒肉拼盤，預算人均抓 $750。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan B Details -->
+      <div id="plan-content-2" class="plan-panel space-y-5 hidden">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-purple-500 text-white font-bold text-xs">科技活力</span>
+              <h3 class="font-bold text-base">方案 B：大棟山 405 高地登高 ➔ 鶯歌文創午餐 ➔ 閃動格子 CyberCube ➔ 豐盛鍋物</h3>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">「尖棟山系健行 ＋ 沉浸式互動電競」：親近公司周邊自然脈絡，結合科技感十足的閃動格子徹底放電！</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-300 block">人均花費 (預算 &le; 2000)</span>
+            <span class="text-lg font-black text-purple-400">NT$ 1,630 / 人</span>
+          </div>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-purple-300 space-y-6 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">09:00 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">大棟山 405 高地登頂健行（龜山後花園）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">開車可至觀景台周邊，小百岳一等三角點俯瞰高鐵呼嘯穿越與 180 度全景。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">12:00 - 13:30</span>
+              <h4 class="font-bold text-sm text-slate-900">鶯歌老街午餐：厚道飲食店古早味排骨飯套餐</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">品嚐外酥內嫩的招牌排骨與古早味波霸奶茶，人均僅約 $220，CP 值極高。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">14:30 - 16:30</span>
+              <h4 class="font-bold text-sm text-slate-900">閃動格子 CyberCube (青埔環球店 5F) 團體戰</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">包場挑戰踩地雷、重力跳躍與團隊連線！考驗韌體團隊的動態反應（每人約 $350）。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">17:30 - 19:30</span>
+              <h4 class="font-bold text-sm text-slate-900">晚餐：青埔個人和牛鍋物 或 返回龜山享用精緻日料</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">在舒爽熱湯中暢聊今年專案心得，人均預算高達 $980 可享受頂級肉品。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan C Details -->
+      <div id="plan-content-3" class="plan-panel space-y-5 hidden">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-sky-500 text-white font-bold text-xs">近郊漫活</span>
+              <h3 class="font-bold text-base">方案 C：新莊青年公園森呼吸 ➔ 景觀早午餐 ➔ 頂級江浙盛宴</h3>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">「通勤距離最短、預算結餘最多」：車程 15 分鐘內搞定，將預算完整保留在頂級料理與深度聊天！</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-300 block">人均花費 (預算 &le; 2000)</span>
+            <span class="text-lg font-black text-sky-400">NT$ 1,370 / 人</span>
+          </div>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-sky-300 space-y-6 my-4">
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">09:30 - 11:30</span>
+              <h4 class="font-bold text-sm text-slate-900">新莊青年公園（牡丹心生態公園步道）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">距總部僅 12 分鐘車程，平緩林蔭遮陽步道，免門票且乾淨好走。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">12:00 - 14:00</span>
+              <h4 class="font-bold text-sm text-slate-900">新莊特色景觀咖啡 / 悠閒義大利麵輕食</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">在文青感咖啡廳慢慢吃披薩與咖啡，5 個人放鬆暢談生活與下半季 Roadmap。</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-purple-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">17:00 - 19:30</span>
+              <h4 class="font-bold text-sm text-slate-900">林口點水樓 頂級名菜包廂圓桌晚宴</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">人均預算拉高至 $950，品嚐冠軍小籠包、無錫排骨與精緻砂鍋土雞湯。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Food Recommendation Table -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-utensils text-rose-500"></i>
+          團建午餐、下午茶與晚餐精選推薦表格（NT$ 2,000 預算友善度）
+        </h2>
+        <p class="text-xs text-slate-500">已完整驗證週一營業狀態、5 人座位彈性與動線，點擊可直接開啟 Google Maps 導航</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+              <th class="py-3 px-3 font-bold">餐廳名稱與亮點特色</th>
+              <th class="py-3 px-3 font-bold">餐期與類型</th>
+              <th class="py-3 px-3 font-bold">評分與來源</th>
+              <th class="py-3 px-3 font-bold">預估人均</th>
+              <th class="py-3 px-3 font-bold">週一營業 / 建議</th>
+              <th class="py-3 px-3 font-bold">導航與食記連結</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <!-- Jinshan Duck (Monday OPEN) -->
+            <tr class="hover:bg-slate-50 bg-amber-50/20 font-medium">
+              <td class="py-3 px-3 font-bold text-slate-900">
+                金包里廟口鴨肉 (金山老街)
+                <span class="block text-[11px] text-slate-500 font-normal">金山金包里街104號 / 自端熱炒經典合菜、多汁鹽水鴨、炒麵、平價大份量、吃飽好出海</span>
+              </td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">午餐 / 在地合菜</span></td>
+              <td class="py-3 px-3 font-semibold text-slate-700">3.7★ (Google 11,000+ 則)</td>
+              <td class="py-3 px-3 font-bold text-emerald-700">NT$ 280 - 350</td>
+              <td class="py-3 px-3 text-emerald-600 font-semibold">週一正常營業 (10:00-18:00)</td>
+              <td class="py-3 px-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=金包里鴨肉+金山老街" target="_blank" class="text-sky-600 hover:underline mr-2"><i class="fa-solid fa-map-pin"></i> 導航</a>
+                <a href="https://www.youtube.com/results?search_query=金山廟口鴨肉" target="_blank" class="text-rose-600 hover:underline"><i class="fa-brands fa-youtube"></i> 食記</a>
+              </td>
+            </tr>
+
+            <!-- Le coq Cafe Sanzhi (Monday OPEN) -->
+            <tr class="hover:bg-slate-50 bg-sky-50/20 font-medium">
+              <td class="py-3 px-3 font-bold text-slate-900">
+                Le coq 公雞咖啡 (三芝淺水灣)
+                <span class="block text-[11px] text-slate-500 font-normal">三芝北勢子 / 淺水灣海岸第一排露台、絕美東海景觀、復古氛圍、特調水果茶與點心小憩</span>
+              </td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-semibold">下午茶 / 海景咖啡</span></td>
+              <td class="py-3 px-3 font-semibold text-slate-700">4.3★ (Google 5,800+ 則)</td>
+              <td class="py-3 px-3 font-bold text-emerald-700">NT$ 180 - 250</td>
+              <td class="py-3 px-3 text-emerald-600 font-semibold">週一正常營業 (11:00-19:00)</td>
+              <td class="py-3 px-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=公雞咖啡+三芝淺水灣" target="_blank" class="text-sky-600 hover:underline mr-2"><i class="fa-solid fa-map-pin"></i> 導航</a>
+                <a href="https://www.youtube.com/results?search_query=三芝公雞咖啡" target="_blank" class="text-rose-600 hover:underline"><i class="fa-brands fa-youtube"></i> 食記</a>
+              </td>
+            </tr>
+
+            <!-- Zao Shabu Linkou (Monday OPEN) -->
+            <tr class="hover:bg-slate-50 bg-emerald-50/20 font-medium">
+              <td class="py-3 px-3 font-bold text-slate-900">
+                藏王 極上鍋物 (林口昕境店)
+                <span class="block text-[11px] text-slate-500 font-normal">林口文化三路 / 全台肉品最強火鍋、日本A5和牛拼盤、野生海大蝦、個人獨立鍋溫暖身心</span>
+              </td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-semibold">晚餐 / 和牛鍋物</span></td>
+              <td class="py-3 px-3 font-semibold text-slate-700">4.8★ (Google 2,800+ 則)</td>
+              <td class="py-3 px-3 font-bold text-emerald-700">NT$ 750 - 950</td>
+              <td class="py-3 px-3 text-emerald-600 font-semibold">週一正常營業 (11:30-15:00, 17:30-22:30)</td>
+              <td class="py-3 px-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=藏王極上鍋物林口店" target="_blank" class="text-sky-600 hover:underline mr-2"><i class="fa-solid fa-map-pin"></i> 導航</a>
+                <a href="https://www.youtube.com/results?search_query=藏王極上鍋物林口" target="_blank" class="text-rose-600 hover:underline"><i class="fa-brands fa-youtube"></i> 食記</a>
+              </td>
+            </tr>
+
+            <!-- Tianshan Rural Chicken (Monday OPEN) -->
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-3 font-bold text-slate-900">
+                天山鄉土雞城 (五股凌雲路三段)
+                <span class="block text-[11px] text-slate-500 font-normal">硬漢嶺登山口旁、招牌白斬閹雞、綠竹筍排骨湯、山產野菜</span>
+              </td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">午餐 / 土雞山產</span></td>
+              <td class="py-3 px-3 font-semibold text-slate-700">4.2★ (Google 1,000+ 則)</td>
+              <td class="py-3 px-3 font-bold text-emerald-700">NT$ 350 - 450 (合菜)</td>
+              <td class="py-3 px-3 text-emerald-600 font-semibold">週一正常營業 (11:00-21:00)</td>
+              <td class="py-3 px-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=天山鄉土雞城五股區凌雲路三段" target="_blank" class="text-sky-600 hover:underline mr-2"><i class="fa-solid fa-map-pin"></i> 導航</a>
+                <a href="https://www.youtube.com/results?search_query=天山鄉土雞城五股" target="_blank" class="text-rose-600 hover:underline"><i class="fa-brands fa-youtube"></i> 食記</a>
+              </td>
+            </tr>
+
+            <!-- Kanpai Yakiniku (Monday OPEN) -->
+            <tr class="hover:bg-slate-50">
+              <td class="py-3 px-3 font-bold text-slate-900">
+                乾杯 燒肉居酒屋 (桃園大江店 / 林口三井店)
+                <span class="block text-[11px] text-slate-500 font-normal">親切熱鬧、和牛燒肉拼盤、無冷場氣氛</span>
+              </td>
+              <td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-semibold">晚餐 / 燒肉</span></td>
+              <td class="py-3 px-3 font-semibold text-slate-700">4.2★ (Google 1,800+ 則)</td>
+              <td class="py-3 px-3 font-bold text-emerald-700">NT$ 700 - 850</td>
+              <td class="py-3 px-3 text-emerald-600 font-semibold">週一有營業 (11:00-22:00)</td>
+              <td class="py-3 px-3">
+                <a href="https://www.google.com/maps/search/?api=1&query=乾杯燒肉居酒屋桃園大江店" target="_blank" class="text-sky-600 hover:underline mr-2"><i class="fa-solid fa-map-pin"></i> 導航</a>
+                <a href="https://www.youtube.com/results?search_query=乾杯燒肉居酒屋桃園大江店" target="_blank" class="text-rose-600 hover:underline"><i class="fa-brands fa-youtube"></i> 食記</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Riding & Bridge Regulations Notice -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 2026 Danjiang Bridge Motorbike Lane Specs -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-purple-600"></i>
+              淡江大橋 機車專用道騎乘指引 (2026 新制)
+            </h3>
+            <span class="text-xs bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded">通車必讀</span>
+          </div>
+          <p class="text-xs text-slate-600 mb-3 leading-relaxed">
+            淡江大橋為快速道路規格，全線採「汽機車分流」設計，白牌機車具備專屬路權：
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-purple-50/70 border border-purple-200">
+              <strong class="text-purple-900 block"><i class="fa-solid fa-road mr-1"></i> 嚴格行駛「外側機車專用道」：</strong>
+              250c.c. 以下普通重型機車（Gogoro 白牌公務車）請務必循標線行駛獨立機車專用道，<strong>嚴禁駛入快車道主線</strong>。
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <strong class="text-slate-800 block"><i class="fa-solid fa-gauge mr-1"></i> 速限與防側風：</strong>
+              橋面出海口側風較大，專用道速限為 <strong>40~50 km/h</strong>，請車隊保持安全車距、雙手穩握龍頭，飽覽淡水河夕陽。
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500">
+          * 經淡江大橋跨海僅需 6 分鐘，節省繞道關渡大橋 25 分鐘車程！
+        </div>
+      </div>
+
+      <!-- PTFW Team Building Takeaways -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-bolt text-emerald-600"></i>
+              Gogoro 5 台車隊團建實務
+            </h3>
+            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">向心力滿分</span>
+          </div>
+          <p class="text-xs text-slate-600 mb-3 leading-relaxed">
+            PTFW 團隊身為馬達控制與電控韌體的核心，一起騎上陽明山與西濱巡航，最具公司認同感！
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+              <strong class="text-emerald-900 block"><i class="fa-solid fa-motorcycle text-emerald-600 mr-1"></i> 一同換電儀式感：</strong>
+              全隊齊刷刷在 GoStation 同時抽出電池、完成換電，畫面極具部門科技向心力。
+            </div>
+            <div class="p-2.5 rounded-xl bg-cyan-50/70 border border-cyan-200">
+              <strong class="text-cyan-900 block"><i class="fa-solid fa-gauge-simple-high text-cyan-600 mr-1"></i> 韌體工程師路測體驗：</strong>
+              親身體驗上坡扭力爬坡流暢度、下坡回充反饋、濱海長途巡航，團建兼技術交流！
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500">
+          * 借用公司公務車省下大筆租車費用，晚餐升級頂級和牛火鍋！
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-md bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-xs">
+          G
+        </div>
+        <span class="text-slate-300 font-semibold">Gogoro PTFW 專屬旅遊規劃大師</span>
+        <span class="text-slate-500">| 睿能科技創意 龜山出發</span>
+      </div>
+      <p class="text-slate-500">2026/11 初冬 5 人車隊團建案 · 檔案版本 v1.5 · 單一檔案架構交付</p>
+    </div>
+  </footer>
+
+  <script>
+    // 1. Plan Tab Switching Logic
+    function switchPlan(planId) {
+      for (let i = 1; i <= 5; i++) {
+        const panel = document.getElementById(`plan-content-${i}`);
+        const btn = document.getElementById(`plan-btn-${i}`);
+        if (panel) panel.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('active', 'bg-slate-900', 'text-white');
+          btn.classList.add('text-slate-600');
+        }
+      }
+
+      const targetPanel = document.getElementById(`plan-content-${planId}`);
+      const targetBtn = document.getElementById(`plan-btn-${planId}`);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.add('active', 'bg-slate-900', 'text-white');
+        targetBtn.classList.remove('text-slate-600');
+      }
+    }
+
+    // 2. Leaflet Interactive Map Engine with ESRI Clean Tiles
+    let map;
+    let markers = {};
+    let currentTileLayer;
+
+    const tileLayers = {
+      topo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom'
+      }),
+      satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA'
+      })
+    };
+
+    const locations = [
+      { id: 'gogoro_hq', name: 'Gogoro 睿能創意總部', lat: 25.0445, lng: 121.3688, cat: 'hq', desc: '集合出發點：龜山區頂湖路33號 (領取 5 台公務車發車)' },
+      { id: 'gostation_fulin', name: 'GoStation 中油福林加油站', lat: 25.0913, lng: 121.5280, cat: 'gostation', desc: '士林中山北路五段465號 / 仰德大道入口，上山前 5 車全員換滿電' },
+      { id: 'qingtiangang', name: '陽明山 擎天崗草原', lat: 25.1668, lng: 121.5745, cat: 'hike', desc: '海拔 770m 大草原與水牛群 / 健行 1.5 小時舒活身心' },
+      { id: 'jinshan_duck', name: '金包里廟口鴨肉 (金山老街)', lat: 25.2218, lng: 121.6372, cat: 'food', desc: '金山金包里街104號 / 經典自端熱炒鴨肉、合菜平價澎湃 (週一正常營業)' },
+      { id: 'gostation_jinshan', name: 'GoStation 中油金山農會站', lat: 25.2185, lng: 121.6330, cat: 'gostation', desc: '金山環金路462號 / 下陽金公路後換上滿電，準備巡航北海岸' },
+      { id: 'le_coq_cafe', name: 'Le coq 公雞咖啡 (三芝淺水灣)', lat: 25.2505, lng: 121.4725, cat: 'food', desc: '三芝淺水灣海景第一排 / 復古露台、水果茶與咖啡小憩 (週一正常營業)' },
+      { id: 'danjiang_bridge', name: '淡江大橋 (Danjiang Bridge)', lat: 25.1760, lng: 121.4165, cat: 'bridge', desc: '2026 全新通車世界級單塔斜張橋 / 白牌專用機車道跨海 6 分鐘直達八里' },
+      { id: 'love_kart', name: '八里樂福卡丁車場', lat: 25.1585, lng: 121.4050, cat: 'kart', desc: '戶外 400m 專業賽道 / 週一 11:00-19:00 正常營運' },
+      { id: 'zao_shabu', name: '藏王 極上鍋物 (林口店)', lat: 25.0718, lng: 121.3712, cat: 'food', desc: '林口文化三路一段402巷 / 全台最強火鍋肉品、和牛極品個人鍋' },
+      { id: 'yinghanling', name: '觀音山 硬漢嶺步道', lat: 25.1378, lng: 121.4190, cat: 'hike', desc: '海拔 616m 觀音山最高峰 / 270度出海口全景' },
+      { id: 'cybercube', name: '閃動格子 青埔環球店', lat: 25.0016, lng: 121.2064, cat: 'indoor', desc: '沉浸式踩格體能闖關 / 5人包場考驗敏捷度' }
+    ];
+
+    function initMap() {
+      const mapEl = document.getElementById('map');
+      if (!mapEl) return;
+
+      if (typeof L === 'undefined') {
+        mapEl.innerHTML = '<div class="p-6 text-center text-slate-500">地圖引擎載入中，若未顯示可直接點擊右側列表「Google 導航」按鈕。</div>';
+        return;
+      }
+
+      try {
+        map = L.map('map', {
+          scrollWheelZoom: false
+        }).setView([25.1700, 121.5000], 11);
+
+        currentTileLayer = tileLayers.topo;
+        currentTileLayer.addTo(map);
+
+        locations.forEach(loc => {
+          let pinColor = '#0ea5e9'; // sky (健行)
+          if (loc.cat === 'hq') pinColor = '#10b981'; // emerald (基地)
+          if (loc.cat === 'gostation') pinColor = '#06b6d4'; // cyan (GoStation)
+          if (loc.cat === 'bridge') pinColor = '#9333ea'; // purple (淡江大橋)
+          if (loc.cat === 'kart') pinColor = '#f43f5e'; // rose (極速)
+          if (loc.cat === 'food') pinColor = '#f59e0b'; // amber (美食)
+          if (loc.cat === 'indoor') pinColor = '#a855f7'; // purple (科技)
+
+          const icon = L.divIcon({
+            className: 'custom-map-pin',
+            html: `<div style="background-color: ${pinColor}; width: 15px; height: 15px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 7px rgba(0,0,0,0.4);"></div>`,
+            iconSize: [15, 15],
+            iconAnchor: [7.5, 7.5]
+          });
+
+          const marker = L.marker([loc.lat, loc.lng], { icon: icon }).addTo(map);
+          const popup = `
+            <div class="p-1 font-sans">
+              <h5 class="font-bold text-xs text-slate-900 mb-0.5">${loc.name}</h5>
+              <p class="text-[11px] text-slate-600 mb-1.5">${loc.desc}</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.name)}" target="_blank" 
+                 class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-900">
+                開啟 Google 導航 ➔
+              </a>
+            </div>
+          `;
+          marker.bindPopup(popup);
+          markers[loc.id] = marker;
+        });
+
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 300);
+
+      } catch (err) {
+        console.warn('Map initialization error:', err);
+      }
+    }
+
+    function changeTileLayer(type) {
+      if (!map) return;
+      if (currentTileLayer) {
+        map.removeLayer(currentTileLayer);
+      }
+
+      const btnTopo = document.getElementById('btn-layer-topo');
+      const btnSat = document.getElementById('btn-layer-sat');
+
+      if (type === 'satellite') {
+        currentTileLayer = tileLayers.satellite;
+        currentTileLayer.addTo(map);
+        btnSat.className = 'px-2 py-1 bg-white shadow-sm font-bold text-emerald-800 rounded text-[11px] transition';
+        btnTopo.className = 'px-2 py-1 text-slate-600 hover:text-slate-900 font-medium rounded text-[11px] transition';
+      } else {
+        currentTileLayer = tileLayers.topo;
+        currentTileLayer.addTo(map);
+        btnTopo.className = 'px-2 py-1 bg-white shadow-sm font-bold text-emerald-800 rounded text-[11px] transition';
+        btnSat.className = 'px-2 py-1 text-slate-600 hover:text-slate-900 font-medium rounded text-[11px] transition';
+      }
+    }
+
+    function focusMap(lat, lng, zoomLevel = 15) {
+      if (!map) return;
+      map.flyTo([lat, lng], zoomLevel, {
+        animate: true,
+        duration: 1.2
+      });
+
+      locations.forEach(l => {
+        if (Math.abs(l.lat - lat) < 0.001 && Math.abs(l.lng - lng) < 0.001) {
+          if (markers[l.id]) {
+            setTimeout(() => {
+              markers[l.id].openPopup();
+            }, 600);
+          }
+        }
+      });
+    }
+
+    function resetMapView() {
+      if (!map) return;
+      map.flyTo([25.1700, 121.5000], 11, {
+        animate: true,
+        duration: 1
+      });
+    }
+
+    window.onload = function() {
+      initMap();
+    };
+  </script>
+</body>
+</html>
