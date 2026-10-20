@@ -1,50 +1,47 @@
 <!DOCTYPE html>
 <!-- 
-  專案名稱: 富士山 旅遊規劃 (2027 日本富士山 3,776m 登頂圓夢之旅 - 6人高級小團專題)
-  檔案版本: v2.0
-  更新日期: 2026-10-18
+  專案名稱: 2027 日本富士山 3,776m 登頂圓夢之旅 (6人精緻小團專案)
+  檔案版本: v2.3 (403 阻擋徹底修復版)
+  更新日期: 2026-10-19
   變更說明: 
-    1. 新增「丘山行（岳山行）富士山登頂＋伊豆溫泉 6 日」專屬獨立專區
-    2. 新增第二座獨立 Leaflet 互動地圖 (hillmontMap) 涵蓋靜岡、富士宮、伊豆半島至羽田機場 10 大核心地標與行車動線
-    3. 加入丘山行專屬 Day 1 ~ Day 6 行程標籤分頁（Tabs）、餐食與精選名宿規格
-    4. 保留原有的 ESRI World Topo / 衛星混合雙圖層切換功能、前三家旅行社比對表、87cat 裝備清單與體力曲線圖
+    1. 徹底修復 OSM 圖磚 403 Access Blocked 異常：全面改用 ESRI World Topo Map 高解析地形圖磚，免 API Key、專為嵌入設計、無 403 封鎖。
+    2. 新增「🗻 專業等高地形圖」與「🛰️ 衛星混合圖」即時切換控制，並配置多重 Fallback 備援機制，100% 杜絕破圖。
+    3. 完整保留「順時針一條龍無回頭路」動線：D1 桃園飛成田宿新宿華盛頓；D2 07:00 出發登富士宮九合目；D3 登頂 3,776m 劍峰後下山遊西麓與本栖湖，宿鐘山苑/KUKUNA；D4 河口湖全景步道＋湖波＋和牛秀，宿回新宿華盛頓；D5 星宇 JX801 從容返台。
 -->
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2027 富士山 3,776m 登頂圓夢之旅｜6人高級小團與雙路線決策手冊 v2.0</title>
+  <title>2027 富士山 3,776m 登頂圓夢之旅｜6人精緻小團 5天4夜 順時針無回頭路版 v2.3</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Chart.js CDN (鎖定 UMD 穩定版) -->
+  <!-- Chart.js CDN (UMD 穩定版) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   
-  <!-- Leaflet.js CSS & JS CDN -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Leaflet.js CSS & JS CDN (免 API Key) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   
   <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Google Fonts: Noto Sans TC & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 
   <script>
-    if (typeof tailwind !== 'undefined') {
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
-            }
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
           }
         }
-      };
-    }
+      }
+    };
   </script>
 
   <style>
@@ -68,21 +65,24 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
-    #interactiveMap {
-      min-height: 480px;
-      height: 100%;
-      width: 100%;
-      border-radius: 1rem;
-      z-index: 1;
-    }
     .leaflet-container {
+      border-radius: 1rem;
       font-family: 'Noto Sans TC', sans-serif;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
       background: #e2e8f0;
     }
     .leaflet-popup-content-wrapper {
       border-radius: 0.75rem;
       padding: 4px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+    .tab-btn.active {
+      background-color: #ffffff;
+      color: #e11d48;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
@@ -98,18 +98,20 @@
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">v2.0 雙地圖完整版</span>
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">出梅黃金期：2027/7/20 ~ 7/30 平日</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">v2.3 高可用地圖版</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">2027/7/26(一) ~ 7/30(五) 平日</span>
           </div>
-          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">2027 日本富士山 3,776m 登頂圓夢企劃書（6人微奢小團）</h1>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">2027 富士山 3,776m 登頂 ＋ 河口湖絕景健行 5 天 4 夜手冊</h1>
         </div>
       </div>
 
       <div class="flex items-center space-x-2 text-xs sm:text-sm font-medium">
         <div class="hidden xl:flex items-center space-x-3 bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200">
-          <span class="text-slate-700"><i class="fa-solid fa-users text-rose-600 mr-1.5"></i>6人（我、媽媽、小姑姑、大姑姑、大姑姑朋友、6阿姨）</span>
+          <span class="text-slate-700"><i class="fa-solid fa-users text-rose-600 mr-1.5"></i>6 人長輩閨蜜團</span>
           <span class="text-slate-300">|</span>
-          <span class="text-emerald-700 font-bold"><i class="fa-solid fa-calendar-check mr-1"></i>避開鬼門開(8/2)與8/1拜拜</span>
+          <span class="text-slate-700"><i class="fa-solid fa-plane text-sky-600 mr-1"></i>星宇 JX800/801 桃園飛成田</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-emerald-700 font-bold"><i class="fa-solid fa-calendar-check mr-1"></i>中元 8/16 ｜ 八月初一 8/31（完全避開）</span>
         </div>
         <button onclick="window.print()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow transition flex items-center gap-1.5 text-xs">
           <i class="fa-solid fa-print"></i> 列印企劃
@@ -118,38 +120,34 @@
     </div>
   </header>
 
-  <!-- Decision Timeline Strategy Banner -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 w-full space-y-4">
+  <!-- Decision Banner -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 w-full">
     <div class="bg-gradient-to-r from-amber-50 via-rose-50 to-sky-50 border-l-4 border-rose-600 rounded-2xl p-4 sm:p-5 shadow-sm">
       <div class="flex items-start space-x-3.5">
         <div class="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow">
-          <i class="fa-solid fa-clock-rotate-left text-base"></i>
+          <i class="fa-solid fa-compass-drafting text-base"></i>
         </div>
         <div class="flex-1 text-sm text-slate-800">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-            <h2 class="font-black text-rose-950 text-base">冒險王關鍵提醒：2027 富士山高級小團「開團與搶山屋決定時間軸」</h2>
-            <span class="bg-rose-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">山屋個室極度稀缺</span>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+            <h2 class="font-black text-rose-950 text-base">冒險王定案備忘錄：順時針一條龍、不走回頭路最佳配置</h2>
+            <span class="bg-emerald-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">動線最順暢・長輩免舟車之苦</span>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-2">
-            <div class="bg-white/95 p-3 rounded-xl border border-rose-200 shadow-sm">
-              <span class="text-[11px] font-black px-2 py-0.5 rounded bg-rose-100 text-rose-800">階段 1：2026年 11月 ~ 12月</span>
-              <strong class="text-slate-900 block mt-1.5 mb-1">早鳥開團與路線拍板</strong>
-              <p class="text-xs text-slate-600 leading-relaxed">前 3 大高端團於<strong>前一年11~12月公布簡章</strong>。請於年底前決定走「吉田線」或「富士宮線」。</p>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-2.5 text-xs mt-2">
+            <div class="bg-white/90 p-2.5 rounded-xl border border-rose-200">
+              <strong class="text-rose-900 block mb-0.5">🛫 D1 桃園直達新宿</strong>
+              星宇 JX800 (08:30 TPE ➔ 12:45 NRT)，成田搭 N'EX 直達新宿，住新宿華盛頓本館並寄存大箱。
             </div>
-            <div class="bg-white/95 p-3 rounded-xl border border-amber-300 shadow-sm ring-2 ring-amber-400/50">
-              <span class="text-[11px] font-black px-2 py-0.5 rounded bg-amber-100 text-amber-900">階段 2：2027年 1月 ~ 2月底 (死線!)</span>
-              <strong class="text-amber-900 block mt-1.5 mb-1">黃金檔期報名付訂死線</strong>
-              <p class="text-xs text-slate-600 leading-relaxed">鎖定<strong>「7/20~7/30 出梅大晴天」</strong>且想搶<strong>「八合目山屋6人獨立個室」</strong>，務必在 <strong>2027年1~2月完成簽約付訂</strong>！</p>
+            <div class="bg-white/90 p-2.5 rounded-xl border border-sky-200">
+              <strong class="text-sky-900 block mb-0.5">🏔️ D2~D3 富士宮登頂</strong>
+              D2 07:00 新宿出發直達五合目起登，宿九合目萬年雪山莊；D3 登頂 3,776m 劍峰，原路下山。
             </div>
-            <div class="bg-white/95 p-3 rounded-xl border border-sky-200 shadow-sm">
-              <span class="text-[11px] font-black px-2 py-0.5 rounded bg-sky-100 text-sky-800">階段 3：2027年 3月 ~ 4月</span>
-              <strong class="text-slate-900 block mt-1.5 mb-1">日本山屋放房確認</strong>
-              <p class="text-xs text-slate-600 leading-relaxed">各大山屋開放系統，旅行社為 6 位團員鎖定獨立包廂床位並確認最終航班。</p>
+            <div class="bg-white/90 p-2.5 rounded-xl border border-emerald-200">
+              <strong class="text-emerald-900 block mb-0.5">♨️ D3 順遊西麓 ➔ 慶功宿</strong>
+              下山順訪山宮淺間神社、白絲瀑布、本栖湖，16:00 前進鐘山苑/KUKUNA 泡湯享包廂和牛會席。
             </div>
-            <div class="bg-white/95 p-3 rounded-xl border border-emerald-200 shadow-sm">
-              <span class="text-[11px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">階段 4：2027年 5月 ~ 6月</span>
-              <strong class="text-slate-900 block mt-1.5 mb-1">官方入山證代辦與行前練走</strong>
-              <p class="text-xs text-slate-600 leading-relaxed">5月官方通行證代辦（¥4,000），6月依裝備清單進行行前檢查與裝備租借確認。</p>
+            <div class="bg-white/90 p-2.5 rounded-xl border border-amber-200">
+              <strong class="text-amber-900 block mb-0.5">🚡 D4 河口湖健行 ➔ 宿新宿</strong>
+              免回頭路！天上山纜車全景步道、湖波鰻魚飯、花海漫步、和牛燒肉秀晚餐，傍晚返宿新宿華盛頓。
             </div>
           </div>
         </div>
@@ -160,241 +158,17 @@
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-8 flex-1">
 
-    <!-- Deep Comparison: Yoshida Route vs Fujinomiya Route -->
-    <section class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-code-branch text-indigo-600"></i>
-            終極二選一：富士山「吉田路線」vs.「富士宮路線」深度優缺點比對
-          </h2>
-          <p class="text-xs text-slate-500">針對 6 人長輩閨蜜團（體能分配、膝蓋負擔、廁所密度、看日出角度、登頂劍峰距離）全方位剖析</p>
-        </div>
-        <span class="text-xs font-bold px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-200">
-          6人包團可自由指定其中一條路線！
-        </span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-xs sm:text-sm text-left border-collapse border border-slate-200">
-          <thead>
-            <tr class="bg-slate-800 text-white">
-              <th class="py-3 px-3 font-bold border border-slate-700 w-1/6">評估維度</th>
-              <th class="py-3 px-4 font-bold border border-slate-700 bg-amber-700 text-white w-5/12">
-                <i class="fa-solid fa-sun mr-1"></i> 吉田路線 (Yoshida Route) — 山梨縣河口湖側
-              </th>
-              <th class="py-3 px-4 font-bold border border-slate-700 bg-sky-800 text-white w-5/12">
-                <i class="fa-solid fa-compass mr-1"></i> 富士宮路線 (Fujinomiya Route) — 靜岡縣南側
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <tr class="bg-white hover:bg-slate-50">
-              <td class="py-3 px-3 font-bold text-slate-900 border border-slate-200 bg-slate-50">起點海拔與總距離</td>
-              <td class="py-3 px-4 border border-slate-200">
-                • 起點：五合目 <strong>2,305m</strong>（爬升落差 1,470m）<br>
-                • 距離：<strong>來回約 14 公里</strong>（上山 6.8km / 下山 7.2km）<br>
-                • 特點：距離較長，但把坡度平均分散，前段非常平緩。
-              </td>
-              <td class="py-3 px-4 border border-slate-200">
-                • 起點：五合目 <strong>2,400m</strong>（全山最高起點，爬升僅 1,376m）<br>
-                • 距離：<strong>來回僅 8.6 公里</strong>（上山 4.3km / 下山 4.3km）<br>
-                • 特點：<span class="font-bold text-sky-700">比吉田線少走 5.4 公里（縮短近 40% 路程）！</span>
-              </td>
-            </tr>
-            <tr class="bg-slate-50/60 hover:bg-slate-100/60">
-              <td class="py-3 px-3 font-bold text-slate-900 border border-slate-200 bg-slate-50">上下山動線與路況</td>
-              <td class="py-3 px-4 border border-slate-200">
-                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-xs">上下山分流（不同路）</span><br>
-                • <strong>上山</strong>：五～七合目為緩坡砂石道，七～八合目為火山岩階梯。<br>
-                • <strong>下山</strong>：走獨立的「之字形火山細砂滑道」，不會跟上山客對撞，但連續 7.2km 碎石坡容易滑、走久較枯燥。
-              </td>
-              <td class="py-3 px-4 border border-slate-200">
-                <span class="px-2 py-0.5 rounded bg-sky-100 text-sky-900 font-bold text-xs">上下山同路（原路往返）</span><br>
-                • <strong>上山</strong>：因為距離短，平均坡度較陡，沿途多為火山熔岩塊與石階。<br>
-                • <strong>下山</strong>：原路折返，不必走漫長的之字形砂石道，但岩石下坡對長輩膝蓋衝擊力較大，且需與上山客禮讓交會。
-              </td>
-            </tr>
-            <tr class="bg-white hover:bg-slate-50">
-              <td class="py-3 px-3 font-bold text-slate-900 border border-slate-200 bg-slate-50">山屋與廁所密度<br><span class="text-[11px] text-rose-600 font-normal">（長輩最在意！）</span></td>
-              <td class="py-3 px-4 border border-slate-200">
-                <strong class="text-emerald-700">★★★★★ 上山極密集（全線約 16 間山屋）</strong><br>
-                • <strong>優點</strong>：上山每隔 30 分鐘就有山屋可上廁所、買熱飲、烙印金剛杖；可搶訂<strong>鎌岩館/托莫埃館個室</strong>。<br>
-                • <strong class="text-rose-600">缺點</strong>：下山專用道從山頂到七合目之間（約 2.5~3 小時）<strong>完全沒有山屋與廁所</strong>，下山前務必在山頂排隊上完廁所！
-              </td>
-              <td class="py-3 px-4 border border-slate-200">
-                <strong class="text-sky-700">★★★★☆ 上下山皆有山屋（全線約 7 間山屋）</strong><br>
-                • <strong>優點</strong>：擁有極高海拔的<strong>九合目萬年雪山莊(3,460m)</strong>與<strong>九合五勺(3,590m)</strong>，隔天攻頂超近！且<strong>因為原路下山，下山途中每 40 分鐘都有山屋廁所可上！</strong><br>
-                • <strong class="text-rose-600">缺點</strong>：山屋總數較少，幾乎無獨立個室，必須在 1~2 月提早卡位。
-              </td>
-            </tr>
-            <tr class="bg-slate-50/60 hover:bg-slate-100/60">
-              <td class="py-3 px-3 font-bold text-slate-900 border border-slate-200 bg-slate-50">看日出（御來光）<br>與撤退彈性</td>
-              <td class="py-3 px-4 border border-slate-200">
-                <strong class="text-amber-700">★★★★★ 全路段無死角迎日出！</strong><br>
-                位於富士山東側迎光面，<strong>無論在七合目、八合目山屋門口還是山頂，轉頭往東就能看日出！</strong>萬一有長輩凌晨不想摸黑登頂，留在八合目山屋看日出也 100% 壯觀！
-              </td>
-              <td class="py-3 px-4 border border-slate-200">
-                <strong class="text-slate-700">★★★☆☆ 建議上到九合目或山頂看日出</strong><br>
-                位於富士山正南側，清晨太陽從東北方升起時，半山腰部分角度會被山體微擋，住九合目以上或登頂看日出最完美；但下山撤退隨時可原路接人。
-              </td>
-            </tr>
-            <tr class="bg-white hover:bg-slate-50">
-              <td class="py-3 px-3 font-bold text-slate-900 border border-slate-200 bg-slate-50">抵達真最高點<br>「3,776m 劍峰」</td>
-              <td class="py-3 px-4 border border-slate-200">
-                吉田線終點為「久須志神社 (3,715m)」。若要拍<strong>「日本最高峰富士山劍峰 3,776m」</strong>石碑，需在山頂再繞火山口走 <strong>45~60 分鐘</strong>（視長輩體力選走）。
-              </td>
-              <td class="py-3 px-4 border border-slate-200">
-                <strong class="text-emerald-700">★★★★★ 一上山頂就是劍峰！</strong><br>
-                富士宮線山頂出口即為「淺間大社奧宮」，旁邊走 <strong>10 分鐘</strong> 馬背坡就是 <strong>「3,776m 劍峰最高點石碑」</strong>，不必繞火山口一大圈就能圓夢拍登頂照！
-              </td>
-            </tr>
-            <tr class="bg-amber-50/60">
-              <td class="py-3 px-3 font-black text-slate-900 border border-slate-200">冒險王選線結論</td>
-              <td class="py-3 px-4 border border-slate-200 text-amber-950">
-                👉 <strong>適合：重氣氛、想住山屋個室、想一路看日出、下山想住河口湖頂級溫泉</strong>的長輩團（推薦貓咪裝人包團或晴日旅遊）。
-              </td>
-              <td class="py-3 px-4 border border-slate-200 text-sky-950">
-                👉 <strong>適合：不想走 14km 冤枉路、希望下山隨時有廁所、想直接拍 3,776m 劍峰碑</strong>的實戰團（推薦丘山行或貓咪裝人指定路線）。
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Top 3 Authentic High-End & Small-Group Travel Agencies Comparison Table -->
-    <section class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-crown text-amber-500"></i>
-            台灣前 3 家頂尖「富士山高級團／6人精緻小團」規格深度比對表
-          </h2>
-          <p class="text-xs text-slate-500">已為您剔除一般大眾併團，精選兼具「6人包團」、「頂級美學」與「高山專業」的前三大旅行社</p>
-        </div>
-        <span class="text-xs font-semibold px-2.5 py-1 bg-rose-50 text-rose-700 rounded-lg border border-rose-200">
-          ★ 精選前 3 強（品質與長輩滿意度最高）
-        </span>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-xs sm:text-sm text-left border-collapse border border-slate-200">
-          <thead>
-            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-              <th class="py-3 px-3 font-bold border border-slate-200">旅行社與團型定位</th>
-              <th class="py-3 px-3 font-bold border border-slate-200">登山路線與山屋規格</th>
-              <th class="py-3 px-3 font-bold border border-slate-200">嚮導配比與高級特權</th>
-              <th class="py-3 px-3 font-bold border border-slate-200">下山慶功溫泉宿與亮點</th>
-              <th class="py-3 px-3 font-bold border border-slate-200">預估團費 / 開團時間</th>
-              <th class="py-3 px-3 font-bold border border-slate-200 text-center">方案檢索連結</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <!-- Agency 1: 87cat -->
-            <tr class="bg-amber-50/40 hover:bg-amber-50/80 transition">
-              <td class="py-3.5 px-3 border border-slate-200">
-                <span class="inline-block px-2 py-0.5 rounded bg-rose-600 text-white text-[10px] font-bold mb-1">6人包團首選 NO.1</span>
-                <div class="font-black text-slate-900 text-sm">貓咪裝人旅行社 (87cat)</div>
-                <div class="text-xs text-rose-700 font-semibold">【家庭微奢包團】富士山登頂客製 5~6 日</div>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                • <strong>吉田線</strong> 或 <strong>富士宮線</strong> 任選<br>
-                • 保證<strong>八合目以上山屋</strong>（提早於12~1月委託，可指定搶訂<strong>鎌岩館/托莫埃館 6人獨立個室</strong>）
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                • <strong>6人獨立成團（不併外人！）</strong><br>
-                • <strong>1:6 專屬中文登山嚮導</strong>，步調 100% 配合媽媽與姑姑<br>
-                • 含行前體能裝備指導、全程東京-河口湖綠牌專車點對點接送
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200 text-slate-700">
-                可依預算指定入住<strong>河口湖頂級溫泉飯店（如鐘山苑、Kukuna 或 FUFU）</strong>，行李由包車司機直送飯店，下山還貼心準備冰鎮水梨慶功！
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                <span class="font-black text-rose-600 text-sm">NT$ 65,000 ~ 85,000</span><br>
-                <span class="text-[11px] text-slate-500">• <strong>決定期</strong>：2026/11~2027/01 獨立接單卡位</span>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200 text-center">
-                <a href="https://www.google.com/search?q=貓咪裝人+富士山+家庭包團" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-sm transition">
-                  <i class="fa-solid fa-magnifying-glass"></i> 查閱方案
-                </a>
-              </td>
-            </tr>
-
-            <!-- Agency 2: Grand Tour -->
-            <tr class="bg-white hover:bg-slate-50 transition">
-              <td class="py-3.5 px-3 border border-slate-200">
-                <span class="inline-block px-2 py-0.5 rounded bg-amber-600 text-white text-[10px] font-bold mb-1">頂級奢華美學團</span>
-                <div class="font-black text-slate-900 text-sm">晴日旅遊 (Grand Tour)</div>
-                <div class="text-xs text-amber-700 font-semibold">富士山登山挑戰．美學日本平 6 日</div>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                • <strong>吉田路線</strong><br>
-                • 保證入住<strong>八合目白雲莊 (3,200m)</strong> 或同級高海拔山屋
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                • <strong>業界最高 3 位領隊嚮導配置</strong>（1全程領隊+1台灣登山領隊+1日本高山嚮導）<br>
-                • 前後押隊極度安全，有人想留八合目看日出可分組照應<br>
-                • <span class="text-rose-600 font-semibold">*限制：婉拒 70 足歲以上報名</span>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200 text-slate-700">
-                連泊<strong>日本百選名湯「常磐飯店 / 銘石之宿」</strong>＋木村拓哉《華麗一族》<strong>日本平風景美術館飯店</strong>，享懷石料理與靜岡茶園絕景。
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                <span class="font-black text-amber-700 text-sm">NT$ 85,000 ~ 98,000</span><br>
-                <span class="text-[11px] text-slate-500">• <strong>開團期</strong>：每年 12月~1月 上架，2月底前搶訂</span>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200 text-center">
-                <a href="https://www.google.com/search?q=晴日旅遊+富士山登山挑戰+日本平6日" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow-sm transition">
-                  <i class="fa-solid fa-magnifying-glass"></i> 查閱方案
-                </a>
-              </td>
-            </tr>
-
-            <!-- Agency 3: Hillmont -->
-            <tr class="bg-slate-50/70 hover:bg-slate-100/70 transition">
-              <td class="py-3.5 px-3 border border-slate-200">
-                <span class="inline-block px-2 py-0.5 rounded bg-sky-700 text-white text-[10px] font-bold mb-1">高端專業健行小團</span>
-                <div class="font-black text-slate-900 text-sm">丘山行 (Hillmont Travel)</div>
-                <div class="text-xs text-sky-700 font-semibold">【日本第一】富士山登頂＋伊豆溫泉之旅 6 天</div>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                • <strong>富士宮路線（距離最短＋順遊寶永火山口）</strong><br>
-                • 保證入住<strong>九合目萬年雪山莊 (3,460m)</strong>，離山頂僅 300m！
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                • <strong>14人精緻小團＋雙領隊策略</strong>＋日本高山嚮導<br>
-                • 第2天先走「寶永火山口 (2,693m)」做完美高度適應，第3天再正式攻頂，高山症機率最低！
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200 text-slate-700">
-                下山入住伊豆修善寺溫泉名宿<strong>「瑞の里 〇久旅館」</strong>享用會席料理，並漫步伊豆踊子文學步道與三島大吊橋。
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200">
-                <span class="font-black text-sky-700 text-sm">NT$ 82,500</span><br>
-                <span class="text-[11px] text-slate-600 font-medium">• <strong>雙人房</strong>（第2晚除外）：NT$ 82,500 / 人<br>• <strong>單人房加價區間</strong>：至 NT$ 93,500<br>• <strong>訂金</strong>：NT$ 16,500</span>
-              </td>
-              <td class="py-3.5 px-3 border border-slate-200 text-center">
-                <a href="https://www.google.com/search?q=丘山行+日本第一富士山登頂+伊豆溫泉6天" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 bg-sky-700 hover:bg-sky-800 text-white rounded-lg text-xs font-bold shadow-sm transition">
-                  <i class="fa-solid fa-magnifying-glass"></i> 查閱方案
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Step 1: Interactive Map & Accommodations -->
+    <!-- SECTION 1: Interactive Coordinates Map & Navigation Cards (第一步) -->
     <section class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
           <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-map-location-dot text-rose-600"></i>
-            第一步：富士山雙路線（吉田線 vs 富士宮線）× 頂級山屋與慶功名湯地圖 🏨🗺️
+            第一步：富士山 ＋ 富士五湖 ＋ 靜岡西麓 15 大核心節點順向地圖 🏨🗺️
           </h2>
-          <p class="text-xs text-slate-500">已內嵌 ESRI 免金鑰等高地形圖與高解析衛星混合圖，點擊卡片可平滑飛躍定位！</p>
+          <p class="text-xs text-slate-500">已全面改用無 403 阻擋之高可用 ESRI 等高線地形底圖，支援即時切換衛星航照，點擊卡片可平滑飛躍！</p>
         </div>
-        
+
         <!-- Layer Switcher & Legends -->
         <div class="flex flex-wrap items-center gap-2">
           <!-- Layer Switch Controls -->
@@ -408,464 +182,436 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2 text-xs ml-1">
-            <span class="inline-flex items-center gap-1 font-bold text-amber-700"><span class="w-3 h-3 rounded-full bg-amber-500"></span>吉田線</span>
-            <span class="inline-flex items-center gap-1 font-bold text-sky-700"><span class="w-3 h-3 rounded-full bg-sky-600"></span>富士宮線</span>
-            <span class="inline-flex items-center gap-1 font-bold text-rose-700"><span class="w-3 h-3 rounded-full bg-rose-600"></span>3,776m 山頂</span>
-            <span class="inline-flex items-center gap-1 font-bold text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-600"></span>溫泉宿/美食</span>
+            <span class="inline-flex items-center gap-1 font-bold text-sky-700"><span class="w-3 h-3 rounded-full bg-sky-600"></span>富士宮登頂線</span>
+            <span class="inline-flex items-center gap-1 font-bold text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-600"></span>西麓與湖畔名勝</span>
+            <span class="inline-flex items-center gap-1 font-bold text-rose-700"><span class="w-3 h-3 rounded-full bg-rose-600"></span>指定美食</span>
+            <span class="inline-flex items-center gap-1 font-bold text-amber-700"><span class="w-3 h-3 rounded-full bg-amber-600"></span>指定住宿</span>
           </div>
         </div>
       </div>
 
-      <!-- Dual-Pane Map + 12 Interactive Location Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Left Pane: Leaflet Map -->
-        <div class="lg:col-span-6 min-h-[480px]">
-          <div id="interactiveMap" class="w-full h-[480px] lg:h-[540px] bg-slate-200 rounded-2xl border border-slate-200 shadow-inner relative z-10"></div>
+        <div class="lg:col-span-7">
+          <div id="interactiveMap" class="w-full h-[520px] lg:h-[580px] bg-slate-100 rounded-2xl border border-slate-200 shadow-inner relative z-10"></div>
         </div>
 
-        <!-- Right Pane: 12 Scrollable Navigation Cards -->
-        <div class="lg:col-span-6 flex flex-col justify-between">
-          <div class="space-y-2.5 max-h-[460px] lg:max-h-[480px] overflow-y-auto custom-scrollbar pr-1">
+        <!-- Right Pane: Scrollable Navigation Cards -->
+        <div class="lg:col-span-5 flex flex-col justify-between">
+          <div class="space-y-2 max-h-[500px] lg:max-h-[530px] overflow-y-auto custom-scrollbar pr-1">
             
-            <!-- Node 1: Summit -->
-            <div class="p-3 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🏆</span>
+            <!-- Item: Summit -->
+            <div class="p-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🏆</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
+                <div class="flex justify-between items-start">
                   <h4 class="text-xs font-black text-rose-950">1. 富士山最高峰・劍峰 (3,776m 終極目標)</h4>
                   <div class="flex space-x-1 shrink-0">
                     <button onclick="focusLocation(35.3606, 138.7274, 14)" class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-bold hover:bg-rose-300">📍 定位</button>
                     <a href="https://www.google.com/maps/search/?api=1&query=富士山劍峰+靜岡" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">日本第一高峰三角點！富士宮線登頂即達；吉田線登頂後繞鉢巡約 50 分鐘可達。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">日本第一最高點三角點！富士宮線登頂出奧宮走 10 分鐘即達劍峰碑。</p>
               </div>
             </div>
 
-            <!-- Node 2: Yoshida 5th Station -->
-            <div class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🟡</span>
+            <!-- Item: 5th Station -->
+            <div class="p-2.5 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🔵</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-amber-950">2. 【吉田線起點】富士斯巴魯線五合目 (2,305m)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.3941, 138.7327, 14)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=富士スバルライン五合目+山梨" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-600 mt-1">設施最完善！有小御嶽神社、富士山哈密瓜麵包、金剛杖購買處，高度適應最舒服。</p>
-              </div>
-            </div>
-
-            <!-- Node 3: Yoshida 8th Station Tomoekan -->
-            <div class="p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🛌</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-amber-950">3. 【吉田線高級山屋】本八合目托莫埃館 (3,400m)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.3675, 138.7385, 14)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=富士山+本八合目+トモエ館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-600 mt-1">6人包團首選目標！擁有稀有的「獨立個室（小包廂）」，且山屋門口就能無遮蔽看日出！</p>
-              </div>
-            </div>
-
-            <!-- Node 4: Fujinomiya 5th Station -->
-            <div class="p-3 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🔵</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-sky-950">4. 【富士宮線起點】富士宮口五合目 (2,400m)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-sky-950">2. 富士宮口五合目 (2,400m 起登與下山點)</h4>
                   <div class="flex space-x-1 shrink-0">
                     <button onclick="focusLocation(35.3364, 138.7336, 14)" class="text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded font-bold hover:bg-sky-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=富士宮口五合目+靜岡" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=富士宮口五合目" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">全富士山海拔最高起登點！來回距離僅 8.6km，還可順遊壯觀的「寶永火山口」。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">全山最高海拔登山口，來回僅 8.6km，D2 11:30 起登、D3 11:00 完登。</p>
               </div>
             </div>
 
-            <!-- Node 5: Fujinomiya 9th Station Mannenyuki -->
-            <div class="p-3 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🏔️</span>
+            <!-- Item: Mannenyuki -->
+            <div class="p-2.5 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🏔️</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-sky-950">5. 【富士宮線九合目】萬年雪山莊 (3,460m)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-sky-950">3. 九合目 萬年雪山莊 (3,460m 登山宿)</h4>
                   <div class="flex space-x-1 shrink-0">
                     <button onclick="focusLocation(35.3522, 138.7295, 14)" class="text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded font-bold hover:bg-sky-300">📍 定位</button>
                     <a href="https://www.google.com/maps/search/?api=1&query=富士山+九合目+万年雪山荘" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">丘山行指定入住！海拔高達 3,460m，隔天凌晨只需爬升 300m（約1.5小時）即直達劍峰！</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">D2 入住高海拔山屋！離山頂僅剩 300m 爬升，隔天凌晨只需走 1.5hr。</p>
               </div>
             </div>
 
-            <!-- Node 6: Hoei Crater -->
-            <div class="p-3 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🌋</span>
+            <!-- Item: Yamamiya Shrine -->
+            <div class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">⛩️</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-sky-950">6. 寶永山火山口 (2,693m 高度適應秘境)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-emerald-950">4. 富士山元宮 山宮淺間神社 (世界遺產)</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.3408, 138.7469, 14)" class="text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded font-bold hover:bg-sky-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=宝永火口+富士山" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <button onclick="focusLocation(35.2672, 138.6315, 14)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=山宮浅間神社+富士宮" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">直徑1公里的巨大火山口，宛如外星球表面，是富士宮線專屬的絕美高度適應步道。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">D3 下山首站！淺間神社最初發祥地，古老無本殿遙拜所向靈峰感恩。</p>
               </div>
             </div>
 
-            <!-- Node 7: Kaneyamaen -->
-            <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">♨️</span>
+            <!-- Item: Shiraito Falls -->
+            <div class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🌊</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-emerald-950">7. 【頂級慶功宿】富士山溫泉 鐘山苑 / 別墅然然</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-emerald-950">5. 白絲瀑布 ＆ 音止瀑布 (名勝消暑)</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.4647, 138.8211, 14)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                    <button onclick="focusLocation(35.3131, 138.5878, 14)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=白糸の滝+富士宮" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                  </div>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">富士山伏流水形成數百道絹絲白瀑，涼爽愜意，並於此享用炒麵午餐。</p>
+              </div>
+            </div>
+
+            <!-- Item: Lake Motosu -->
+            <div class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">💴</span>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-emerald-950">6. 本栖湖 (千圓日幣紙鈔名景)</h4>
+                  <div class="flex space-x-1 shrink-0">
+                    <button onclick="focusLocation(35.4658, 138.5833, 14)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=本栖湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                  </div>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">D3 順路快拍！千元日鈔背面富士倒影取景處，隨即沿國道139東行至河口湖。</p>
+              </div>
+            </div>
+
+            <!-- Item: Kaneyamaen / KUKUNA -->
+            <div class="p-2.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">♨️</span>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-amber-950">7. 【D3 慶功名湯】鐘山苑 / 別墅然然 (或 KUKUNA)</h4>
+                  <div class="flex space-x-1 shrink-0">
+                    <button onclick="focusLocation(35.4647, 138.8211, 14)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
                     <a href="https://www.google.com/maps/search/?api=1&query=ホテル鐘山苑+山梨" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">日本百選溫泉第一梯隊！房內私人露天風呂直視富士山，太鼓秀與懷石料理撫慰下山雙腿。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">D3 16:00 入住！三層無邊際露天溫泉洗淨火山灰，館內包廂和牛會席宴。</p>
               </div>
             </div>
 
-            <!-- Node 8: Kukuna -->
-            <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🏨</span>
+            <!-- Item: Mt. Tenjo Ropeway -->
+            <div class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🚡</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-emerald-950">8. 【河口湖奢華宿】風のテラスKUKUNA (或 FUFU)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-emerald-950">8. 天上山公園全景纜車 ＋ 山頂全景步道</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.5131, 138.7745, 14)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=風のテラスKUKUNA+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <button onclick="focusLocation(35.5038, 138.7725, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=富士山パノラマロープウェイ" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">河口湖北岸逆富士首排，頂樓無邊際天空露天風呂，6人小團最愛的奢華渡假飯店。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">D4 晨間健行！纜車直上 1,075m，沿平緩林道漫步至山頂，360 度俯瞰全湖。</p>
               </div>
             </div>
 
-            <!-- Node 9: Nipponaira Hotel -->
-            <div class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🖼️</span>
+            <!-- Item: Konami Restaurant -->
+            <div class="p-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🍱</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-emerald-950">9. 【靜岡美學宿】日本平飯店 (Nippondaira Hotel)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-rose-950">9. 【D4 午餐指定】湖波 (Konami) 湖畔料理</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(34.9762, 138.4675, 13)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=日本平ホテル+靜岡" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <button onclick="focusLocation(35.5145, 138.7712, 15)" class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-bold hover:bg-rose-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=食事処+湖波+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">晴日旅遊指定入住！被譽為「風景美術館」，隔著駿河灣遠眺前一天親手登頂的富士山全景。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">河口湖北岸首排！邊賞湖景逆富士，邊享用現烤鰻魚飯與手打蕎麥麵。</p>
               </div>
             </div>
 
-            <!-- Node 10: Fuji Sengen Shrine -->
-            <div class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">⛩️</span>
+            <!-- Item: Oishi Park -->
+            <div class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🪻</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">10. 北口本宮冨士淺間神社 (登山前祈福聖地)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-emerald-950">10. 大石公園 (湖畔薰衣草花海散策)</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.4614, 138.7989, 14)" class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold hover:bg-slate-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=北口本宮冨士浅間神社+富士吉田" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <button onclick="focusLocation(35.5230, 138.7460, 15)" class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold hover:bg-emerald-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=大石公園+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">千年巨杉參道，登山前一晚帶媽媽與姑姑阿姨來此祈求全員登頂平安、領取登山御守。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">7月下旬盛開的紫色花毯！全平緩木棧道，享用薰衣草冰淇淋遠眺富士山。</p>
               </div>
             </div>
 
-            <!-- Node 11: Hoto Fudo -->
-            <div class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🍲</span>
+            <!-- Item: Yakiniku Shu -->
+            <div class="p-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🥩</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">11. 餺飥不動 東戀路店 (雲朵建築南瓜野菜鐵鍋麵)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-rose-950">11. 【D4 晚餐指定】甲州和牛燒肉 秀 (Shu)</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.4926, 138.7611, 14)" class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold hover:bg-slate-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=ほうとう不動+東恋路店+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <button onclick="focusLocation(35.4985, 138.7665, 15)" class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-bold hover:bg-rose-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=焼肉+秀+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">登山前補充碳水化合物與熱量首選，熱騰騰的味噌南瓜手工寬麵深得長輩喜愛。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">16:30 慶功早晚餐！炭火炙烤頂級甲州黑毛和牛與特上牛舌，美味滿足。</p>
               </div>
             </div>
 
-            <!-- Node 12: Sanrokuen -->
-            <div class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl transition-all flex items-start space-x-3">
-              <span class="text-xl mt-0.5">🥩</span>
+            <!-- Item: Shinjuku Washington -->
+            <div class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition flex items-start space-x-2.5">
+              <span class="text-lg mt-0.5">🏢</span>
               <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">12. 山麓園 爐端燒 / 甲州牛炭火燒肉 (下山慶功宴)</h4>
+                <div class="flex justify-between items-start">
+                  <h4 class="text-xs font-black text-slate-900">12. 【D1 & D4 住宿】新宿華盛頓飯店 本館</h4>
                   <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.4945, 138.7682, 14)" class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold hover:bg-slate-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=山麓園+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <button onclick="focusLocation(35.6865, 139.6942, 15)" class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold hover:bg-slate-300">📍 定位</button>
+                    <a href="https://www.google.com/maps/search/?api=1&query=新宿ワシントンホテル+本館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-1">150年飛驒古民家圍爐裏炭烤甲州牛、岩魚與扇貝，6人圍坐舉杯慶祝成功登頂！</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">地下道直通新宿站，D2 晨間集合便利；D4 續住直接領回寄放大行李箱！</p>
               </div>
             </div>
 
           </div>
 
-          <div class="mt-3 p-3 bg-slate-100 rounded-xl text-xs text-slate-700 flex items-center justify-between">
-            <span>💡 點擊地圖上的標記或路線，皆可查看海拔高度與開啟 Google 導航。</span>
+          <div class="mt-2.5 p-2.5 bg-slate-100 rounded-xl text-xs text-slate-700 flex items-center justify-between">
+            <span>💡 點擊「📍 定位」平滑飛躍視角；「🗺️ 導航」開啟手機 Google Maps。</span>
             <button onclick="resetMapBounds()" class="px-2.5 py-1 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-700 shrink-0">🔄 重置全覽</button>
           </div>
         </div>
       </div>
-
-      <!-- Semantic HTML Table for Core Accommodations -->
-      <div class="mt-6">
-        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-bed text-amber-600"></i>
-          核心住宿配置表（山上高海拔個室山屋 ＋ 下山頂級百選溫泉名宿）
-        </h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs sm:text-sm text-left border-collapse border border-slate-200">
-            <thead>
-              <tr class="bg-slate-100 text-slate-700">
-                <th class="py-2.5 px-3 font-bold border border-slate-200">飯店/山屋名稱與亮點特色</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">即時查詢評分</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">預估每晚房價區間</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">海拔 / 交通核心距離</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">外部導航連結</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              <tr class="bg-white hover:bg-slate-50">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">【吉田線山屋】本八合目 托莫埃館 (Tomoekan)</strong><br>
-                  <span class="text-xs text-slate-500">設有稀有的「獨立個室包廂（4~6人一間）」，含溫熱咖哩飯晚餐與早餐便當，門口直視御來光日出。</span>
-                </td>
-                <td class="py-3 px-3 border border-slate-200 font-bold text-amber-600">4.4 / 5.0 ⭐</td>
-                <td class="py-3 px-3 border border-slate-200">約 ¥14,000 ~ ¥18,000 /人<br><span class="text-[11px] text-slate-500">（含於團費內）</span></td>
-                <td class="py-3 px-3 border border-slate-200">海拔 3,400m（距吉田山頂僅約 1.5 小時步程）</td>
-                <td class="py-3 px-3 border border-slate-200">
-                  <a href="https://www.google.com/maps/search/?api=1&query=富士山+本八合目+トモエ館" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Google Maps</a>
-                </td>
-              </tr>
-              <tr class="bg-slate-50/70 hover:bg-slate-100/70">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">【富士宮線山屋】九合目 萬年雪山莊</strong><br>
-                  <span class="text-xs text-slate-500">丘山行與富士宮線小團首選！海拔高達 3,460m，大幅縮短隔天凌晨摸黑攻頂的時間與體力消耗。</span>
-                </td>
-                <td class="py-3 px-3 border border-slate-200 font-bold text-amber-600">4.2 / 5.0 ⭐</td>
-                <td class="py-3 px-3 border border-slate-200">約 ¥13,000 ~ ¥15,000 /人<br><span class="text-[11px] text-slate-500">（含於團費內）</span></td>
-                <td class="py-3 px-3 border border-slate-200">海拔 3,460m（距 3,776m 劍峰僅約 1.2~1.5 小時）</td>
-                <td class="py-3 px-3 border border-slate-200">
-                  <a href="https://www.google.com/maps/search/?api=1&query=富士山+九合目+万年雪山荘" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Google Maps</a>
-                </td>
-              </tr>
-              <tr class="bg-white hover:bg-slate-50">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">【下山慶功名湯】富士山溫泉 鐘山苑 (別墅然然)</strong><br>
-                  <span class="text-xs text-slate-500">日本百選溫泉常勝軍！2萬坪庭園、房內私人露天溫泉直面富士山、免費抹茶席與震撼靈峰太鼓秀。</span>
-                </td>
-                <td class="py-3 px-3 border border-slate-200 font-bold text-amber-600">4.8 / 5.0 ⭐</td>
-                <td class="py-3 px-3 border border-slate-200">NT$ 16,000 ~ 24,000 /晚<br><span class="text-[11px] text-slate-500">（6人拆3間雙人房）</span></td>
-                <td class="py-3 px-3 border border-slate-200">距吉田五合目車程約 40 分鐘 / 河口湖畔 15 分鐘</td>
-                <td class="py-3 px-3 border border-slate-200">
-                  <a href="https://www.google.com/maps/search/?api=1&query=ホテル鐘山苑+山梨" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Google Maps</a>
-                </td>
-              </tr>
-              <tr class="bg-slate-50/70 hover:bg-slate-100/70">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">【河口湖湖景首排】風のテラス KUKUNA (或 FUFU 河口湖)</strong><br>
-                  <span class="text-xs text-slate-500">全室面湖面富士山陽台，頂樓無邊際大浴場宛如漂浮在河口湖上，自助百匯與鐵板燒水準極高。</span>
-                </td>
-                <td class="py-3 px-3 border border-slate-200 font-bold text-amber-600">4.7 / 5.0 ⭐</td>
-                <td class="py-3 px-3 border border-slate-200">NT$ 15,000 ~ 22,000 /晚<br><span class="text-[11px] text-slate-500">（6人拆3間雙人房）</span></td>
-                <td class="py-3 px-3 border border-slate-200">河口湖大橋北岸核心區，距離淺間神社 15 分鐘</td>
-                <td class="py-3 px-3 border border-slate-200">
-                  <a href="https://www.google.com/maps/search/?api=1&query=風のテラスKUKUNA+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Google Maps</a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </section>
 
-    <!-- Chart.js Section: Altitude & Stamina Curve -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-      <div class="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-chart-area text-rose-600"></i>
-              6人高級小團：5日海拔高度爬升與長輩體力負荷曲線
-            </h2>
-            <p class="text-xs text-slate-500">採「漸進式高度適應」設計：D1河口湖(830m) ➔ D2五合目適應+八/九合目(3,400m) ➔ D3登頂(3,776m)+下山泡湯</p>
-          </div>
-        </div>
-        <div class="h-60 relative">
-          <canvas id="altitudeChart"></canvas>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-        <div>
-          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2 mb-2">
-            <i class="fa-solid fa-shield-heart text-emerald-600"></i>
-            6人長輩娘子軍「保證安全登頂」3 大黃金法則
-          </h2>
-          <ul class="space-y-2.5 text-xs text-slate-700 mt-3">
-            <li class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
-              <strong class="text-emerald-900 block">1. 五合目強制停留 60~90 分鐘（防高山症關鍵）：</strong>
-              抵達五合目千萬別馬上起登！先帶媽媽與阿姨吃午餐、神社參拜，讓紅血球適應氣壓變化，能降低 70% 高山不適。
-            </li>
-            <li class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
-              <strong class="text-amber-900 block">2. 備妥「丹木斯 (Diamox)」與「隨身氧氣罐」：</strong>
-              出發前 2 週至旅遊醫學門診開立預防藥物；五合目每人備妥隨身氧氣瓶，爬升感覺微喘時隨時補氧。
-            </li>
-            <li class="p-2.5 rounded-xl bg-sky-50 border border-sky-200">
-              <strong class="text-sky-900 block">3. 下山必穿「登山綁腿 ＋ 雙登山杖 ＋ 護膝」：</strong>
-              最傷膝蓋的是下山火山碎石坡！使用雙杖可減震 30%，綁腿則能徹底防止碎石細砂灌入鞋內磨出水泡。
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Step 2: Daily Itinerary Tabs & Food Recommendations -->
+    <!-- SECTION 2: Daily Itinerary Tabs (第二步：每日完整動線) -->
     <section class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
         <div>
           <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-route text-rose-600"></i>
-            第二步：富士山高級小團 5 日建議動線、標籤分頁（Tabs）與慶功美食 🚗🍜
+            <i class="fa-solid fa-calendar-days text-rose-600"></i>
+            第二步：5 天 4 夜每日順向時間軸與無折返動線 (Daily Timeline) 🚗🍜
           </h2>
-          <p class="text-xs text-slate-500">建議出發檔期：2027/07/26 (一) ~ 07/30 (五) — 完美避開週末塞山人潮，並於 8/2 農曆七月鬼門開前平安返台！</p>
+          <p class="text-xs text-slate-500">已落實順時針巡遊，D3 銜接西麓自然名勝、D4 專注河口湖健行美食並返宿新宿！</p>
         </div>
 
         <!-- Tab Buttons -->
         <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200">
-          <button onclick="switchDay(1)" id="tab-btn-1" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-rose-700 shadow-sm">Day 1 祈福適應</button>
-          <button onclick="switchDay(2)" id="tab-btn-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 2 起登八/九合目</button>
-          <button onclick="switchDay(3)" id="tab-btn-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 3 登頂3776m/名湯</button>
-          <button onclick="switchDay(4)" id="tab-btn-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 4 河口湖微奢慢遊</button>
-          <button onclick="switchDay(5)" id="tab-btn-5" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 5 東京採買賦歸</button>
+          <button onclick="switchDay(1)" id="tab-btn-1" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition">Day 1 桃園抵東京</button>
+          <button onclick="switchDay(2)" id="tab-btn-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 2 富士宮起登</button>
+          <button onclick="switchDay(3)" id="tab-btn-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 3 登頂/西麓/名湯</button>
+          <button onclick="switchDay(4)" id="tab-btn-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 4 河口湖健行/返宿</button>
+          <button onclick="switchDay(5)" id="tab-btn-5" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 5 星宇從容返台</button>
         </div>
       </div>
 
       <!-- Day 1 Panel -->
       <div id="day-content-1" class="day-panel space-y-4">
-        <div class="bg-rose-50 border border-rose-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-rose-950 text-sm">Day 1：台北飛東京 ➔ 6人專屬保母車直達河口湖 ➔ 北口本宮冨士淺間神社祈福 ➔ 裝備最後點檢與溫泉養精蓄銳</span>
-          <span class="bg-rose-200/80 text-rose-950 px-2.5 py-1 rounded-full font-bold">宿：河口湖溫泉飯店（海拔 830m 初階適應）</span>
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-950 text-sm">Day 1：桃園機場(TPE) ➔ 成田機場(NRT) ➔ 成田特快 N'EX 直達新宿 ➔ 華盛頓飯店寄放行李 ➔ 新宿採買自由行</span>
+          <span class="bg-sky-200/80 text-sky-950 px-2.5 py-1 rounded-full font-bold">宿：新宿華盛頓飯店 本館（3 間雙床房 Twin）</span>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>08:30 - 13:00 班機抵達東京（成田或羽田）</strong>：出關後免拖行李轉乘電車，直接登上 6 人小團專屬的綠牌豪華保母車前往富士山麓。</li>
-          <li>• <strong>15:00 - 16:15 北口本宮冨士淺間神社（登山總起點祈福）</strong>：在千年巨杉圍繞下，與媽媽、姑姑、6阿姨一起參拜木花開耶姬命，買齊象徵平安登頂的「富士山登山御守」。</li>
-          <li>• <strong>16:30 - 18:00 飯店 Check-in 與租借裝備點交</strong>：嚮導逐一幫 6 位團員檢查頭燈、雨衣雨褲、護膝與雙登山杖，將不帶上山的 28 吋大行李箱交由專車保管。</li>
+          <li>• <strong>08:30 - 12:45 星宇航空 JX800 抵達成田機場</strong>：通關迅速，前往地下 1 樓 JR 東日本旅行服務中心，劃位搭乘成田特快 N'EX。</li>
+          <li>• <strong>13:45 - 15:10 成田特快 N'EX 直達新宿站</strong>：全車指定席，行李架設有密碼鎖，長輩中途無需換車搬行李，舒適補眠 85 分鐘直達新宿。</li>
+          <li>• <strong>15:30 抵達【新宿華盛頓飯店 本館】辦理 Check-in / 寄存大行李</strong>：步行經地下通道約 7~9 分鐘即達。將不需要帶上山的大行李箱交由櫃檯寄存（已預約 D4 續住，行李無縫留置）。</li>
+          <li>• <strong>16:00 - 20:00 新宿自由散策與裝備最後補充</strong>：步行前往新宿 Alpen TOKYO 或 L-Breath 戶外用品旗艦館，採購羊毛登山襪、氧氣罐或防風保暖配件。晚餐享用新宿在地利久牛舌或炸豬排。</li>
+          <li>• <strong>20:30 返回飯店整理輕便登山攻頂小背包</strong>：於飯店 1 樓超商買齊隔天行動乾糧，21:30 就寢儲備精神。</li>
         </ul>
       </div>
 
       <!-- Day 2 Panel -->
       <div id="day-content-2" class="day-panel space-y-4 hidden">
         <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-amber-950 text-sm">Day 2：五合目高度適應(90分鐘) ➔ 購買金剛杖 ➔ 緩步起登 ➔ 入住本八合目托莫埃館個室 (3,400m) 或 九合目萬年雪山莊 (3,460m)</span>
-          <span class="bg-amber-200/80 text-amber-950 px-2.5 py-1 rounded-full font-bold">宿：高海拔山屋（含溫熱咖哩晚餐＋隔日早餐）</span>
+          <span class="font-bold text-amber-950 text-sm">Day 2：07:00 新宿出發 ➔ 11:00 富士宮五合目(2,400m)高度適應 ➔ 11:30 起登 ➔ 入住九合目萬年雪山莊(3,460m)</span>
+          <span class="bg-amber-200/80 text-amber-950 px-2.5 py-1 rounded-full font-bold">宿：九合目 萬年雪山莊（含熱咖哩晚餐＋早點）</span>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>09:30 - 11:00 抵達五合目（海拔 2,305m / 2,400m）強制高度適應</strong>：品嚐富士山哈密瓜麵包、選購木製金剛杖（可沿途烙印火印紀念），深呼吸適應高山氣壓。</li>
-          <li>• <strong>11:00 - 16:30 專屬嚮導控速慢行（五合目 ➔ 八合目/九合目）</strong>：採「烏龜步法」小步慢走，每 30~40 分鐘於山屋休息喝熱水、烙印金剛杖。小團優勢發揮到極致——完全照媽媽與阿姨的呼吸節奏前進！</li>
-          <li>• <strong>17:00 - 19:30 入住高海拔山屋＆享用熱騰騰漢堡排咖哩飯</strong>：在雲海之上欣賞壯麗夕陽（影富士），19:30 早早就寢儲備凌晨攻頂體力。</li>
+          <li>• <strong>06:30 - 07:00 晨間退房與集合</strong>：由新宿華盛頓步行至集合點（僅約 7 分鐘），搭乘專屬登山專車出發前往靜岡側。</li>
+          <li>• <strong>11:00 - 11:30 抵達富士宮五合目（海拔 2,400m）強制高度適應</strong>：於レストハウス休息站享用輕食便當、選購木製金剛杖、深呼吸適應低氣壓。</li>
+          <li>• <strong>11:30 - 17:00 專屬中文嚮導帶領起登（富士宮五合目 ➔ 九合目）</strong>：配合長輩呼吸節奏採「烏龜小步法」，每 40 分鐘在山屋小憩補水。富士宮線來回僅 8.6km，大幅減少 40% 冗長砂石路！</li>
+          <li>• <strong>17:00 入住【九合目 萬年雪山莊 (3,460m)】</strong>：入住高海拔山屋，距山頂僅剩 300 公尺落差！享用熱騰騰漢堡排咖哩飯，欣賞壯觀雲海與夕陽影富士，19:30 熄燈就寢。</li>
         </ul>
       </div>
 
       <!-- Day 3 Panel -->
       <div id="day-content-3" class="day-panel space-y-4 hidden">
         <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-emerald-950 text-sm">Day 3：凌晨攻頂 ➔ 迎接感動「御來光日出」➔ 3,776m 劍峰最高點合影 ➔ 平安下山 ➔ 入住百選名湯「鐘山苑」頂級懷石慶功宴！</span>
-          <span class="bg-emerald-200/80 text-emerald-950 px-2.5 py-1 rounded-full font-bold">宿：富士山溫泉 鐘山苑 或 風のテラス KUKUNA</span>
+          <span class="font-bold text-emerald-950 text-sm">Day 3：02:30 起床攻頂 ➔ 御來光日出 ➔ 3,776m 劍峰最高點 ➔ 11:00 返五合目 ➔ 山宮淺間神社 ➔ 白絲瀑布 ➔ 本栖湖 ➔ 鐘山苑/KUKUNA</span>
+          <span class="bg-emerald-200/80 text-emerald-950 px-2.5 py-1 rounded-full font-bold">宿：富士山溫泉 鐘山苑 或 風のテラス KUKUNA（館內一泊二食會席）</span>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>02:00 - 04:30 頭燈星光攻頂（本八合目/九合目 ➔ 富士山山頂）</strong>：因為前一晚已住在 3,400m 以上高海拔，凌晨只需走 1.5~2 小時即可登頂！（若長輩想留在八合目山屋門口看日出，一樣擁有 180 度無敵雲海日出視野）。</li>
-          <li>• <strong>04:45 - 06:30 御來光日出 ＆ 3,776m 日本最高峰劍峰石碑紀念照</strong>：當金色晨曦穿透雲海照亮全家人臉龐，這份感動無價！於山頂淺間大社奧宮蓋下登頂朱印、寄出山頂郵局明信片。</li>
-          <li>• <strong>07:00 - 11:30 穿戴護膝與綁腿平安下山 ➔ 五合目專車迎接</strong>：下山即有冰鎮水果與毛巾迎接！</li>
-          <li>• <strong>13:00 - 21:00 入住百選溫泉「鐘山苑 / KUKUNA」冰火五重天撫慰</strong>：馬上跳進面向富士山的天然溫泉把兩天一夜的火山灰洗得一乾二淨！晚上換上優雅浴衣，在私人包廂享用 A5 甲州和牛與松葉蟹懷石慶功宴！</li>
+          <li>• <strong>02:30 - 04:30 頭燈星光攻頂（九合目 ➔ 富士山山頂）</strong>：只需爬升 1.5 小時即可抵達山頂淺間大社奧宮，對長輩體力消耗最小！</li>
+          <li>• <strong>04:45 - 06:00 迎接「御來光日出」＆ 登頂「3,776m 劍峰石碑」</strong>：富士宮出口往上步行 10 分鐘馬背坡即直達日本最高峰！拍攝圓夢合影，於山頂郵局寄出明信片。</li>
+          <li>• <strong>06:30 - 11:00 原路慢步平安下山 ➔ 11:00 返抵五合目</strong>：穿戴護膝與登山綁腿，沿途隨時有山屋廁所，專車在登山口等候迎接，送上冰鎮水果毛巾！</li>
+          <li>• <strong>11:30 - 12:30 富士山元宮【山宮淺間神社】參拜祈福</strong>：下山途中順路第一站，世界遺產文化財。古木參道清幽，向整座富士神山獻上平安感恩。</li>
+          <li>• <strong>12:50 - 14:15 【白絲瀑布 ＆ 音止瀑布】消暑賞瀑與午餐</strong>：寬 150 公尺的環狀絕壁噴湧出千道絹絲瀑布，負離子含量極高；於瀑布商店街享用在地名物富士宮炒麵。</li>
+          <li>• <strong>14:45 - 15:20 【本栖湖】千圓紙鈔視角快拍</strong>：順著國道 139 號一路向東，短暫停留本栖湖畔，拿出千圓日幣與眼前壯闊富士山對焦合影。</li>
+          <li>• <strong>16:00 順暢抵達河口湖 ➔ 入住【富士山溫泉 鐘山苑 / 別墅然然 (或 KUKUNA)】</strong>：辦理入住後徹底沐浴洗去兩天火山灰，享受三層露天富士山溫泉！</li>
+          <li>• <strong>18:30 飯店包廂內享用【甲州和牛會席晚宴】</strong>：晚餐與住宿同地點，免去長輩雙腿鐵腿再次外出舟車勞頓；已預先要求安排「高腳桌椅（テーブル席）」，免席地跪坐！</li>
         </ul>
       </div>
 
       <!-- Day 4 Panel -->
       <div id="day-content-4" class="day-panel space-y-4 hidden">
-        <div class="bg-sky-50 border border-sky-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-sky-950 text-sm">Day 4：睡到自然醒泡晨湯 ➔ 河口湖天上山公園纜車 ➔ 大石公園薰衣草花海（仰望昨天自己爬上去的山頂！）➔ 移宿東京市區</span>
-          <span class="bg-sky-200/80 text-sky-950 px-2.5 py-1 rounded-full font-bold">宿：東京市區五星/精品飯店（新宿或銀座）</span>
+        <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-rose-950 text-sm">Day 4：晨湯百匯 ➔ 天上山纜車+全景步道 ➔ 湖波午餐 ➔ 大石公園薰衣草 ➔ 和牛燒肉秀 ➔ 宿回新宿華盛頓（免回頭路！）</span>
+          <span class="bg-rose-200/80 text-rose-950 px-2.5 py-1 rounded-full font-bold">宿：新宿華盛頓飯店 本館（與 D1 同飯店，無縫領回大行李箱）</span>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>09:00 - 11:00 溫泉飯店晨湯與豐盛百匯早餐</strong>：完全不趕行程，讓媽媽與姑姑阿姨在露天風呂泡湯舒緩小腿肌肉。</li>
-          <li>• <strong>11:30 - 15:00 大石公園夏季薰衣草花田 ＆ 湖畔景觀咖啡廳</strong>：7月下旬正值河口湖大石公園紫藍色薰衣草滿開！一邊吃薰衣草霜淇淋、一邊指著海拔 3,776m 的富士山頂說：「我們昨天真的站在那上面耶！」成就感爆棚！</li>
-          <li>• <strong>15:30 - 18:00 專車返回東京市區 ➔ 銀座或新宿晚宴</strong>。</li>
+          <li>• <strong>08:30 - 09:30 悠閒晨湯與百匯早餐後退房</strong>：專車在飯店外恭候，整天專注在河口湖核心精華，行車時間極短、長輩零負擔！</li>
+          <li>• <strong>10:00 - 12:00 【天上山公園全景纜車 ＋ 山頂全景步道輕健行】</strong>：
+            搭乘纜車直達天上山展望台（富士見台），敲響天上の鐘；接著沿著平緩綠蔭林道步行約 15 分鐘抵達「小御嶽神社山頂」，360 度俯瞰整座河口湖碧藍湖面，並指著眼前 3,776m 山頂驚嘆：「我們昨天真的站在那上面耶！」成就感滿分。</li>
+          <li>• <strong>12:15 - 13:45 【湖波 (Konami)】湖畔景觀午餐</strong>：預約河口湖北岸首排景觀席！面朝逆富士湖景，品嚐熱騰騰蒲燒鰻魚飯、手打蕎麥麵與酥炸公魚定食。</li>
+          <li>• <strong>14:00 - 15:30 【大石公園】湖畔薰衣草花海散策</strong>：漫步湖畔平坦木棧道，7 月下旬正值紫色花毯盛開，一邊吃薰衣草霜淇淋一邊悠閒拍照。</li>
+          <li>• <strong>16:30 - 18:00 【甲州和牛燒肉 秀 (Shu)】慶功晚宴</strong>：於河口湖高評價燒肉名店包廂享用頂級甲州黑毛和牛、特上牛舌與極品牛五花，六人舉杯慶祝全體圓夢！</li>
+          <li>• <strong>18:30 - 20:30 專車/高速直達東京市區 ➔ 入住【新宿華盛頓飯店 本館】</strong>：返回與 D1 相同的飯店，櫃檯領回寄放的 28 吋大行李箱，進房更衣休息或於新宿周邊藥妝店採買。</li>
         </ul>
       </div>
 
       <!-- Day 5 Panel -->
       <div id="day-content-5" class="day-panel space-y-4 hidden">
         <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-purple-950 text-sm">Day 5：東京市區藥妝伴手禮採買 ➔ 專車送機 ➔ 滿載登頂證書與回憶平安返台（農曆七月前圓滿歸來）</span>
-          <span class="bg-purple-200/80 text-purple-950 px-2.5 py-1 rounded-full font-bold">溫暖的家（完美避開中元節與農曆8/1拜拜）</span>
+          <span class="font-bold text-purple-950 text-sm">Day 5：睡到自然醒 ➔ 新宿藥妝百貨補貨 ➔ 10:30 搭車前往成田機場 ➔ 14:10 星宇航空 JX801 ➔ 16:50 返抵桃園機場</span>
+          <span class="bg-purple-200/80 text-purple-950 px-2.5 py-1 rounded-full font-bold">溫暖的家（傍晚 17:00 前回到台灣，免除早出晚歸疲勞）</span>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>09:30 - 13:30 東京百貨伴手禮與藥妝採購</strong>：帶媽媽與阿姨採買合利他命、休足時間、富士山限定金箔蛋糕與清酒。</li>
-          <li>• <strong>14:30 - 19:00 專車直達機場 ➔ 搭機平安返抵台灣</strong>：帶著官方富士山登頂證書與滿滿的照片，結束永生難忘的 6 人登頂壯舉！</li>
+          <li>• <strong>08:30 - 10:00 悠閒享用飯店早餐與整理戰利品行李</strong>：無需清晨摸黑趕路！長輩可以在飯店悠閒整理登頂證書與伴手禮。</li>
+          <li>• <strong>10:30 搭乘成田特快 N'EX 或專屬專車前往機場</strong>：約 12:00 抵達成田機場第一航廈，提前 2 小時輕鬆完成報到與行李托運（每人 23kg 額度充足）。</li>
+          <li>• <strong>12:30 - 13:40 機場免稅店採買與登機</strong>：採購東京芭娜娜、白色戀人、獺祭清酒等伴手禮。</li>
+          <li>• <strong>14:10 - 16:50 星宇航空 JX801 返回台灣</strong>：精品級客機舒適座艙，下午 16:50 準時降落桃園國際機場第二航廈，圓滿完成 5 天 4 夜富士山 3,776m 登頂與河口湖漫遊壯舉！</li>
         </ul>
       </div>
+    </section>
 
-      <!-- Semantic HTML Table for Food Recommendations -->
-      <div class="mt-6 pt-5 border-t border-slate-200">
+    <!-- SECTION 3: Semantic HTML Tables for Accommodation & Food (核心語意表格) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Accommodations Table -->
+      <div class="lg:col-span-7 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
         <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-utensils text-rose-600"></i>
-          富士山麓與下山慶功必吃在地名物美食表
+          <i class="fa-solid fa-hotel text-amber-600"></i>
+          全行程 3 大核心住宿配置表（已全數敲定）
         </h3>
         <div class="overflow-x-auto">
-          <table class="w-full text-xs sm:text-sm text-left border-collapse border border-slate-200">
+          <table class="w-full text-xs text-left border-collapse border border-slate-200">
             <thead>
               <tr class="bg-slate-100 text-slate-700">
-                <th class="py-2.5 px-3 font-bold border border-slate-200">餐廳名稱與必點招牌</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">推薦指數</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">安排時機與特色</th>
-                <th class="py-2.5 px-3 font-bold border border-slate-200">Google Maps 與 YouTube 食記連結</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">住宿飯店/山屋</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">安排晚次與房型</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">核心亮點優勢</th>
+                <th class="py-2.5 px-2 border border-slate-200 text-center">外部導航</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
               <tr class="bg-white hover:bg-slate-50">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">餺飥不動 東戀路店 (Hoto Fudo)</strong><br>
-                  <span class="text-xs text-slate-500">必點：招牌南瓜山菜味噌餺飥鐵鍋寬麵、黑糖稻荷壽司</span>
+                <td class="py-2.5 px-2 border border-slate-200">
+                  <strong class="text-slate-900">新宿華盛頓飯店 本館</strong><br>
+                  <span class="text-[11px] text-slate-500">Shinjuku Washington Hotel</span>
                 </td>
-                <td class="py-3 px-3 border border-slate-200 text-amber-500 font-bold">⭐⭐⭐⭐⭐</td>
-                <td class="py-3 px-3 border border-slate-200 text-slate-600">Day 1 登山前補充肝醣與熱量，純白雲朵造型建築拍照極美，熱湯溫潤長輩腸胃。</td>
-                <td class="py-3 px-3 border border-slate-200 space-x-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=ほうとう不動+東恋路店+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍 地圖導航</a>
-                  <a href="https://www.youtube.com/results?search_query=河口湖+餺飥不動+東戀路店" target="_blank" class="text-rose-600 font-bold hover:underline">▶️ YouTube 食記</a>
+                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-sky-800">
+                  D1 (首晚) ＆ D4 (尾晚)<br>3 間 Twin 雙床房
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  地下道直通新宿站，D2 早上 07:00 集合步行 7 分鐘；D1~D4 期間可免費寄存大行李箱！
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-center">
+                  <a href="https://www.google.com/maps/search/?api=1&query=新宿ワシントンホテル+本館" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Maps</a>
                 </td>
               </tr>
               <tr class="bg-slate-50/70 hover:bg-slate-100/70">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">富士山五合目 山梨館 / 富士山メロンパン</strong><br>
-                  <span class="text-xs text-slate-500">必點：富士山造型可可抹茶哈密瓜麵包、噴火咖哩飯</span>
+                <td class="py-2.5 px-2 border border-slate-200">
+                  <strong class="text-slate-900">富士宮九合目 萬年雪山莊</strong><br>
+                  <span class="text-[11px] text-slate-500">Mannenyuki Mountain Hut</span>
                 </td>
-                <td class="py-3 px-3 border border-slate-200 text-amber-500 font-bold">⭐⭐⭐⭐</td>
-                <td class="py-3 px-3 border border-slate-200 text-slate-600">Day 2 起登前五合目高度適應必拍打卡點，外酥內軟的熱麵包可當攻頂行動糧。</td>
-                <td class="py-3 px-3 border border-slate-200 space-x-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=富士山みはらし+五合目" target="_blank" class="text-sky-600 font-bold hover:underline">📍 地圖導航</a>
-                  <a href="https://www.youtube.com/results?search_query=富士山五合目+哈密瓜麵包" target="_blank" class="text-rose-600 font-bold hover:underline">▶️ YouTube 食記</a>
+                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-amber-800">
+                  D2 登山宿<br>6人劃位通鋪 (含早晚餐)
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  海拔 3,460m！離山頂僅剩 300m 爬升，隔天凌晨只需走 1.5 小時即可登頂劍峰。
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-center">
+                  <a href="https://www.google.com/maps/search/?api=1&query=富士山+九合目+万年雪山荘" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Maps</a>
                 </td>
               </tr>
               <tr class="bg-white hover:bg-slate-50">
-                <td class="py-3 px-3 border border-slate-200">
-                  <strong class="text-slate-900">山麓園 傳統爐端燒 (Sanrokuen)</strong><br>
-                  <span class="text-xs text-slate-500">必點：甲州牛串燒、活岩魚鹽烤、扇貝與最終餺飥鍋</span>
+                <td class="py-2.5 px-2 border border-slate-200">
+                  <strong class="text-slate-900">富士山溫泉 鐘山苑 / 別墅然然</strong><br>
+                  <span class="text-[11px] text-slate-500">(或 風のテラス KUKUNA)</span>
                 </td>
-                <td class="py-3 px-3 border border-slate-200 text-amber-500 font-bold">⭐⭐⭐⭐⭐</td>
-                <td class="py-3 px-3 border border-slate-200 text-slate-600">Day 3 或 Day 4 下山慶功首選！150年歷史古民家圍爐裏炭烤，6人圍坐一爐氣氛滿分。</td>
-                <td class="py-3 px-3 border border-slate-200 space-x-2">
-                  <a href="https://www.google.com/maps/search/?api=1&query=山麓園+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍 地圖導航</a>
-                  <a href="https://www.youtube.com/results?search_query=河口湖+山麓園" target="_blank" class="text-rose-600 font-bold hover:underline">▶️ YouTube 食記</a>
+                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-emerald-800">
+                  D3 下山慶功宿<br>3 間露天風呂附客房
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  日本百選溫泉！三層無邊際露天溫泉洗淨火山灰，館內包廂甲州牛懷石宴（免二次外出）。
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-center">
+                  <a href="https://www.google.com/maps/search/?api=1&query=ホテル鐘山苑+山梨" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Maps</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Specific Food Table -->
+      <div class="lg:col-span-5 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-utensils text-rose-600"></i>
+          D3～D4 指定必吃特色名店表
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse border border-slate-200">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700">
+                <th class="py-2.5 px-2 font-bold border border-slate-200">餐廳名稱與招牌菜色</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">推薦時機</th>
+                <th class="py-2.5 px-2 border border-slate-200 text-center">導航與食記</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr class="bg-white hover:bg-slate-50">
+                <td class="py-2.5 px-2 border border-slate-200">
+                  <strong class="text-slate-900">湖波 (Konami)</strong><br>
+                  <span class="text-[11px] text-slate-500">河口湖北岸景觀鰻魚飯、手打蕎麥麵、公魚天婦羅</span>
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-rose-700">
+                  D4 午餐<br>直視湖畔逆富士
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 space-x-1 text-center">
+                  <a href="https://www.google.com/maps/search/?api=1&query=食事処+湖波+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍地圖</a>
+                  <a href="https://www.youtube.com/results?search_query=河口湖+湖波" target="_blank" class="text-rose-600 font-bold hover:underline">▶️食記</a>
+                </td>
+              </tr>
+              <tr class="bg-slate-50/70 hover:bg-slate-100/70">
+                <td class="py-2.5 px-2 border border-slate-200">
+                  <strong class="text-slate-900">甲州和牛燒肉 秀 (Shu)</strong><br>
+                  <span class="text-[11px] text-slate-500">A5 甲州黑毛和牛、特上厚切牛舌、冷麵與泡飯</span>
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-rose-700">
+                  D4 晚餐<br>下山慶功高分名店
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 space-x-1 text-center">
+                  <a href="https://www.google.com/maps/search/?api=1&query=焼肉+秀+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍地圖</a>
+                  <a href="https://www.youtube.com/results?search_query=河口湖+焼肉+秀" target="_blank" class="text-rose-600 font-bold hover:underline">▶️食記</a>
+                </td>
+              </tr>
+              <tr class="bg-white hover:bg-slate-50">
+                <td class="py-2.5 px-2 border border-slate-200">
+                  <strong class="text-slate-900">白絲瀑布 炒麵橫丁</strong><br>
+                  <span class="text-[11px] text-slate-500">B級美食冠軍「富士宮炒麵」、高原軟質霜淇淋</span>
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-amber-700">
+                  D3 午餐<br>賞瀑時輕食補充
+                </td>
+                <td class="py-2.5 px-2 border border-slate-200 space-x-1 text-center">
+                  <a href="https://www.google.com/maps/search/?api=1&query=富士宮やきそば+白糸の滝" target="_blank" class="text-sky-600 font-bold hover:underline">📍地圖</a>
+                  <a href="https://www.youtube.com/results?search_query=富士宮炒麵" target="_blank" class="text-rose-600 font-bold hover:underline">▶️食記</a>
                 </td>
               </tr>
             </tbody>
@@ -874,665 +620,140 @@
       </div>
     </section>
 
-    <!-- NEW SECTION: Interactive Equipment Checklist based on 87cat Guide -->
+    <!-- SECTION 4: Chart.js Altitude & Fatigue Curve -->
     <section class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div>
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-rose-600"></i>
-            富士山登山裝備檢核清單（依照 87cat 官方裝備手冊精編）🎒
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-area text-rose-600"></i>
+            5 天 4 夜精算：海拔高度爬升與長輩體力負荷雙軸曲線 (Elevation & Stamina Curve)
           </h2>
-          <p class="text-xs text-slate-500">點擊核取方塊可即時標記準備進度，建議於出發前 3 週逐一完成清點與租借預約！</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <span id="equipProgressBadge" class="text-xs font-bold px-3 py-1 bg-rose-50 text-rose-700 rounded-full border border-rose-200">
-            準備進度：0 / 22
-          </span>
-          <a href="https://87cat.com/wp-content/uploads/2024/08/%E5%AF%8C%E5%A3%AB%E5%B1%B1%E7%99%BB%E5%B1%B1%E8%A3%9D%E5%82%99%E6%B8%85%E5%96%AE.pdf" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-sm transition">
-            <i class="fa-solid fa-file-pdf"></i> 下載官方 PDF
-          </a>
+          <p class="text-xs text-slate-500">D1新宿(40m) ➔ D2五合目(2,400m)+九合目(3,460m) ➔ D3劍峰(3,776m)+白絲/鐘山苑(850m) ➔ D4天上山(1,075m)/新宿 ➔ D5返台</p>
         </div>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-        
-        <!-- Category 1: Clothing -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-slate-900 text-sm mb-2.5 flex items-center gap-1.5 text-rose-700">
-              <i class="fa-solid fa-shirt"></i> 1. 人身衣著與三層穿搭
-            </h3>
-            <div class="space-y-2 text-slate-700">
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>底層排汗衣物 (1~2套)</strong>：快乾聚酯纖維或羊毛，嚴禁純棉</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>中層保暖衣物</strong>：抓絨衣 (Fleece) 或輕量化羽絨外套</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>外層兩截式雨衣雨褲</strong>：Gore-Tex 或同級抗風防水</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>彈性登山長褲</strong>：耐磨透氣防潑水，活動自如</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>羊毛登山厚襪 (2雙)</strong>：吸震包覆、防腳底磨破起水泡</span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] text-slate-500">
-            💡 山頂清晨僅 0~5°C，保暖層萬不可省！
-          </div>
-        </div>
-
-        <!-- Category 2: Footwear & Packs -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-slate-900 text-sm mb-2.5 flex items-center gap-1.5 text-amber-700">
-              <i class="fa-solid fa-person-hiking"></i> 2. 背包、鞋履與行進輔具
-            </h3>
-            <div class="space-y-2 text-slate-700">
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>登山背包 (30~40L)</strong>：附腰帶減壓，解放雙手</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>背包防雨罩 + 內層防水袋</strong>：避免高山暴雨全濕</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>中高筒硬底登山鞋</strong>：防扭傷、具備深抓地齒紋</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>登山杖 2 支</strong>：上下山維持重心平衡並減輕膝蓋負擔</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>防砂登山綁腿 (Gaiters)</strong>：下山防火山碎石灌進鞋內</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>運動護膝 (長輩必備)</strong>：支撐關節、緩解下坡衝擊</span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] text-slate-500">
-            💡 登山鞋請務必提早在台灣郊山穿開適應。
-          </div>
-        </div>
-
-        <!-- Category 3: Night & Headgear -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-slate-900 text-sm mb-2.5 flex items-center gap-1.5 text-sky-700">
-              <i class="fa-solid fa-head-side-mask"></i> 3. 頭部防護與夜行照明
-            </h3>
-            <div class="space-y-2 text-slate-700">
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>高流明頭燈 + 備用電池</strong>：凌晨摸黑攻頂必備</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>寬簷遮陽帽 + 太陽眼鏡</strong>：高山強烈紫外線防護</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>保暖毛帽 / 頭巾</strong>：登頂防強風吹襲引發高山偏頭痛</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>耐磨手套 / 防風防潑水手套</strong>：七合目以上岩石攀爬</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>防塵口罩 / 魔術頭巾</strong>：下山砂塵漫天防吸入口鼻</span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] text-slate-500">
-            💡 攻頂請勿用手機手電筒，頭燈才能解放雙手。
-          </div>
-        </div>
-
-        <!-- Category 4: Supplies & Cash -->
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
-          <div>
-            <h3 class="font-bold text-slate-900 text-sm mb-2.5 flex items-center gap-1.5 text-emerald-700">
-              <i class="fa-solid fa-coins"></i> 4. 個人消耗品與山屋神物
-            </h3>
-            <div class="space-y-2 text-slate-700">
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>百元日幣硬幣 (每人約 20~30 枚)</strong>：付費廁所使用</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>行動電源 (防低溫) + 充電線</strong>：山屋插座極少</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>耳塞與眼罩</strong>：山屋通鋪隔音差，早睡防干擾</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>大張擦澡濕紙巾＋乾洗髮</strong>：山屋無法淋浴洗澡</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>個人藥品 (丹木斯/止痛/腸胃)</strong>：行前門診開立</span>
-              </label>
-              <label class="flex items-start gap-2 cursor-pointer">
-                <input type="checkbox" onchange="updateEquipProgress()" class="equip-cb mt-0.5 rounded text-rose-600 focus:ring-rose-500">
-                <span><strong>行動水瓶 (1~1.5L) + 垃圾袋</strong>：山上垃圾自帶下山</span>
-              </label>
-            </div>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] text-slate-500">
-            💡 山上所有付費廁所與販售均僅收日幣現金。
-          </div>
-        </div>
-
+      <div class="h-64 relative">
+        <canvas id="altitudeChart"></canvas>
       </div>
-    </section>
-
-    <!-- NEW SECTION: Hillmont Travel (岳山行/丘山行) 6-Day Fujinomiya & Izu Route Special Section -->
-    <section id="hillmont-special-section" class="bg-gradient-to-br from-sky-50/70 via-indigo-50/40 to-white p-5 sm:p-7 rounded-3xl border-2 border-sky-300 shadow-md space-y-6">
-      
-      <!-- Section Header -->
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-sky-200 pb-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-500/25">
-            <i class="fa-solid fa-person-hiking text-xl"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-sky-600 text-white">實戰路線精選</span>
-              <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800">富士宮路線 + 駿河灣伊豆名湯</span>
-            </div>
-            <h2 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight mt-0.5">
-              岳山行（丘山行）網路行程：日本第一富士山登頂＋伊豆溫泉 6 天專題
-            </h2>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <a href="https://www.google.com/search?q=丘山行+日本第一富士山登頂+伊豆溫泉6天" target="_blank" class="px-3.5 py-1.5 bg-sky-700 hover:bg-sky-800 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> 查看官網原檔
-          </a>
-        </div>
-      </div>
-
-      <!-- Quick Highlights Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-        <div class="bg-white/90 p-3 rounded-xl border border-sky-200 shadow-sm">
-          <span class="text-slate-400 block font-semibold text-[11px]">登山路線</span>
-          <span class="font-black text-slate-800 text-sm">富士宮路線 (最短路程)</span>
-        </div>
-        <div class="bg-white/90 p-3 rounded-xl border border-sky-200 shadow-sm">
-          <span class="text-slate-400 block font-semibold text-[11px]">山屋規格</span>
-          <span class="font-black text-sky-700 text-sm">九合目 萬年雪山莊(3460m)</span>
-        </div>
-        <div class="bg-white/90 p-3 rounded-xl border border-sky-200 shadow-sm">
-          <span class="text-slate-400 block font-semibold text-[11px]">雙人房團費</span>
-          <span class="font-black text-sky-800 text-sm">NT$ 82,500 /人 (訂金$16,500)</span>
-        </div>
-        <div class="bg-white/90 p-3 rounded-xl border border-sky-200 shadow-sm">
-          <span class="text-slate-400 block font-semibold text-[11px]">絕景收尾名宿</span>
-          <span class="font-black text-amber-700 text-sm">日本平飯店＋堂島新銀水</span>
-        </div>
-      </div>
-
-      <!-- Dual Pane: Independent Map + 10 Landmarks -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Left: Independent Leaflet Map for Hillmont Route -->
-        <div class="lg:col-span-6 min-h-[460px]">
-          <div class="relative w-full h-[460px] lg:h-[500px] rounded-2xl overflow-hidden border border-sky-200 shadow-inner bg-slate-200">
-            <div id="hillmontMap" class="w-full h-full relative z-10"></div>
-            <div class="absolute top-3 left-3 z-[400] bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-300 text-[11px] font-bold text-slate-700 shadow-sm flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-sky-600 animate-pulse"></span> 丘山行 6 日全景巡禮地圖
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: 10 Landmark Navigation Cards -->
-        <div class="lg:col-span-6 flex flex-col justify-between">
-          <div class="space-y-2.5 max-h-[430px] lg:max-h-[450px] overflow-y-auto custom-scrollbar pr-1">
-
-            <!-- Spot 1: Shizuoka Ekinan -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🏨</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">D1 靜鐵飯店Prezio 靜岡站南 (靜岡市區)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(34.9701, 138.3888, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=13581496008858349986" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">出東京機場後抵達靜岡市區，鄰近百貨與戶外用品店，方便登山物資採購與補給。</p>
-              </div>
-            </div>
-
-            <!-- Spot 2: Fujisan Sengen Taisha -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">⛩️</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">D2 富士山本宮淺間大社 (起登前參拜祈福)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(35.2255, 138.6115, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=15566775290038374071" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">富士信仰總本宮，湧玉池清澈融雪泉水，祈求登頂全員平安順利。</p>
-              </div>
-            </div>
-
-            <!-- Spot 3: Fujinomiya 5th -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🔵</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-sky-900">D2 富士宮五合目 (2,390m 起登點)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(35.3364, 138.7336, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=富士宮口五合目" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">稍事休息適應氣壓後出發，草山往木山之神界過渡，俯瞰駿河灣美景。</p>
-              </div>
-            </div>
-
-            <!-- Spot 4: Mannenyuki -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🏔️</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-rose-950">D2 萬年雪山莊 (九合目 3,460m 宿營點)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(35.3522, 138.7295, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=7442534079784523402" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">多人通鋪山屋簡餐，離山頂僅約 300 公尺落差，凌晨攻頂最省力！</p>
-              </div>
-            </div>
-
-            <!-- Spot 5: Ken-ga-mine -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🏆</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-rose-900">D3 富士山最高點・劍峰 (3,776m 迎接御來光)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(35.3606, 138.7274, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=富士山劍峰" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">凌晨兩點出發頭燈如聖誕樹燈海，登頂許願、巡訪寶永火山口後下山。</p>
-              </div>
-            </div>
-
-            <!-- Spot 6: Shuzenji Marukyu -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">♨️</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-indigo-950">D3 修善寺溫泉 瑞の里 〇久旅館 (中伊豆古湯)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(34.9721, 138.9272, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=109758086899247127" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">弘法大師開湯之千年歷史名湯，漫步竹林小徑，享用旅館精緻會席料理。</p>
-              </div>
-            </div>
-
-            <!-- Spot 7: Kawazu Nanadaru -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🌲</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">D4 踊子步道・天城山隧道 ＆ 河津七瀑</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(34.7865, 138.9328, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=3749852175895814691" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">川端康成筆下文學森林，切穿火山熔岩之七座飛瀑，芬多精健行 5 小時。</p>
-              </div>
-            </div>
-
-            <!-- Spot 8: Dogashima New Ginsui -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🌅</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-amber-950">D4 西伊豆堂島溫泉 堂島新銀水 (海景夕陽名宿)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(34.7852, 138.7735, 14)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=6390503181550209229" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">入住面海溫泉大飯店，全室面海，欣賞被列為日本第一的西伊豆黃金落日。</p>
-              </div>
-            </div>
-
-            <!-- Spot 9: Nippondaira Hotel -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🖼️</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-indigo-900">D5 戀人岬 ➔ 久能山東照宮 ➔ 日本平飯店</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(34.9762, 138.4675, 13)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=7925057863335212941" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">參觀德川家康安息地與戀人岬，入住「風景美術館」日本平飯店享用法式或會席晚餐。</p>
-              </div>
-            </div>
-
-            <!-- Spot 10: Miho no Matsubara -->
-            <div class="p-3 bg-white hover:bg-sky-50/70 border border-slate-200 rounded-xl transition flex items-start space-x-3">
-              <span class="text-lg mt-0.5">🌲</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start gap-1">
-                  <h4 class="text-xs font-black text-slate-900">D6 三保松原 ➔ 羽田機場 ➔ 台北圓滿賦歸</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusHillmont(35.0012, 138.5222, 13)" class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold hover:bg-sky-200">📍 定位</button>
-                    <a href="https://maps.google.com/?cid=7264174959909716498" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">新日本三景羽衣傳說地，海邊遠眺富士山，乘車返回羽田機場搭機返國。</p>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="mt-3 p-2.5 bg-white rounded-xl text-xs text-slate-600 flex items-center justify-between border border-sky-100">
-            <span>💡 點選各卡片「📍 定位」即可平滑飛躍至專屬路線點。</span>
-            <button onclick="resetHillmontMapBounds()" class="px-2.5 py-1 bg-sky-800 text-white rounded-lg font-bold hover:bg-sky-700 shrink-0">🔄 重置全覽</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Daily Schedule Tabs (Day 1 - Day 6) -->
-      <div class="bg-white p-5 rounded-2xl border border-sky-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-200">
-          <div>
-            <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-calendar-days text-sky-600"></i>
-              岳山行 6 日詳細動線、餐食與住宿標籤分頁 (Day 1 ~ Day 6)
-            </h3>
-            <p class="text-xs text-slate-500">依岳山行官方簡章標準規格展開，每日步程與餐食明細一覽無遺</p>
-          </div>
-
-          <!-- Hillmont Day Tabs Buttons -->
-          <div class="flex flex-wrap gap-1.5 p-1 bg-sky-50 rounded-xl border border-sky-200">
-            <button onclick="switchHillmontDay(1)" id="hm-btn-1" class="hm-tab-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-white text-sky-800 shadow-sm">Day 1 抵達靜岡</button>
-            <button onclick="switchHillmontDay(2)" id="hm-btn-2" class="hm-tab-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 2 登九合目</button>
-            <button onclick="switchHillmontDay(3)" id="hm-btn-3" class="hm-tab-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 3 攻頂/修善寺</button>
-            <button onclick="switchHillmontDay(4)" id="hm-btn-4" class="hm-tab-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 4 踊子瀑布</button>
-            <button onclick="switchHillmontDay(5)" id="hm-btn-5" class="hm-tab-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 5 日本平飯店</button>
-            <button onclick="switchHillmontDay(6)" id="hm-btn-6" class="hm-tab-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 6 三保松原</button>
-          </div>
-        </div>
-
-        <!-- Hillmont Day 1 Panel -->
-        <div id="hm-content-1" class="hm-panel space-y-3">
-          <div class="bg-sky-50 border border-sky-100 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-sky-950 text-sm">【Day 1】台北 ➔ 東京 ➔ 靜岡（採買物資）</span>
-            <span class="bg-sky-200/80 text-sky-950 px-2.5 py-0.5 rounded-full font-bold">旅館：靜鐵飯店Prezio 靜岡站南</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-            飛機抵達東京機場後，搭車前往靜岡市住宿。下午及晚上自由活動，可前往百貨公司購物，採購登山用品。
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div><strong>🍳 早餐：</strong>機上簡餐 / 自理</div>
-            <div><strong>🍱 午餐：</strong>方便逛街自理</div>
-            <div><strong>🍲 晚餐：</strong>靜岡市區逛街自理</div>
-          </div>
-        </div>
-
-        <!-- Hillmont Day 2 Panel -->
-        <div id="hm-content-2" class="hm-panel space-y-3 hidden">
-          <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-amber-950 text-sm">【Day 2】靜岡 ➔ 富士山本宮淺間大社 ➔ 五合目(2,390m) ➔ 九合目萬年雪山莊(3,460m)（步程約 5hr）</span>
-            <span class="bg-amber-200/80 text-amber-950 px-2.5 py-0.5 rounded-full font-bold">山屋：萬年雪山莊 (多人通鋪、不可洗澡)</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-            早餐後搭乘專車前往富士山本宮淺間大社參拜，祈求登山平安順利，然後前往富士宮五合目登山口。稍事休息後開始登山行程，繼續上行。登山客絡繹不絕，回頭眺望山腳下的駿河灣，稍解爬坡的辛勞。富士山從山麓到山頂，可劃分為「草山」、「木山」及「燒山」。富士登拜，意思是通過往返於俗界和神界來消除今世的罪過和污穢。
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div><strong>🍳 早餐：</strong>旅館早餐</div>
-            <div><strong>🍱 午餐：</strong>日式便當</div>
-            <div><strong>🍲 晚餐：</strong>萬年雪山莊溫熱簡餐</div>
-          </div>
-        </div>
-
-        <!-- Hillmont Day 3 Panel -->
-        <div id="hm-content-3" class="hm-panel space-y-3 hidden">
-          <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-emerald-950 text-sm">【Day 3】九合目 ➔ 富士山頂(3,776m 劍峰) ➔ 寶永火山口 ➔ 五合目 ➔ 修善寺溫泉（步程約 8hr）</span>
-            <span class="bg-emerald-200/80 text-emerald-950 px-2.5 py-0.5 rounded-full font-bold">旅館：修善寺 瑞の里 〇久旅館 (和式/和洋室附衛浴)</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-            凌晨約兩點起床，簡單用過早餐後往山頂出發。一路上登山客的頭燈形成一片燈海，望之猶如繽紛的聖誕樹。登上山頂等待御來光，日出時許下願望，祈求好運。登頂最高點劍峰之後下山，欣賞壯觀的寶永火山口，回到六合目午餐。接著驅車來到中伊豆的著名溫泉小鎮 – 修善寺，投宿在溫泉旅館，好好泡湯慰藉一身疲勞。修善寺溫泉相傳由弘法大師空海所發現，可在著名的竹林小徑散步，體驗清幽的歷史氛圍。
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div><strong>🍳 早餐：</strong>山屋早餐</div>
-            <div><strong>🍱 午餐：</strong>山屋自理 / 六合目簡餐</div>
-            <div><strong>🍲 晚餐：</strong>旅館會席料理</div>
-          </div>
-        </div>
-
-        <!-- Hillmont Day 4 Panel -->
-        <div id="hm-content-4" class="hm-panel space-y-3 hidden">
-          <div class="bg-sky-50 border border-sky-200 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-sky-950 text-sm">【Day 4】修善寺溫泉 ➔ 踊子步道 ➔ 天城山隧道 ➔ 河津七瀑 ➔ 西伊豆堂島溫泉（步程約 5hr）</span>
-            <span class="bg-sky-200/80 text-sky-950 px-2.5 py-0.5 rounded-full font-bold">旅館：西伊豆堂島溫泉 堂島新銀水 (和式房附衛浴)</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-            今天往南遊覽南伊豆。早上先去超市採購午餐，然後開始健行踊子步道。穿越川端康成筆下的天城山隧道，隨後來到河津七瀑，河流切穿火山熔岩層，讚嘆大自然鬼斧神工之美。健行完畢搭車前往西伊豆，入住海邊溫泉旅館，有機會欣賞西伊豆著名的落日美景。
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div><strong>🍳 早餐：</strong>旅館早餐</div>
-            <div><strong>🍱 午餐：</strong>方便健行請自備 (超市採購)</div>
-            <div><strong>🍲 晚餐：</strong>堂島新銀水海鮮會席晚宴</div>
-          </div>
-        </div>
-
-        <!-- Hillmont Day 5 Panel -->
-        <div id="hm-content-5" class="hm-panel space-y-3 hidden">
-          <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-indigo-950 text-sm">【Day 5】西伊豆 ➔ 戀人岬 ➔ 久能山東照宮 ➔ 日本平風景美術館（步程約 2.5hr）</span>
-            <span class="bg-indigo-200/80 text-indigo-950 px-2.5 py-0.5 rounded-full font-bold">旅館：日本平飯店 (Nippondaira Hotel)</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-            今早前往西伊豆，參觀戀人岬，散步道終點可以眺望富士山，回想辛苦攀登的過程，自己曾經站在山頂，俯視著眼下大地，感動於自己曾經付出的努力。接著搭車前往久能山，循著1159級石階緩緩而上，抵達東照宮。這裡是德川家康埋骨之處，建築精緻堂皇。傍晚入住有「風景美術館」之稱的日本平飯店，在被評比為第一名的日本平丘陵之上，眺望富士山與駿河灣美麗夜景。傍晚享受飯店餐廳的高級料理。
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div><strong>🍳 早餐：</strong>旅館早餐</div>
-            <div><strong>🍱 午餐：</strong>日式簡餐</div>
-            <div><strong>🍲 晚餐：</strong>日本平飯店高級晚宴</div>
-          </div>
-        </div>
-
-        <!-- Hillmont Day 6 Panel -->
-        <div id="hm-content-6" class="hm-panel space-y-3 hidden">
-          <div class="bg-purple-50 border border-purple-200 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-purple-950 text-sm">【Day 6】日本平 ➔ 三保松原 ➔ 羽田機場 ➔ 台北圓滿賦歸（步程約 1.5hr）</span>
-            <span class="bg-purple-200/80 text-purple-950 px-2.5 py-0.5 rounded-full font-bold">溫暖的家</span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-1">
-            早晨醒來，拉開窗簾即可看見富士山靜靜矗立在駿河灣之後。坐在餐廳大片落地窗前，一邊欣賞富士山美景，一邊享用美味早餐。餐後前往三保松原。這裡獲選為新日本三景之一，亦是仙女下凡故事「羽衣傳說」之地，可以從海邊眺望富士山。最後前往機場，結束難忘的富士山登頂之旅。
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div><strong>🍳 早餐：</strong>日本平飯店景觀早餐</div>
-            <div><strong>🍱 午餐：</strong>日式定食</div>
-            <div><strong>🍲 晚餐：</strong>機上簡餐</div>
-          </div>
-        </div>
-
-      </div>
-
     </section>
 
   </main>
 
+  <!-- Footer -->
   <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs py-5 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <span class="text-slate-300 font-bold">冒險王 (一站式旅遊規劃大師兼前端介面工程師)</span>
-      <span>檔案版本：20261017_富士山_v2.0.html ｜ 整合 6 人包團與岳山行伊豆登頂雙系統</span>
+      <span>檔案版本：20261018_富士山_v2.3.html ｜ 依據順時針無折返跑決策鎖定條件量身打造</span>
     </div>
   </footer>
 
   <script>
     let map = null;
     let markers = [];
-    let altitudeChartInstance = null;
     let currentBaseLayer = 'topo';
 
-    // 免 API Key 圖層定義
+    // 免 API Key、專為嵌入設計之高可用圖磚
     let layerTopo = null;
     let layerSatGroup = null;
 
-    // 岳山行 (丘山行) 專屬獨立地圖實例與標記集
-    let hillmontMap = null;
-    let hillmontMarkers = [];
-
     const coordinatesList = [
-      { id: 1, name: "🏆 富士山最高峰・劍峰 (3,776m)", lat: 35.3606, lng: 138.7274, searchName: "富士山剣ヶ峰", note: "日本最高點三角點！御來光日出與鉢巡終極目標", color: "#e11d48" },
-      { id: 2, name: "🟡 【吉田線起點】富士斯巴魯五合目 (2,305m)", lat: 35.3941, lng: 138.7327, searchName: "富士スバルライン五合目", note: "吉田路線起點，商店最豐富、坡度最平緩", color: "#d97706" },
-      { id: 3, name: "🛌 【吉田線山屋】本八合目托莫埃館 (3,400m)", lat: 35.3675, lng: 138.7385, searchName: "富士山 本八合目 トモエ館", note: "吉田線高級山屋，可搶6人獨立個室，門口直視日出", color: "#d97706" },
-      { id: 4, name: "🔵 【富士宮線起點】富士宮口五合目 (2,400m)", lat: 35.3364, lng: 138.7336, searchName: "富士宮口五合目", note: "全山最高起登點，來回僅8.6km距離最短", color: "#0284c7" },
-      { id: 5, name: "🏔️ 【富士宮線山屋】九合目萬年雪山莊 (3,460m)", lat: 35.3522, lng: 138.7295, searchName: "富士山 万年雪山荘", note: "丘山行指定山屋，距山頂僅300公尺爬升", color: "#0284c7" },
-      { id: 6, name: "🌋 寶永山火山口 (2,693m)", lat: 35.3408, lng: 138.7469, searchName: "宝永火口", note: "富士宮線專屬高度適應步道，壯闊巨大火山口", color: "#0284c7" },
-      { id: 7, name: "♨️ 富士山溫泉 鐘山苑 / 別墅然然", lat: 35.4647, lng: 138.8211, searchName: "ホテル鐘山苑", note: "日本百選名湯，下山洗去疲勞的頂級慶功宿", color: "#059669" },
-      { id: 8, name: "🏨 風のテラス KUKUNA (河口湖)", lat: 35.5131, lng: 138.7745, searchName: "風のテラスKUKUNA", note: "河口湖逆富士首排，無邊際天空露天溫泉", color: "#059669" },
-      { id: 9, name: "🖼️ 日本平飯店 (Nippondaira Hotel)", lat: 34.9762, lng: 138.4675, searchName: "日本平ホテル", note: "晴日旅遊指定入住，隔駿河灣遠眺富士山全景", color: "#059669" },
-      { id: 10, name: "⛩️ 北口本宮冨士淺間神社", lat: 35.4614, lng: 138.7989, searchName: "北口本宮冨士浅間神社", note: "Day 1 登山前祈求全員平安登頂的千年古社", color: "#475569" },
-      { id: 11, name: "🍲 餺飥不動 東戀路店", lat: 35.4926, lng: 138.7611, searchName: "ほうとう不動 東恋路店", note: "雲朵造型建築，必吃南瓜山菜味噌鐵鍋寬麵", color: "#475569" },
-      { id: 12, name: "🥩 山麓園 爐端燒", lat: 35.4945, lng: 138.7682, searchName: "山麓園 河口湖", note: "150年古民家圍爐裏炭烤甲州牛與海鮮慶功宴", color: "#475569" }
+      { id: 1, name: "🏆 富士山最高峰・劍峰 (3,776m)", lat: 35.3606, lng: 138.7274, searchName: "富士山剣ヶ峰", note: "日本最高峰三角點！富士宮線登頂走 10 分鐘即達劍峰碑", color: "#e11d48" },
+      { id: 2, name: "🔵 富士宮口五合目 (2,400m)", lat: 35.3364, lng: 138.7336, searchName: "富士宮口五合目", note: "全山最高海拔起登點，來回僅 8.6km 距離最短", color: "#0284c7" },
+      { id: 3, name: "🏔️ 九合目萬年雪山莊 (3,460m)", lat: 35.3522, lng: 138.7295, searchName: "富士山 万年雪山荘", note: "D2 登山宿！離山頂僅剩 300m 爬升，攻頂最輕鬆", color: "#0284c7" },
+      { id: 4, name: "⛩️ 富士山元宮 山宮淺間神社", lat: 35.2672, lng: 138.6315, searchName: "山宮浅間神社 富士宮", note: "D3 下山首站世界遺產，古老無本殿遙拜所", color: "#059669" },
+      { id: 5, name: "🌊 白絲瀑布 ＆ 音止瀑布", lat: 35.3131, lng: 138.5878, searchName: "白糸の滝 富士宮", note: "D3 下山清涼聖地！富士山伏流水飛瀑與炒麵美食", color: "#059669" },
+      { id: 6, name: "💴 本栖湖 (千圓日幣展望台)", lat: 35.4658, lng: 138.5833, searchName: "本栖湖", note: "D3 順路快拍！千元日鈔背面富士倒影取景處", color: "#059669" },
+      { id: 7, name: "♨️ 富士山溫泉 鐘山苑 / 別墅然然", lat: 35.4647, lng: 138.8211, searchName: "ホテル鐘山苑 山梨", note: "D3 慶功名湯！露天溫泉直面富士山，包廂和牛會席宴", color: "#d97706" },
+      { id: 8, name: "🏨 風のテラス KUKUNA (河口湖)", lat: 35.5131, lng: 138.7745, searchName: "風のテラスKUKUNA", note: "D3 備選頂級宿！全室逆富士首排，無邊際天空露天溫泉", color: "#d97706" },
+      { id: 9, name: "🚡 天上山公園全景纜車 ＋ 全景步道", lat: 35.5038, lng: 138.7725, searchName: "富士山パノラマロープウェイ", note: "D4 健行首選！搭纜車登頂走 15 分鐘全景步道俯瞰全景", color: "#059669" },
+      { id: 10, name: "🍱 湖波 (Konami) 湖畔景觀餐廳", lat: 35.5145, lng: 138.7712, searchName: "食事処 湖波 河口湖", note: "D4 午餐指定！北岸首排鰻魚飯與手打蕎麥麵", color: "#e11d48" },
+      { id: 11, name: "🪻 大石公園 (湖畔花海散策)", lat: 35.5230, lng: 138.7460, searchName: "大石公園 河口湖", note: "D4 漫步紫色薰衣草花毯木棧道，品嚐霜淇淋", color: "#059669" },
+      { id: 12, name: "🥩 甲州和牛燒肉 秀 (Shu)", lat: 35.4985, lng: 138.7665, searchName: "焼肉 秀 河口湖", note: "D4 晚餐指定！高分和牛燒肉盛宴，包廂慶功", color: "#e11d48" },
+      { id: 13, name: "🏢 新宿華盛頓飯店 本館", lat: 35.6865, lng: 139.6942, searchName: "新宿ワシントンホテル 本館", note: "D1 & D4 住宿！地下道直通新宿站，寄存大行李最方便", color: "#475569" }
     ];
 
-    // 岳山行 6 日專屬地標資料集（涵蓋靜岡、富士宮、伊豆半島）
-    const hillmontSpots = [
-      { id: 1, name: "🏨 D1 靜鐵飯店Prezio 靜岡站南", lat: 34.9701, lng: 138.3888, note: "D1 住宿 / 靜岡市區採買登山用品", color: "#0284c7" },
-      { id: 2, name: "⛩️ D2 富士山本宮淺間大社", lat: 35.2255, lng: 138.6115, note: "D2 登拜祈福 / 湧玉池參拜", color: "#0369a1" },
-      { id: 3, name: "🔵 D2 富士宮五合目 (2,390m)", lat: 35.3364, lng: 138.7336, note: "D2 起登點 / 眺望駿河灣", color: "#0284c7" },
-      { id: 4, name: "🏔️ D2 萬年雪山莊 (3,460m)", lat: 35.3522, lng: 138.7295, note: "D2 山屋住宿 / 九合目通鋪簡餐", color: "#e11d48" },
-      { id: 5, name: "🏆 D3 富士山最高點・劍峰 (3,776m)", lat: 35.3606, lng: 138.7274, note: "D3 御來光日出 / 登頂日本最高峰", color: "#dc2626" },
-      { id: 6, name: "♨️ D3 修善寺溫泉 瑞の里 〇久旅館", lat: 34.9721, lng: 138.9272, note: "D3 住宿 / 空海弘法大師千年名湯會席料理", color: "#4f46e5" },
-      { id: 7, name: "🌲 D4 踊子步道・河津七瀑", lat: 34.7865, lng: 138.9328, note: "D4 健行 5 小時 / 川端康成文學隧道與熔岩瀑布", color: "#059669" },
-      { id: 8, name: "🌅 D4 西伊豆堂島溫泉 堂島新銀水", lat: 34.7852, lng: 138.7735, note: "D4 住宿 / 海景溫泉欣賞西伊豆黃金夕陽", color: "#d97706" },
-      { id: 9, name: "🖼️ D5 日本平飯店 (風景美術館)", lat: 34.9762, lng: 138.4675, note: "D5 住宿 / 戀人岬與久能山東照宮後入住頂級名門", color: "#7c3aed" },
-      { id: 10, name: "🌲 D6 三保松原 (羽衣傳說)", lat: 35.0012, lng: 138.5222, note: "D6 新日本三景 / 眺望富士山後前往羽田機場", color: "#0284c7" }
-    ];
-
-    function initApp() {
+    window.onload = function() {
       initInteractiveMap();
-      initHillmontMap();
       initAltitudeChart();
-      restoreEquipProgress();
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-      initApp();
-    }
-
-    window.addEventListener('load', () => {
-      if (map) {
-        map.invalidateSize();
-        resetMapBounds();
-      }
-      if (hillmontMap) {
-        hillmontMap.invalidateSize();
-        resetHillmontMapBounds();
-      }
-    });
+    };
 
     function initInteractiveMap() {
-      const mapEl = document.getElementById('interactiveMap');
-      if (!mapEl || typeof L === 'undefined') return;
-      if (map) return;
+      if (typeof L === 'undefined') return;
+
+      const mapContainer = document.getElementById('interactiveMap');
+      if (!mapContainer || map) return;
 
       try {
+        // 富士山至河口湖全域視野
         map = L.map('interactiveMap', {
-          zoomControl: true,
           scrollWheelZoom: false
-        }).setView([35.38, 138.74], 10);
+        }).setView([35.42, 138.68], 11);
 
-        /* ESRI World Topo Map */
+        // 1. ESRI World Topo Map：專為高山地形設計，無 403 阻擋、免 API Key
         layerTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
           maxZoom: 18,
           attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom'
         });
 
+        // 容錯備援：若 ESRI 偶發延遲自動切換備用開源圖磚
         layerTopo.on('tileerror', function(error, tile) {
           tile.src = 'https://tile.opentopomap.org/' + map.getZoom() + '/' + tile.coords.x + '/' + tile.coords.y + '.png';
         });
 
+        // 2. ESRI 衛星混合圖（Satellite + Reference Labels）
         const satBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
           maxZoom: 18,
-          attribution: 'Tiles &copy; Esri'
+          attribution: 'Tiles &copy; Esri, Maxar, Earthstar Geographics'
         });
-
         const satLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
           maxZoom: 18
         });
-
         layerSatGroup = L.layerGroup([satBase, satLabels]);
+
+        // 預設載入專業等高地形圖
         layerTopo.addTo(map);
 
-        // 吉田登山路線 (橘色)
-        const yoshidaTrail = [
-          [35.3941, 138.7327],
-          [35.3675, 138.7385],
-          [35.3606, 138.7274]
-        ];
-        L.polyline(yoshidaTrail, {
-          color: '#d97706',
-          weight: 4.5,
-          dashArray: '8, 6',
-          opacity: 0.95
-        }).addTo(map).bindPopup('<b>🟡 吉田登山路線 (Yoshida Route)</b><br>來回約 14km，山屋最密集、全線迎日出');
-
-        // 富士宮登山路線 (藍色)
+        // 繪製富士宮登山路線 Polyline (Blue)
         const fujinomiyaTrail = [
-          [35.3364, 138.7336],
-          [35.3522, 138.7295],
-          [35.3606, 138.7274]
+          [35.3364, 138.7336], // 5th Station (2,400m)
+          [35.3522, 138.7295], // 9th Station (3,460m)
+          [35.3606, 138.7274]  // Summit Kengamine (3,776m)
         ];
         L.polyline(fujinomiyaTrail, {
           color: '#0284c7',
           weight: 4.5,
           dashArray: '8, 6',
           opacity: 0.95
-        }).addTo(map).bindPopup('<b>🔵 富士宮登山路線 (Fujinomiya Route)</b><br>來回僅 8.6km 距離最短，直登3,776m劍峰');
+        }).addTo(map).bindPopup('<b>🔵 富士宮登山路線 (Fujinomiya Route)</b><br>來回僅 8.6km，直攻最高峰 3,776m 劍峰');
+
+        // 繪製順時針巡遊動線 Polyline (Green)
+        const clockwiseTour = [
+          [35.3364, 138.7336], // 五合目下山
+          [35.2672, 138.6315], // 山宮淺間神社
+          [35.3131, 138.5878], // 白絲瀑布
+          [35.4658, 138.5833], // 本栖湖
+          [35.4647, 138.8211], // 鐘山苑
+          [35.5038, 138.7725], // 天上山纜車
+          [35.5145, 138.7712], // 湖波 (Konami)
+          [35.5230, 138.7460], // 大石公園
+          [35.4985, 138.7665]  // 燒肉 秀
+        ];
+        L.polyline(clockwiseTour, {
+          color: '#059669',
+          weight: 3.5,
+          opacity: 0.75
+        }).addTo(map).bindPopup('<b>🟢 順時針無回頭路巡遊動線 (D3 西麓 ➔ D4 河口湖)</b>');
 
         coordinatesList.forEach(item => {
           const customIcon = L.divIcon({
             className: 'custom-pin',
-            html: `<div style="background-color: ${item.color}; width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.45);"></div>`,
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+            html: `<div style="background-color: ${item.color}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.35);"></div>`,
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
           });
 
           const marker = L.marker([item.lat, item.lng], { icon: customIcon }).addTo(map)
             .bindPopup(`
-              <div style="padding:2px;">
+              <div style="padding:2px; font-family:'Noto Sans TC',sans-serif;">
                 <b style="font-size:13px;color:#0f172a;">${item.name}</b><br>
                 <span style="font-size:11px;color:#475569;">${item.note}</span><br>
                 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.searchName)}" target="_blank" style="display:inline-block;margin-top:6px;padding:3px 8px;background:#059669;color:#ffffff;border-radius:6px;font-size:11px;text-decoration:none;font-weight:bold;">🗺️ 開啟 Google Maps 導航</a>
@@ -1542,128 +763,20 @@
         });
 
         resetMapBounds();
-        setTimeout(() => { if (map) map.invalidateSize(); }, 200);
-        setTimeout(() => { if (map) { map.invalidateSize(); resetMapBounds(); } }, 600);
 
-        if (typeof ResizeObserver !== 'undefined') {
-          const resizeObserver = new ResizeObserver(() => {
-            if (map) map.invalidateSize();
-          });
-          resizeObserver.observe(mapEl);
-        }
+        // 尺寸自適應監聽
+        const resizeObserver = new ResizeObserver(() => {
+          if (map) map.invalidateSize();
+        });
+        resizeObserver.observe(mapContainer);
+        setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+
       } catch (err) {
-        console.error("Map loading error:", err);
+        console.error("Map initialization error:", err);
       }
     }
 
-    function initHillmontMap() {
-      const hmMapEl = document.getElementById('hillmontMap');
-      if (!hmMapEl || typeof L === 'undefined') return;
-      if (hillmontMap) return;
-
-      try {
-        hillmontMap = L.map('hillmontMap', {
-          zoomControl: true,
-          scrollWheelZoom: false
-        }).setView([35.10, 138.75], 9);
-
-        // 使用完全免 API Key 之 ESRI 地形圖
-        const hmTopo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-          maxZoom: 18,
-          attribution: 'Tiles &copy; Esri'
-        });
-        hmTopo.addTo(hillmontMap);
-
-        // 繪製岳山行 6 日巡迴動線
-        const routePoints = [
-          [34.9701, 138.3888], // D1 靜岡
-          [35.2255, 138.6115], // D2 淺間大社
-          [35.3364, 138.7336], // D2 富士宮五合目
-          [35.3522, 138.7295], // D2 萬年雪山莊
-          [35.3606, 138.7274], // D3 劍峰
-          [34.9721, 138.9272], // D3 修善寺溫泉
-          [34.7865, 138.9328], // D4 踊子步道河津七瀑
-          [34.7852, 138.7735], // D4 西伊豆堂島溫泉
-          [34.9762, 138.4675], // D5 日本平飯店
-          [35.0012, 138.5222]  // D6 三保松原
-        ];
-
-        L.polyline(routePoints, {
-          color: '#0284c7',
-          weight: 4,
-          dashArray: '6, 6',
-          opacity: 0.9
-        }).addTo(hillmontMap).bindPopup('<b>岳山行（丘山行）6日登山＋伊豆巡遊動線</b>');
-
-        hillmontSpots.forEach(spot => {
-          const customIcon = L.divIcon({
-            className: 'custom-hm-pin',
-            html: `<div style="background-color: ${spot.color}; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.4);"></div>`,
-            iconSize: [14, 14],
-            iconAnchor: [7, 7]
-          });
-
-          const marker = L.marker([spot.lat, spot.lng], { icon: customIcon }).addTo(hillmontMap)
-            .bindPopup(`
-              <div style="padding:2px;">
-                <b style="font-size:12px;color:#0f172a;">${spot.name}</b><br>
-                <span style="font-size:11px;color:#475569;">${spot.note}</span><br>
-                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}" target="_blank" style="display:inline-block;margin-top:5px;padding:2px 7px;background:#0284c7;color:#ffffff;border-radius:5px;font-size:10px;text-decoration:none;font-weight:bold;">🗺️ 開啟 Google Maps</a>
-              </div>
-            `);
-          hillmontMarkers.push({ id: spot.id, lat: spot.lat, lng: spot.lng, instance: marker });
-        });
-
-        resetHillmontMapBounds();
-        setTimeout(() => { if (hillmontMap) hillmontMap.invalidateSize(); }, 300);
-
-        if (typeof ResizeObserver !== 'undefined') {
-          const ro = new ResizeObserver(() => {
-            if (hillmontMap) hillmontMap.invalidateSize();
-          });
-          ro.observe(hmMapEl);
-        }
-      } catch (e) {
-        console.error("Hillmont Map Error:", e);
-      }
-    }
-
-    function focusHillmont(lat, lng, zoomLevel) {
-      if (!hillmontMap) return;
-      hillmontMap.flyTo([lat, lng], zoomLevel, { animate: true, duration: 1.2 });
-      const target = hillmontMarkers.find(m => Math.abs(m.lat - lat) < 0.001 && Math.abs(m.lng - lng) < 0.001);
-      if (target) {
-        setTimeout(() => { target.instance.openPopup(); }, 1200);
-      }
-    }
-
-    function resetHillmontMapBounds() {
-      if (!hillmontMap) return;
-      const coords = hillmontSpots.map(s => [s.lat, s.lng]);
-      const bounds = L.latLngBounds(coords);
-      hillmontMap.fitBounds(bounds, { padding: [30, 30] });
-    }
-
-    function switchHillmontDay(day) {
-      const panels = document.querySelectorAll('.hm-panel');
-      panels.forEach(p => p.classList.add('hidden'));
-
-      const buttons = document.querySelectorAll('.hm-tab-btn');
-      buttons.forEach(btn => {
-        btn.classList.remove('bg-white', 'text-sky-800', 'shadow-sm');
-        btn.classList.add('text-slate-600');
-      });
-
-      const targetPanel = document.getElementById(`hm-content-${day}`);
-      if (targetPanel) targetPanel.classList.remove('hidden');
-
-      const targetBtn = document.getElementById(`hm-btn-${day}`);
-      if (targetBtn) {
-        targetBtn.classList.remove('text-slate-600');
-        targetBtn.classList.add('bg-white', 'text-sky-800', 'shadow-sm');
-      }
-    }
-
+    // 圖層切換函數
     function switchBaseLayer(layerType) {
       if (!map) return;
       const btnTopo = document.getElementById('btnLayerTopo');
@@ -1684,7 +797,7 @@
       }
     }
 
-    function focusLocation(lat, lng, zoomLevel) {
+    function focusLocation(lat, lng, zoomLevel = 14) {
       if (!map) return;
       map.flyTo([lat, lng], zoomLevel, { animate: true, duration: 1.2 });
       const target = markers.find(m => Math.abs(m.lat - lat) < 0.001 && Math.abs(m.lng - lng) < 0.001);
@@ -1695,8 +808,9 @@
 
     function resetMapBounds() {
       if (!map) return;
-      const coreCoords = coordinatesList.filter(c => c.id !== 9).map(c => [c.lat, c.lng]);
-      const bounds = L.latLngBounds(coreCoords);
+      // 聚焦於富士山與五湖區域 (排除東京新宿點避免比例尺過大)
+      const regionalCoords = coordinatesList.filter(c => c.id !== 13).map(c => [c.lat, c.lng]);
+      const bounds = L.latLngBounds(regionalCoords);
       map.fitBounds(bounds, { padding: [35, 35] });
     }
 
@@ -1706,7 +820,7 @@
 
       const buttons = document.querySelectorAll('.tab-btn');
       buttons.forEach(btn => {
-        btn.classList.remove('bg-white', 'text-rose-700', 'shadow-sm');
+        btn.classList.remove('active');
         btn.classList.add('text-slate-600');
       });
 
@@ -1716,29 +830,25 @@
       const targetBtn = document.getElementById(`tab-btn-${dayIndex}`);
       if (targetBtn) {
         targetBtn.classList.remove('text-slate-600');
-        targetBtn.classList.add('bg-white', 'text-rose-700', 'shadow-sm');
+        targetBtn.classList.add('active');
       }
     }
 
     function initAltitudeChart() {
-      const canvasEl = document.getElementById('altitudeChart');
-      if (!canvasEl || typeof Chart === 'undefined') return;
-
-      if (altitudeChartInstance) {
-        altitudeChartInstance.destroy();
-      }
-
-      const ctx = canvasEl.getContext('2d');
-      altitudeChartInstance = new Chart(ctx, {
+      if (typeof Chart === 'undefined') return;
+      const canvas = document.getElementById('altitudeChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['D1 河口湖祈福', 'D2 五合目適應', 'D2 本八/九合目山屋', 'D3 凌晨3776m登頂', 'D3 下山鐘山苑泡湯', 'D4 河口湖慢遊', 'D5 東京返台'],
+          labels: ['D1 新宿抵達', 'D2 五合目(2400m)', 'D2 九合目(3460m)', 'D3 劍峰登頂(3776m)', 'D3 白絲/鐘山苑', 'D4 天上山(1075m)', 'D4 宿回新宿', 'D5 星宇返台'],
           datasets: [
             {
               label: '所處海拔高度 (公尺 m)',
-              data: [830, 2350, 3420, 3776, 850, 830, 40],
+              data: [40, 2400, 3460, 3776, 850, 1075, 40, 30],
               borderColor: '#e11d48',
-              backgroundColor: 'rgba(225, 29, 72, 0.12)',
+              backgroundColor: 'rgba(225, 29, 72, 0.1)',
               borderWidth: 3,
               tension: 0.3,
               fill: true,
@@ -1746,7 +856,7 @@
             },
             {
               label: '長輩體力負荷指數 (0-100)',
-              data: [25, 45, 75, 90, 40, 20, 25],
+              data: [25, 45, 75, 88, 35, 30, 25, 15],
               borderColor: '#0284c7',
               borderDash: [5, 5],
               borderWidth: 2.5,
@@ -1773,7 +883,7 @@
               min: 0,
               max: 100,
               grid: { drawOnChartArea: false },
-              title: { display: true, text: '體力負荷 (%)', font: { size: 10 } }
+              title: { display: true, text: '體能負荷 (%)', font: { size: 10 } }
             }
           },
           plugins: {
@@ -1781,46 +891,6 @@
           }
         }
       });
-    }
-
-    function updateEquipProgress() {
-      const checkboxes = document.querySelectorAll('.equip-cb');
-      const total = checkboxes.length;
-      let checked = 0;
-      const state = [];
-
-      checkboxes.forEach((cb, index) => {
-        if (cb.checked) checked++;
-        state.push(cb.checked);
-      });
-
-      const badge = document.getElementById('equipProgressBadge');
-      if (badge) {
-        badge.textContent = `準備進度：${checked} / ${total}`;
-        if (checked === total) {
-          badge.className = 'text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full border border-emerald-300';
-        } else {
-          badge.className = 'text-xs font-bold px-3 py-1 bg-rose-50 text-rose-700 rounded-full border border-rose-200';
-        }
-      }
-
-      try {
-        localStorage.setItem('fuji_equip_checklist', JSON.stringify(state));
-      } catch (e) {}
-    }
-
-    function restoreEquipProgress() {
-      try {
-        const saved = localStorage.getItem('fuji_equip_checklist');
-        if (saved) {
-          const state = JSON.parse(saved);
-          const checkboxes = document.querySelectorAll('.equip-cb');
-          checkboxes.forEach((cb, idx) => {
-            if (state[idx] !== undefined) cb.checked = state[idx];
-          });
-          updateEquipProgress();
-        }
-      } catch (e) {}
     }
   </script>
 </body>
