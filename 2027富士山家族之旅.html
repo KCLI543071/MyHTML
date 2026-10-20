@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <!-- 
-  專案名稱: 2027 日本富士山 3,776m 登頂圓夢之旅 (6人精緻小團專案)
-  檔案版本: v2.3 (403 阻擋徹底修復版)
-  更新日期: 2026-10-19
+  專案名稱: 2027 日本富士山 3,776m 登頂圓夢之旅 (6人尊榮包團企劃手冊)
+  檔案版本: v2.4 (貓咪裝人官方 Final 定案版)
+  更新日期: 2026-10-20
   變更說明: 
-    1. 徹底修復 OSM 圖磚 403 Access Blocked 異常：全面改用 ESRI World Topo Map 高解析地形圖磚，免 API Key、專為嵌入設計、無 403 封鎖。
-    2. 新增「🗻 專業等高地形圖」與「🛰️ 衛星混合圖」即時切換控制，並配置多重 Fallback 備援機制，100% 杜絕破圖。
-    3. 完整保留「順時針一條龍無回頭路」動線：D1 桃園飛成田宿新宿華盛頓；D2 07:00 出發登富士宮九合目；D3 登頂 3,776m 劍峰後下山遊西麓與本栖湖，宿鐘山苑/KUKUNA；D4 河口湖全景步道＋湖波＋和牛秀，宿回新宿華盛頓；D5 星宇 JX801 從容返台。
+    1. 對齊星宇航空實際開票日期：2027/07/27(二) ~ 2027/07/31(六) 5天4夜。
+    2. 更新貓咪裝人官方 Final 報價：NT$ 64,300 元/人起（6人專屬包團，兩人一室雙床）。
+    3. 全面升級房型與規格：
+       - D1 & D4：新宿華盛頓飯店【別館 Annex】25平方米 舒適雙床房 (Twin)。
+       - D2：富士宮九合目 萬年雪山莊 (3,460m) 登山宿（含早晚餐）。
+       - D3：富士山溫泉 鐘山苑【有樂 山彥亭】附客房露天風呂・12.5疊+談話室（館內包廂甲州牛懷石宴）。
+    4. 交通車輛升級：D2~D4 全程配備「10人座豐田海獅 (Toyota HiAce)」豪華商務車。
+    5. 完美保留 ESRI 免 API Key 高可用等高線地圖、衛星雙圖層、15 大核心節點導航與 Chart.js 海拔體能雙軸曲線。
 -->
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2027 富士山 3,776m 登頂圓夢之旅｜6人精緻小團 5天4夜 順時針無回頭路版 v2.3</title>
+  <title>2027 富士山 3,776m 登頂圓夢之旅｜6人尊榮包團 5天4夜 官方定案手冊 v2.4</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -98,57 +103,73 @@
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">v2.3 高可用地圖版</span>
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">2027/7/26(一) ~ 7/30(五) 平日</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">貓咪裝人 Final 定案版 v2.4</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">2027/7/27(二) ~ 7/31(六)</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">NT$ 64,300 /人</span>
           </div>
-          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">2027 富士山 3,776m 登頂 ＋ 河口湖絕景健行 5 天 4 夜手冊</h1>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">2027 富士山 3,776m 登頂 ＋ 富士五湖漫遊 5 天 4 夜尊榮手冊</h1>
         </div>
       </div>
 
       <div class="flex items-center space-x-2 text-xs sm:text-sm font-medium">
         <div class="hidden xl:flex items-center space-x-3 bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200">
-          <span class="text-slate-700"><i class="fa-solid fa-users text-rose-600 mr-1.5"></i>6 人長輩閨蜜團</span>
+          <span class="text-slate-700"><i class="fa-solid fa-users text-rose-600 mr-1.5"></i>6 人獨立包團</span>
           <span class="text-slate-300">|</span>
           <span class="text-slate-700"><i class="fa-solid fa-plane text-sky-600 mr-1"></i>星宇 JX800/801 桃園飛成田</span>
           <span class="text-slate-300">|</span>
-          <span class="text-emerald-700 font-bold"><i class="fa-solid fa-calendar-check mr-1"></i>中元 8/16 ｜ 八月初一 8/31（完全避開）</span>
+          <span class="text-slate-700"><i class="fa-solid fa-van-shuttle text-amber-600 mr-1"></i>10人座海獅專車</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-emerald-700 font-bold"><i class="fa-solid fa-calendar-check mr-1"></i>避開 8/16中元 ＆ 8/31拜拜</span>
         </div>
         <button onclick="window.print()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg shadow transition flex items-center gap-1.5 text-xs">
-          <i class="fa-solid fa-print"></i> 列印企劃
+          <i class="fa-solid fa-print"></i> 列印定案企劃
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Decision Banner -->
+  <!-- Final Quotation & Strategy Summary Banner -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 w-full">
-    <div class="bg-gradient-to-r from-amber-50 via-rose-50 to-sky-50 border-l-4 border-rose-600 rounded-2xl p-4 sm:p-5 shadow-sm">
+    <div class="bg-gradient-to-r from-emerald-50 via-amber-50 to-rose-50 border-l-4 border-emerald-600 rounded-2xl p-4 sm:p-5 shadow-sm">
       <div class="flex items-start space-x-3.5">
-        <div class="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow">
-          <i class="fa-solid fa-compass-drafting text-base"></i>
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md shadow-emerald-600/20">
+          <i class="fa-solid fa-file-invoice-dollar text-lg"></i>
         </div>
         <div class="flex-1 text-sm text-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-            <h2 class="font-black text-rose-950 text-base">冒險王定案備忘錄：順時針一條龍、不走回頭路最佳配置</h2>
-            <span class="bg-emerald-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">動線最順暢・長輩免舟車之苦</span>
+            <div class="flex items-center gap-2">
+              <h2 class="font-black text-emerald-950 text-base">【貓咪裝人官方 Final 報價確認】：NT$ 64,300 元 / 人起（6 位獨立尊榮包團）</h2>
+              <span class="bg-emerald-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold">全額含稅</span>
+            </div>
+            <span class="text-xs font-bold text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+              訂位代號：EICDNI / 5OP5EC（機位已 OK）
+            </span>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-2.5 text-xs mt-2">
-            <div class="bg-white/90 p-2.5 rounded-xl border border-rose-200">
-              <strong class="text-rose-900 block mb-0.5">🛫 D1 桃園直達新宿</strong>
-              星宇 JX800 (08:30 TPE ➔ 12:45 NRT)，成田搭 N'EX 直達新宿，住新宿華盛頓本館並寄存大箱。
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-2.5 text-xs mt-2.5">
+            <div class="bg-white/95 p-2.5 rounded-xl border border-sky-200">
+              <strong class="text-sky-900 block mb-0.5"><i class="fa-solid fa-plane-up mr-1 text-sky-600"></i>星宇航空正航班來回</strong>
+              JX800 桃園(08:30)➔成田(12:55)<br>
+              JX801 成田(14:10)➔桃園(16:50)<br>
+              <span class="text-[11px] text-slate-500">含每人托運行李 23kg，下午準時返台</span>
             </div>
-            <div class="bg-white/90 p-2.5 rounded-xl border border-sky-200">
-              <strong class="text-sky-900 block mb-0.5">🏔️ D2~D3 富士宮登頂</strong>
-              D2 07:00 新宿出發直達五合目起登，宿九合目萬年雪山莊；D3 登頂 3,776m 劍峰，原路下山。
+            <div class="bg-white/95 p-2.5 rounded-xl border border-amber-200">
+              <strong class="text-amber-900 block mb-0.5"><i class="fa-solid fa-hotel mr-1 text-amber-600"></i>市區：新宿華盛頓【別館】</strong>
+              D1 & D4 安排<strong>兩人一室雙床（25㎡ 大客房）</strong>，室內新穎寬敞好開大行李箱，地下通道直達新宿站。
             </div>
-            <div class="bg-white/90 p-2.5 rounded-xl border border-emerald-200">
-              <strong class="text-emerald-900 block mb-0.5">♨️ D3 順遊西麓 ➔ 慶功宿</strong>
-              下山順訪山宮淺間神社、白絲瀑布、本栖湖，16:00 前進鐘山苑/KUKUNA 泡湯享包廂和牛會席。
+            <div class="bg-white/95 p-2.5 rounded-xl border border-emerald-200">
+              <strong class="text-emerald-900 block mb-0.5"><i class="fa-solid fa-hot-tub-person mr-1 text-emerald-600"></i>名湯：鐘山苑【山彥亭露天風呂】</strong>
+              D3 入住<strong>有樂 山彥亭 附露天風呂客房 (12.5疊+談話室)</strong>，三層大浴場直面富士山，包廂和牛懷石宴。
             </div>
-            <div class="bg-white/90 p-2.5 rounded-xl border border-amber-200">
-              <strong class="text-amber-900 block mb-0.5">🚡 D4 河口湖健行 ➔ 宿新宿</strong>
-              免回頭路！天上山纜車全景步道、湖波鰻魚飯、花海漫步、和牛燒肉秀晚餐，傍晚返宿新宿華盛頓。
+            <div class="bg-white/95 p-2.5 rounded-xl border border-rose-200">
+              <strong class="text-rose-900 block mb-0.5"><i class="fa-solid fa-van-shuttle mr-1 text-rose-600"></i>車輛：10 人座豐田海獅</strong>
+              D2～D4 全程 3 天專屬包車用車（含油資、ETC 過路費、司機食宿），長輩免提行李換車！
             </div>
+          </div>
+
+          <div class="mt-2.5 p-2 bg-emerald-100/70 rounded-xl text-[11px] text-emerald-950 flex flex-wrap items-center justify-between gap-1 border border-emerald-200">
+            <span>✅ <strong>費用包含：</strong>星宇航空來回機票 ＋ 四晚精選住宿（萬年雪山屋＋鐘山苑為一泊二食） ＋ 第二天至第四天全程專屬 10 人座用車 ＋ 1:6 專屬中文登山嚮導 ＋ 高額旅平險與登山特定險。</span>
+            <span class="text-slate-600">※ D1、D5 成田與新宿間採成田特快 N'EX，中餐與部分市區晚餐自理。</span>
           </div>
         </div>
       </div>
@@ -290,18 +311,18 @@
               </div>
             </div>
 
-            <!-- Item: Kaneyamaen / KUKUNA -->
+            <!-- Item: Kaneyamaen (山彥亭露天風呂客房) -->
             <div class="p-2.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition flex items-start space-x-2.5">
               <span class="text-lg mt-0.5">♨️</span>
               <div class="flex-1">
                 <div class="flex justify-between items-start">
-                  <h4 class="text-xs font-black text-amber-950">7. 【D3 慶功名湯】鐘山苑 / 別墅然然 (或 KUKUNA)</h4>
+                  <h4 class="text-xs font-black text-amber-950">7. 【D3 頂級慶功名宿】鐘山苑・有樂 山彥亭 (客房露天風呂)</h4>
                   <div class="flex space-x-1 shrink-0">
                     <button onclick="focusLocation(35.4647, 138.8211, 14)" class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold hover:bg-amber-300">📍 定位</button>
                     <a href="https://www.google.com/maps/search/?api=1&query=ホテル鐘山苑+山梨" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-0.5">D3 16:00 入住！三層無邊際露天溫泉洗淨火山灰，館內包廂和牛會席宴。</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">已定案房型：12.5疊+談話室附專屬露天溫泉！三層無邊際風呂，館內享用懷石料理。</p>
               </div>
             </div>
 
@@ -350,33 +371,18 @@
               </div>
             </div>
 
-            <!-- Item: Yakiniku Shu -->
-            <div class="p-2.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition flex items-start space-x-2.5">
-              <span class="text-lg mt-0.5">🥩</span>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <h4 class="text-xs font-black text-rose-950">11. 【D4 晚餐指定】甲州和牛燒肉 秀 (Shu)</h4>
-                  <div class="flex space-x-1 shrink-0">
-                    <button onclick="focusLocation(35.4985, 138.7665, 15)" class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-bold hover:bg-rose-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=焼肉+秀+河口湖" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
-                  </div>
-                </div>
-                <p class="text-[11px] text-slate-600 mt-0.5">16:30 慶功早晚餐！炭火炙烤頂級甲州黑毛和牛與特上牛舌，美味滿足。</p>
-              </div>
-            </div>
-
-            <!-- Item: Shinjuku Washington -->
+            <!-- Item: Shinjuku Washington Annex -->
             <div class="p-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition flex items-start space-x-2.5">
               <span class="text-lg mt-0.5">🏢</span>
               <div class="flex-1">
                 <div class="flex justify-between items-start">
-                  <h4 class="text-xs font-black text-slate-900">12. 【D1 & D4 住宿】新宿華盛頓飯店 本館</h4>
+                  <h4 class="text-xs font-black text-slate-900">11. 【D1 & D4 住宿】新宿華盛頓飯店【別館 Annex】</h4>
                   <div class="flex space-x-1 shrink-0">
                     <button onclick="focusLocation(35.6865, 139.6942, 15)" class="text-[10px] bg-slate-200 text-slate-800 px-2 py-0.5 rounded font-bold hover:bg-slate-300">📍 定位</button>
-                    <a href="https://www.google.com/maps/search/?api=1&query=新宿ワシントンホテル+本館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=新宿ワシントンホテル+アネックス+別館" target="_blank" class="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded font-bold hover:bg-emerald-700">🗺️ 導航</a>
                   </div>
                 </div>
-                <p class="text-[11px] text-slate-600 mt-0.5">地下道直通新宿站，D2 晨間集合便利；D4 續住直接領回寄放大行李箱！</p>
+                <p class="text-[11px] text-slate-600 mt-0.5">已升級安排別館 25㎡ 雙床大客房 (Twin)！地下道直通新宿站，D4 續住無縫領回行李。</p>
               </div>
             </div>
 
@@ -390,7 +396,7 @@
       </div>
     </section>
 
-    <!-- SECTION 2: Daily Itinerary Tabs (第二步：每日完整動線) -->
+    <!-- SECTION 2: Daily Itinerary Tabs (第二步：每日完整動線與官方時程) -->
     <section class="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
         <div>
@@ -398,44 +404,54 @@
             <i class="fa-solid fa-calendar-days text-rose-600"></i>
             第二步：5 天 4 夜每日順向時間軸與無折返動線 (Daily Timeline) 🚗🍜
           </h2>
-          <p class="text-xs text-slate-500">已落實順時針巡遊，D3 銜接西麓自然名勝、D4 專注河口湖健行美食並返宿新宿！</p>
+          <p class="text-xs text-slate-500">日期對齊：2027/7/27(二) ~ 7/31(六) ｜ 順時針巡遊、10人座海獅專車全程守護</p>
         </div>
 
         <!-- Tab Buttons -->
         <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200">
-          <button onclick="switchDay(1)" id="tab-btn-1" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition">Day 1 桃園抵東京</button>
-          <button onclick="switchDay(2)" id="tab-btn-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 2 富士宮起登</button>
-          <button onclick="switchDay(3)" id="tab-btn-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 3 登頂/西麓/名湯</button>
-          <button onclick="switchDay(4)" id="tab-btn-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 4 河口湖健行/返宿</button>
-          <button onclick="switchDay(5)" id="tab-btn-5" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Day 5 星宇從容返台</button>
+          <button onclick="switchDay(1)" id="tab-btn-1" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition">D1 (7/27 二) 星宇抵新宿</button>
+          <button onclick="switchDay(2)" id="tab-btn-2" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">D2 (7/28 三) 富士宮起登</button>
+          <button onclick="switchDay(3)" id="tab-btn-3" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">D3 (7/29 四) 攻頂/白絲/鐘山苑</button>
+          <button onclick="switchDay(4)" id="tab-btn-4" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">D4 (7/30 五) 天上山/宿回別館</button>
+          <button onclick="switchDay(5)" id="tab-btn-5" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">D5 (7/31 六) 星宇優雅返台</button>
         </div>
       </div>
 
       <!-- Day 1 Panel -->
       <div id="day-content-1" class="day-panel space-y-4">
         <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-sky-950 text-sm">Day 1：桃園機場(TPE) ➔ 成田機場(NRT) ➔ 成田特快 N'EX 直達新宿 ➔ 華盛頓飯店寄放行李 ➔ 新宿採買自由行</span>
-          <span class="bg-sky-200/80 text-sky-950 px-2.5 py-1 rounded-full font-bold">宿：新宿華盛頓飯店 本館（3 間雙床房 Twin）</span>
+          <span class="font-bold text-sky-950 text-sm">Day 1：桃園機場(TPE) ➔ 成田機場(NRT) ➔ 自由活動搭乘成田特快 N'EX 直達新宿 ➔ 華盛頓別館寄放行李 ➔ 新宿採買自由行</span>
+          <span class="bg-sky-200/80 text-sky-950 px-2.5 py-1 rounded-full font-bold">宿：新宿華盛頓飯店 別館 Annex（兩人一室雙床 25㎡）</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div><strong>🍳 早餐：</strong>機上餐 (星宇精緻餐點)</div>
+          <div><strong>🍱 中餐：</strong>成田機場/電車上自理</div>
+          <div><strong>🍲 晚餐：</strong>新宿市區自由探索自理</div>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>08:30 - 12:45 星宇航空 JX800 抵達成田機場</strong>：通關迅速，前往地下 1 樓 JR 東日本旅行服務中心，劃位搭乘成田特快 N'EX。</li>
-          <li>• <strong>13:45 - 15:10 成田特快 N'EX 直達新宿站</strong>：全車指定席，行李架設有密碼鎖，長輩中途無需換車搬行李，舒適補眠 85 分鐘直達新宿。</li>
-          <li>• <strong>15:30 抵達【新宿華盛頓飯店 本館】辦理 Check-in / 寄存大行李</strong>：步行經地下通道約 7~9 分鐘即達。將不需要帶上山的大行李箱交由櫃檯寄存（已預約 D4 續住，行李無縫留置）。</li>
-          <li>• <strong>16:00 - 20:00 新宿自由散策與裝備最後補充</strong>：步行前往新宿 Alpen TOKYO 或 L-Breath 戶外用品旗艦館，採購羊毛登山襪、氧氣罐或防風保暖配件。晚餐享用新宿在地利久牛舌或炸豬排。</li>
-          <li>• <strong>20:30 返回飯店整理輕便登山攻頂小背包</strong>：於飯店 1 樓超商買齊隔天行動乾糧，21:30 就寢儲備精神。</li>
+          <li>• <strong>08:30 - 12:55 星宇航空 JX800 抵達成田機場第一航廈</strong>：通關迅速，跟隨指標前往地下 1 樓 JR 旅行服務中心劃位搭乘成田特快 N'EX（全車指定席、密碼鎖行李架）。</li>
+          <li>• <strong>13:45 - 15:10 成田特快 N'EX 直達新宿站</strong>：長輩無需在中途拖行李轉車換線，舒適在車上補眠 85 分鐘直達新宿。</li>
+          <li>• <strong>15:30 抵達【新宿華盛頓飯店 別館 Annex】辦理 Check-in / 寄存大行李</strong>：經地下通道約 7~9 分鐘即達。入住升級的 25 平方公尺雙床大客房！將登山用不到的 28 吋大行李寄放櫃檯（已預訂 D4 續住，行李無縫留置）。</li>
+          <li>• <strong>16:00 - 20:00 新宿自由散策與裝備最後補充</strong>：步行前往新宿 Alpen TOKYO 或 L-Breath 戶外用品旗艦館，採購羊毛登山襪、氧氣罐或防風保暖配件。晚餐享用在地利久牛舌或新宿炸豬排。</li>
+          <li>• <strong>20:30 返回飯店整理輕便登山攻頂小背包</strong>：超商備妥隔日行動乾糧，21:30 就寢儲備精神。</li>
         </ul>
       </div>
 
       <!-- Day 2 Panel -->
       <div id="day-content-2" class="day-panel space-y-4 hidden">
         <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-amber-950 text-sm">Day 2：07:00 新宿出發 ➔ 11:00 富士宮五合目(2,400m)高度適應 ➔ 11:30 起登 ➔ 入住九合目萬年雪山莊(3,460m)</span>
-          <span class="bg-amber-200/80 text-amber-950 px-2.5 py-1 rounded-full font-bold">宿：九合目 萬年雪山莊（含熱咖哩晚餐＋早點）</span>
+          <span class="font-bold text-amber-950 text-sm">Day 2：東京市區出發 ➔ 專屬10人座海獅專車 ➔ 富士宮五合目(2,400m)高度適應 ➔ 登山起登 ➔ 入住萬年雪山莊</span>
+          <span class="bg-amber-200/80 text-amber-950 px-2.5 py-1 rounded-full font-bold">宿：九合目 萬年雪山莊（含熱食晚餐＋攻頂早點）</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div><strong>🍳 早餐：</strong>飯店旁/超商自理</div>
+          <div><strong>🍱 中餐：</strong>五合目輕食自理</div>
+          <div><strong>🍲 晚餐：</strong>萬年雪山屋內用熱食咖哩</div>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>06:30 - 07:00 晨間退房與集合</strong>：由新宿華盛頓步行至集合點（僅約 7 分鐘），搭乘專屬登山專車出發前往靜岡側。</li>
-          <li>• <strong>11:00 - 11:30 抵達富士宮五合目（海拔 2,400m）強制高度適應</strong>：於レストハウス休息站享用輕食便當、選購木製金剛杖、深呼吸適應低氣壓。</li>
-          <li>• <strong>11:30 - 17:00 專屬中文嚮導帶領起登（富士宮五合目 ➔ 九合目）</strong>：配合長輩呼吸節奏採「烏龜小步法」，每 40 分鐘在山屋小憩補水。富士宮線來回僅 8.6km，大幅減少 40% 冗長砂石路！</li>
+          <li>• <strong>06:30 - 07:00 晨間退房與集合</strong>：專屬 10 人座豐田海獅商務車準時於集合點迎接 6 位團員，車廂寬敞舒適，直奔靜岡側富士宮登山口。</li>
+          <li>• <strong>11:00 - 11:30 抵達富士宮五合目（海拔 2,400m）強制高度適應</strong>：於休息站選購木製金剛杖（準備沿途烙印朱印）、深呼吸適應低氣壓環境。</li>
+          <li>• <strong>11:30 - 17:00 專屬中文登山嚮導隨隊帶領起登（富士宮五合目 ➔ 九合目）</strong>：配合長輩呼吸節奏採「烏龜小步法」，每 40 分鐘在山屋小憩補水。富士宮線來回僅 8.6km，大幅減少 40% 冗長砂石路！</li>
           <li>• <strong>17:00 入住【九合目 萬年雪山莊 (3,460m)】</strong>：入住高海拔山屋，距山頂僅剩 300 公尺落差！享用熱騰騰漢堡排咖哩飯，欣賞壯觀雲海與夕陽影富士，19:30 熄燈就寢。</li>
         </ul>
       </div>
@@ -443,85 +459,99 @@
       <!-- Day 3 Panel -->
       <div id="day-content-3" class="day-panel space-y-4 hidden">
         <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-emerald-950 text-sm">Day 3：02:30 起床攻頂 ➔ 御來光日出 ➔ 3,776m 劍峰最高點 ➔ 11:00 返五合目 ➔ 山宮淺間神社 ➔ 白絲瀑布 ➔ 本栖湖 ➔ 鐘山苑/KUKUNA</span>
-          <span class="bg-emerald-200/80 text-emerald-950 px-2.5 py-1 rounded-full font-bold">宿：富士山溫泉 鐘山苑 或 風のテラス KUKUNA（館內一泊二食會席）</span>
+          <span class="font-bold text-emerald-950 text-sm">Day 3：02:30 攻頂 ➔ 御來光日出 ➔ 3,776m 劍峰最高點 ➔ 11:00 返登山口 ➔ 山宮淺間神社 ➔ 白絲瀑布 ➔ 本栖湖 ➔ 鐘山苑</span>
+          <span class="bg-emerald-200/80 text-emerald-950 px-2.5 py-1 rounded-full font-bold">宿：富士山溫泉 鐘山苑【有樂 山彥亭】附客房露天風呂・12.5疊+談話室</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div><strong>🍳 早餐：</strong>山屋內用早點</div>
+          <div><strong>🍱 中餐：</strong>白絲瀑布名物炒麵自理</div>
+          <div><strong>🍲 晚餐：</strong>鐘山苑飯店內用頂級懷石料理（高腳桌席）</div>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
           <li>• <strong>02:30 - 04:30 頭燈星光攻頂（九合目 ➔ 富士山山頂）</strong>：只需爬升 1.5 小時即可抵達山頂淺間大社奧宮，對長輩體力消耗最小！</li>
-          <li>• <strong>04:45 - 06:00 迎接「御來光日出」＆ 登頂「3,776m 劍峰石碑」</strong>：富士宮出口往上步行 10 分鐘馬背坡即直達日本最高峰！拍攝圓夢合影，於山頂郵局寄出明信片。</li>
-          <li>• <strong>06:30 - 11:00 原路慢步平安下山 ➔ 11:00 返抵五合目</strong>：穿戴護膝與登山綁腿，沿途隨時有山屋廁所，專車在登山口等候迎接，送上冰鎮水果毛巾！</li>
-          <li>• <strong>11:30 - 12:30 富士山元宮【山宮淺間神社】參拜祈福</strong>：下山途中順路第一站，世界遺產文化財。古木參道清幽，向整座富士神山獻上平安感恩。</li>
-          <li>• <strong>12:50 - 14:15 【白絲瀑布 ＆ 音止瀑布】消暑賞瀑與午餐</strong>：寬 150 公尺的環狀絕壁噴湧出千道絹絲瀑布，負離子含量極高；於瀑布商店街享用在地名物富士宮炒麵。</li>
-          <li>• <strong>14:45 - 15:20 【本栖湖】千圓紙鈔視角快拍</strong>：順著國道 139 號一路向東，短暫停留本栖湖畔，拿出千圓日幣與眼前壯闊富士山對焦合影。</li>
-          <li>• <strong>16:00 順暢抵達河口湖 ➔ 入住【富士山溫泉 鐘山苑 / 別墅然然 (或 KUKUNA)】</strong>：辦理入住後徹底沐浴洗去兩天火山灰，享受三層露天富士山溫泉！</li>
-          <li>• <strong>18:30 飯店包廂內享用【甲州和牛會席晚宴】</strong>：晚餐與住宿同地點，免去長輩雙腿鐵腿再次外出舟車勞頓；已預先要求安排「高腳桌椅（テーブル席）」，免席地跪坐！</li>
+          <li>• <strong>04:45 - 06:00 迎接「御來光日出」＆ 登頂「3,776m 劍峰石碑」</strong>：富士宮出口往上步行 10 分鐘馬背坡即直達日本最高峰！拍攝全員圓夢合影，於山頂郵局寄出紀念明信片。</li>
+          <li>• <strong>06:30 - 11:00 原路慢步平安下山 ➔ 11:00 返抵五合目</strong>：穿戴護膝與登山綁腿，沿途隨時有山屋廁所，專屬海獅專車在登山口等候迎接，送上冰鎮毛巾與礦泉水！</li>
+          <li>• <strong>11:30 - 12:30 富士山元宮【山宮淺間神社】參拜祈福</strong>：下山途中第一站，世界遺產文化財。古木參道清幽，向整座富士神山獻上平安感恩。</li>
+          <li>• <strong>12:50 - 14:15 【白絲瀑布 ＆ 音止瀑布】消暑賞瀑與午餐</strong>：寬 150 公尺環狀絕壁噴湧出千道伏流水瀑布，負離子含量極高；於瀑布商店街享用在地名物富士宮炒麵。</li>
+          <li>• <strong>14:45 - 15:20 【本栖湖】千圓紙鈔視角快拍</strong>：順著國道 139 號一路向東，拿出千圓日幣與眼前壯闊富士山對焦合影。</li>
+          <li>• <strong>16:00 順暢抵達河口湖 ➔ 入住【富士山溫泉 鐘山苑・有樂 山彥亭】</strong>：辦理入住後徹底沐浴洗去兩天火山灰，享受房內專屬私人露天溫泉與頂樓三層無邊際富士山風呂！</li>
+          <li>• <strong>18:30 飯店包廂內享用【甲州和牛懷石晚宴】</strong>：晚餐與住宿同地點，免去長輩雙腿疲勞再次外出舟車勞頓；已安排「高腳桌椅（テーブル席）」，免席地跪坐！</li>
         </ul>
       </div>
 
       <!-- Day 4 Panel -->
       <div id="day-content-4" class="day-panel space-y-4 hidden">
         <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-rose-950 text-sm">Day 4：晨湯百匯 ➔ 天上山纜車+全景步道 ➔ 湖波午餐 ➔ 大石公園薰衣草 ➔ 和牛燒肉秀 ➔ 宿回新宿華盛頓（免回頭路！）</span>
-          <span class="bg-rose-200/80 text-rose-950 px-2.5 py-1 rounded-full font-bold">宿：新宿華盛頓飯店 本館（與 D1 同飯店，無縫領回大行李箱）</span>
+          <span class="font-bold text-rose-950 text-sm">Day 4：晨湯百匯 ➔ 天上山公園全景纜車 ➔ 湖波(Konami)鰻魚午餐 ➔ 大石公園薰衣草 ➔ 專車直達東京市區</span>
+          <span class="bg-rose-200/80 text-rose-950 px-2.5 py-1 rounded-full font-bold">宿：新宿華盛頓飯店 別館 Annex（兩人一室雙床 25㎡）</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div><strong>🍳 早餐：</strong>鐘山苑飯店內用精緻百匯</div>
+          <div><strong>🍱 中餐：</strong>湖波(Konami) 湖畔料理自理</div>
+          <div><strong>🍲 晚餐：</strong>甲州和牛燒肉秀 / 新宿美食自理</div>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>08:30 - 09:30 悠閒晨湯與百匯早餐後退房</strong>：專車在飯店外恭候，整天專注在河口湖核心精華，行車時間極短、長輩零負擔！</li>
+          <li>• <strong>08:30 - 09:30 悠閒晨湯與百匯早餐後退房</strong>：專屬海獅專車在飯店外恭候，整天專注在河口湖精華，車程極短、長輩零負擔！</li>
           <li>• <strong>10:00 - 12:00 【天上山公園全景纜車 ＋ 山頂全景步道輕健行】</strong>：
-            搭乘纜車直達天上山展望台（富士見台），敲響天上の鐘；接著沿著平緩綠蔭林道步行約 15 分鐘抵達「小御嶽神社山頂」，360 度俯瞰整座河口湖碧藍湖面，並指著眼前 3,776m 山頂驚嘆：「我們昨天真的站在那上面耶！」成就感滿分。</li>
+            搭乘纜車直達天上山展望台（富士見台），敲響天上の鐘；接著沿平緩綠蔭林道步行約 15 分鐘抵達山頂，360 度俯瞰整座河口湖碧藍湖面，並指著眼前 3,776m 山頂驚嘆：「我們昨天真的站在那上面耶！」成就感滿分。</li>
           <li>• <strong>12:15 - 13:45 【湖波 (Konami)】湖畔景觀午餐</strong>：預約河口湖北岸首排景觀席！面朝逆富士湖景，品嚐熱騰騰蒲燒鰻魚飯、手打蕎麥麵與酥炸公魚定食。</li>
           <li>• <strong>14:00 - 15:30 【大石公園】湖畔薰衣草花海散策</strong>：漫步湖畔平坦木棧道，7 月下旬正值紫色花毯盛開，一邊吃薰衣草霜淇淋一邊悠閒拍照。</li>
-          <li>• <strong>16:30 - 18:00 【甲州和牛燒肉 秀 (Shu)】慶功晚宴</strong>：於河口湖高評價燒肉名店包廂享用頂級甲州黑毛和牛、特上牛舌與極品牛五花，六人舉杯慶祝全體圓夢！</li>
-          <li>• <strong>18:30 - 20:30 專車/高速直達東京市區 ➔ 入住【新宿華盛頓飯店 本館】</strong>：返回與 D1 相同的飯店，櫃檯領回寄放的 28 吋大行李箱，進房更衣休息或於新宿周邊藥妝店採買。</li>
+          <li>• <strong>16:00 - 18:30 10人座海獅專車直達東京市區 ➔ 入住【新宿華盛頓飯店 別館 Annex】</strong>：返回飯店，櫃檯順利領回寄放的 28 吋大行李箱，進房更衣休息；晚餐可自由品嚐新宿和牛燒肉、利久牛舌或拉麵。</li>
         </ul>
       </div>
 
       <!-- Day 5 Panel -->
       <div id="day-content-5" class="day-panel space-y-4 hidden">
         <div class="bg-purple-50 border border-purple-200 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span class="font-bold text-purple-950 text-sm">Day 5：睡到自然醒 ➔ 新宿藥妝百貨補貨 ➔ 10:30 搭車前往成田機場 ➔ 14:10 星宇航空 JX801 ➔ 16:50 返抵桃園機場</span>
-          <span class="bg-purple-200/80 text-purple-950 px-2.5 py-1 rounded-full font-bold">溫暖的家（傍晚 17:00 前回到台灣，免除早出晚歸疲勞）</span>
+          <span class="font-bold text-purple-950 text-sm">Day 5：睡到自然醒 ➔ 新宿藥妝百貨採購 ➔ 自由活動前往成田機場 ➔ 14:10 星宇 JX801 ➔ 16:50 返抵桃園機場</span>
+          <span class="bg-purple-200/80 text-purple-950 px-2.5 py-1 rounded-full font-bold">溫暖的家（週六傍晚 16:50 返台，週日充裕休息調養體力）</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div><strong>🍳 早餐：</strong>新宿市區/超商自理</div>
+          <div><strong>🍱 中餐：</strong>機上餐 (星宇精緻餐點)</div>
+          <div><strong>🍲 晚餐：</strong>溫暖的家</div>
         </div>
         <ul class="space-y-3 text-xs sm:text-sm text-slate-700 pl-2">
-          <li>• <strong>08:30 - 10:00 悠閒享用飯店早餐與整理戰利品行李</strong>：無需清晨摸黑趕路！長輩可以在飯店悠閒整理登頂證書與伴手禮。</li>
-          <li>• <strong>10:30 搭乘成田特快 N'EX 或專屬專車前往機場</strong>：約 12:00 抵達成田機場第一航廈，提前 2 小時輕鬆完成報到與行李托運（每人 23kg 額度充足）。</li>
+          <li>• <strong>08:30 - 10:00 悠閒享用早餐與整理戰利品行李</strong>：無需清晨摸黑趕路！長輩可以在飯店悠閒整理登頂證書與伴手禮。</li>
+          <li>• <strong>10:30 搭乘成田特快 N'EX 前往成田機場</strong>：約 12:00 抵達成田機場第一航廈，提前 2 小時輕鬆完成報到與行李托運（每人 23kg 額度充足）。</li>
           <li>• <strong>12:30 - 13:40 機場免稅店採買與登機</strong>：採購東京芭娜娜、白色戀人、獺祭清酒等伴手禮。</li>
-          <li>• <strong>14:10 - 16:50 星宇航空 JX801 返回台灣</strong>：精品級客機舒適座艙，下午 16:50 準時降落桃園國際機場第二航廈，圓滿完成 5 天 4 夜富士山 3,776m 登頂與河口湖漫遊壯舉！</li>
+          <li>• <strong>14:10 - 16:50 星宇航空 JX801 返回台灣</strong>：精品客機舒適座艙，下午 16:50 準時降落桃園國際機場第一航廈，週六返家、週日充分休息，圓滿完成 5 天 4 夜富士山 3,776m 登頂與河口湖漫遊壯舉！</li>
         </ul>
       </div>
     </section>
 
-    <!-- SECTION 3: Semantic HTML Tables for Accommodation & Food (核心語意表格) -->
+    <!-- SECTION 3: Semantic HTML Tables for Accommodation & Quotation Specifications (核心語意表格) -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       <!-- Accommodations Table -->
       <div class="lg:col-span-7 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
         <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-hotel text-amber-600"></i>
-          全行程 3 大核心住宿配置表（已全數敲定）
+          官方定案住宿與房型明細表（含房型等級與面積）
         </h3>
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left border-collapse border border-slate-200">
             <thead>
               <tr class="bg-slate-100 text-slate-700">
                 <th class="py-2.5 px-2 font-bold border border-slate-200">住宿飯店/山屋</th>
-                <th class="py-2.5 px-2 font-bold border border-slate-200">安排晚次與房型</th>
-                <th class="py-2.5 px-2 font-bold border border-slate-200">核心亮點優勢</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">安排晚次與定案房型</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">房型亮點與餐食規劃</th>
                 <th class="py-2.5 px-2 border border-slate-200 text-center">外部導航</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
               <tr class="bg-white hover:bg-slate-50">
                 <td class="py-2.5 px-2 border border-slate-200">
-                  <strong class="text-slate-900">新宿華盛頓飯店 本館</strong><br>
-                  <span class="text-[11px] text-slate-500">Shinjuku Washington Hotel</span>
+                  <strong class="text-slate-900">新宿華盛頓飯店【別館 Annex】</strong><br>
+                  <span class="text-[11px] text-slate-500">Shinjuku Washington Annex</span>
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 font-semibold text-sky-800">
-                  D1 (首晚) ＆ D4 (尾晚)<br>3 間 Twin 雙床房
+                  D1 (7/27) ＆ D4 (7/30)<br>3 間 Twin 雙床房
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
-                  地下道直通新宿站，D2 早上 07:00 集合步行 7 分鐘；D1~D4 期間可免費寄存大行李箱！
+                  <strong>25 平方公尺舒適大房型</strong>！好開大行李箱，地下連通道直通新宿站；D1~D4 期間免費寄存大行李箱。
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 text-center">
-                  <a href="https://www.google.com/maps/search/?api=1&query=新宿ワシントンホテル+本館" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Maps</a>
+                  <a href="https://www.google.com/maps/search/?api=1&query=新宿ワシントンホテル+アネックス+別館" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Maps</a>
                 </td>
               </tr>
               <tr class="bg-slate-50/70 hover:bg-slate-100/70">
@@ -530,7 +560,7 @@
                   <span class="text-[11px] text-slate-500">Mannenyuki Mountain Hut</span>
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 font-semibold text-amber-800">
-                  D2 登山宿<br>6人劃位通鋪 (含早晚餐)
+                  D2 (7/28) 登山宿<br>6人劃位通鋪 (含早晚餐)
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
                   海拔 3,460m！離山頂僅剩 300m 爬升，隔天凌晨只需走 1.5 小時即可登頂劍峰。
@@ -541,14 +571,14 @@
               </tr>
               <tr class="bg-white hover:bg-slate-50">
                 <td class="py-2.5 px-2 border border-slate-200">
-                  <strong class="text-slate-900">富士山溫泉 鐘山苑 / 別墅然然</strong><br>
-                  <span class="text-[11px] text-slate-500">(或 風のテラス KUKUNA)</span>
+                  <strong class="text-slate-900">富士山溫泉 鐘山苑</strong><br>
+                  <span class="text-[11px] text-emerald-700 font-bold">【有樂 山彥亭 附露天風呂】</span>
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 font-semibold text-emerald-800">
-                  D3 下山慶功宿<br>3 間露天風呂附客房
+                  D3 (7/29) 頂級慶功宿<br>3 間露天風呂客房
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
-                  日本百選溫泉！三層無邊際露天溫泉洗淨火山灰，館內包廂甲州牛懷石宴（免二次外出）。
+                  <strong>12.5疊＋談話室附客房露天風呂</strong>！三層無邊際露天溫泉洗淨火山灰，館內包廂甲州牛懷石晚宴（高腳桌席）。
                 </td>
                 <td class="py-2.5 px-2 border border-slate-200 text-center">
                   <a href="https://www.google.com/maps/search/?api=1&query=ホテル鐘山苑+山梨" target="_blank" class="text-sky-600 font-bold hover:underline">📍 Maps</a>
@@ -559,60 +589,49 @@
         </div>
       </div>
 
-      <!-- Specific Food Table -->
+      <!-- Specific Quotation Specifications Table -->
       <div class="lg:col-span-5 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
         <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-utensils text-rose-600"></i>
-          D3～D4 指定必吃特色名店表
+          <i class="fa-solid fa-receipt text-emerald-600"></i>
+          包團報價與費用明細（NT$ 64,300/人起）
         </h3>
         <div class="overflow-x-auto">
           <table class="w-full text-xs text-left border-collapse border border-slate-200">
             <thead>
               <tr class="bg-slate-100 text-slate-700">
-                <th class="py-2.5 px-2 font-bold border border-slate-200">餐廳名稱與招牌菜色</th>
-                <th class="py-2.5 px-2 font-bold border border-slate-200">推薦時機</th>
-                <th class="py-2.5 px-2 border border-slate-200 text-center">導航與食記</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">項目分類</th>
+                <th class="py-2.5 px-2 font-bold border border-slate-200">包含 / 備註內容</th>
+                <th class="py-2.5 px-2 border border-slate-200 text-center">狀態</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
               <tr class="bg-white hover:bg-slate-50">
-                <td class="py-2.5 px-2 border border-slate-200">
-                  <strong class="text-slate-900">湖波 (Konami)</strong><br>
-                  <span class="text-[11px] text-slate-500">河口湖北岸景觀鰻魚飯、手打蕎麥麵、公魚天婦羅</span>
+                <td class="py-2.5 px-2 border border-slate-200 font-bold text-slate-900">航空機票</td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  星宇航空 JX800/801 桃園⇄成田來回經濟艙（每人 23kg 托運行李）
                 </td>
-                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-rose-700">
-                  D4 午餐<br>直視湖畔逆富士
-                </td>
-                <td class="py-2.5 px-2 border border-slate-200 space-x-1 text-center">
-                  <a href="https://www.google.com/maps/search/?api=1&query=食事処+湖波+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍地圖</a>
-                  <a href="https://www.youtube.com/results?search_query=河口湖+湖波" target="_blank" class="text-rose-600 font-bold hover:underline">▶️食記</a>
-                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-center text-emerald-600 font-bold">已OK</td>
               </tr>
               <tr class="bg-slate-50/70 hover:bg-slate-100/70">
-                <td class="py-2.5 px-2 border border-slate-200">
-                  <strong class="text-slate-900">甲州和牛燒肉 秀 (Shu)</strong><br>
-                  <span class="text-[11px] text-slate-500">A5 甲州黑毛和牛、特上厚切牛舌、冷麵與泡飯</span>
+                <td class="py-2.5 px-2 border border-slate-200 font-bold text-slate-900">專屬車輛</td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  D2～D4 全程 3 天 10 人座豐田海獅商務車（含油資、ETC 過路費、司機津貼）
                 </td>
-                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-rose-700">
-                  D4 晚餐<br>下山慶功高分名店
-                </td>
-                <td class="py-2.5 px-2 border border-slate-200 space-x-1 text-center">
-                  <a href="https://www.google.com/maps/search/?api=1&query=焼肉+秀+河口湖" target="_blank" class="text-sky-600 font-bold hover:underline">📍地圖</a>
-                  <a href="https://www.youtube.com/results?search_query=河口湖+焼肉+秀" target="_blank" class="text-rose-600 font-bold hover:underline">▶️食記</a>
-                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-center text-emerald-600 font-bold">已包含</td>
               </tr>
               <tr class="bg-white hover:bg-slate-50">
-                <td class="py-2.5 px-2 border border-slate-200">
-                  <strong class="text-slate-900">白絲瀑布 炒麵橫丁</strong><br>
-                  <span class="text-[11px] text-slate-500">B級美食冠軍「富士宮炒麵」、高原軟質霜淇淋</span>
+                <td class="py-2.5 px-2 border border-slate-200 font-bold text-slate-900">登山嚮導</td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  富士宮路線 1:6 專屬中文高山嚮導隨隊照護 ＋ 登頂證書 ＋ 專屬保險
                 </td>
-                <td class="py-2.5 px-2 border border-slate-200 font-semibold text-amber-700">
-                  D3 午餐<br>賞瀑時輕食補充
+                <td class="py-2.5 px-2 border border-slate-200 text-center text-emerald-600 font-bold">已包含</td>
+              </tr>
+              <tr class="bg-slate-50/70 hover:bg-slate-100/70">
+                <td class="py-2.5 px-2 border border-slate-200 font-bold text-slate-900">自理項目</td>
+                <td class="py-2.5 px-2 border border-slate-200 text-slate-600">
+                  D1/D5 成田與新宿 N'EX 車票（約¥3,070/趟）、中餐與部分晚餐、個人購物
                 </td>
-                <td class="py-2.5 px-2 border border-slate-200 space-x-1 text-center">
-                  <a href="https://www.google.com/maps/search/?api=1&query=富士宮やきそば+白糸の滝" target="_blank" class="text-sky-600 font-bold hover:underline">📍地圖</a>
-                  <a href="https://www.youtube.com/results?search_query=富士宮炒麵" target="_blank" class="text-rose-600 font-bold hover:underline">▶️食記</a>
-                </td>
+                <td class="py-2.5 px-2 border border-slate-200 text-center text-slate-500 font-medium">現場自理</td>
               </tr>
             </tbody>
           </table>
@@ -628,7 +647,7 @@
             <i class="fa-solid fa-chart-area text-rose-600"></i>
             5 天 4 夜精算：海拔高度爬升與長輩體力負荷雙軸曲線 (Elevation & Stamina Curve)
           </h2>
-          <p class="text-xs text-slate-500">D1新宿(40m) ➔ D2五合目(2,400m)+九合目(3,460m) ➔ D3劍峰(3,776m)+白絲/鐘山苑(850m) ➔ D4天上山(1,075m)/新宿 ➔ D5返台</p>
+          <p class="text-xs text-slate-500">D1新宿別館(40m) ➔ D2五合目(2,400m)+九合目(3,460m) ➔ D3劍峰(3,776m)+鐘山苑(850m) ➔ D4天上山(1,075m)/新宿 ➔ D5返台</p>
         </div>
       </div>
       <div class="h-64 relative">
@@ -642,7 +661,7 @@
   <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs py-5 mt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
       <span class="text-slate-300 font-bold">冒險王 (一站式旅遊規劃大師兼前端介面工程師)</span>
-      <span>檔案版本：20261018_富士山_v2.3.html ｜ 依據順時針無折返跑決策鎖定條件量身打造</span>
+      <span>檔案版本：20261018_富士山_v2.3.html (v2.4 Final) ｜ 依據貓咪裝人官方 Final 定案規格與星宇開票資訊量身打造</span>
     </div>
   </footer>
 
@@ -662,13 +681,13 @@
       { id: 4, name: "⛩️ 富士山元宮 山宮淺間神社", lat: 35.2672, lng: 138.6315, searchName: "山宮浅間神社 富士宮", note: "D3 下山首站世界遺產，古老無本殿遙拜所", color: "#059669" },
       { id: 5, name: "🌊 白絲瀑布 ＆ 音止瀑布", lat: 35.3131, lng: 138.5878, searchName: "白糸の滝 富士宮", note: "D3 下山清涼聖地！富士山伏流水飛瀑與炒麵美食", color: "#059669" },
       { id: 6, name: "💴 本栖湖 (千圓日幣展望台)", lat: 35.4658, lng: 138.5833, searchName: "本栖湖", note: "D3 順路快拍！千元日鈔背面富士倒影取景處", color: "#059669" },
-      { id: 7, name: "♨️ 富士山溫泉 鐘山苑 / 別墅然然", lat: 35.4647, lng: 138.8211, searchName: "ホテル鐘山苑 山梨", note: "D3 慶功名湯！露天溫泉直面富士山，包廂和牛會席宴", color: "#d97706" },
-      { id: 8, name: "🏨 風のテラス KUKUNA (河口湖)", lat: 35.5131, lng: 138.7745, searchName: "風のテラスKUKUNA", note: "D3 備選頂級宿！全室逆富士首排，無邊際天空露天溫泉", color: "#d97706" },
+      { id: 7, name: "♨️ 鐘山苑・有樂 山彥亭 (客房露天風呂)", lat: 35.4647, lng: 138.8211, searchName: "ホテル鐘山苑 山梨", note: "D3 頂級慶功宿！12.5疊+談話室附專屬露天溫泉，包廂和牛懷石宴", color: "#d97706" },
+      { id: 8, name: "🏨 風のテラス KUKUNA (河口湖)", lat: 35.5131, lng: 138.7745, searchName: "風のテラスKUKUNA", note: "備選頂級名宿！全室逆富士首排，無邊際天空露天溫泉", color: "#d97706" },
       { id: 9, name: "🚡 天上山公園全景纜車 ＋ 全景步道", lat: 35.5038, lng: 138.7725, searchName: "富士山パノラマロープウェイ", note: "D4 健行首選！搭纜車登頂走 15 分鐘全景步道俯瞰全景", color: "#059669" },
       { id: 10, name: "🍱 湖波 (Konami) 湖畔景觀餐廳", lat: 35.5145, lng: 138.7712, searchName: "食事処 湖波 河口湖", note: "D4 午餐指定！北岸首排鰻魚飯與手打蕎麥麵", color: "#e11d48" },
       { id: 11, name: "🪻 大石公園 (湖畔花海散策)", lat: 35.5230, lng: 138.7460, searchName: "大石公園 河口湖", note: "D4 漫步紫色薰衣草花毯木棧道，品嚐霜淇淋", color: "#059669" },
-      { id: 12, name: "🥩 甲州和牛燒肉 秀 (Shu)", lat: 35.4985, lng: 138.7665, searchName: "焼肉 秀 河口湖", note: "D4 晚餐指定！高分和牛燒肉盛宴，包廂慶功", color: "#e11d48" },
-      { id: 13, name: "🏢 新宿華盛頓飯店 本館", lat: 35.6865, lng: 139.6942, searchName: "新宿ワシントンホテル 本館", note: "D1 & D4 住宿！地下道直通新宿站，寄存大行李最方便", color: "#475569" }
+      { id: 12, name: "🥩 甲州和牛燒肉 秀 (Shu)", lat: 35.4985, lng: 138.7665, searchName: "焼肉 秀 河口湖", note: "河口湖高分和牛燒肉盛宴，包廂慶功", color: "#e11d48" },
+      { id: 13, name: "🏢 新宿華盛頓飯店【別館 Annex】", lat: 35.6865, lng: 139.6942, searchName: "新宿ワシントンホテル アネックス 別館", note: "D1 & D4 住宿！25㎡ 雙床大客房，地下道直通新宿站，寄放大行李", color: "#475569" }
     ];
 
     window.onload = function() {
@@ -734,8 +753,7 @@
           [35.4647, 138.8211], // 鐘山苑
           [35.5038, 138.7725], // 天上山纜車
           [35.5145, 138.7712], // 湖波 (Konami)
-          [35.5230, 138.7460], // 大石公園
-          [35.4985, 138.7665]  // 燒肉 秀
+          [35.5230, 138.7460]  // 大石公園
         ];
         L.polyline(clockwiseTour, {
           color: '#059669',
@@ -842,7 +860,7 @@
       new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['D1 新宿抵達', 'D2 五合目(2400m)', 'D2 九合目(3460m)', 'D3 劍峰登頂(3776m)', 'D3 白絲/鐘山苑', 'D4 天上山(1075m)', 'D4 宿回新宿', 'D5 星宇返台'],
+          labels: ['D1 新宿別館(40m)', 'D2 五合目(2400m)', 'D2 九合目(3460m)', 'D3 劍峰登頂(3776m)', 'D3 鐘山苑山彥亭(850m)', 'D4 天上山(1075m)', 'D4 宿回新宿別館', 'D5 星宇返台'],
           datasets: [
             {
               label: '所處海拔高度 (公尺 m)',
