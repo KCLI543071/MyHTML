@@ -1,0 +1,1065 @@
+<!--
+  專案名稱: PTFW 動力系統韌體部門 2026 年度團建企劃
+  檔案版本: v2.2 (雙路線旗艦版：新增 Plan B 貓空茶山健行 × 裕隆城玩到底 × ESRI 零浮水印地圖)
+  更新日期: 2026-10-21
+  變更說明: 
+    1. 【新增 Plan B 貓空茶香健行 × 裕隆城沉浸玩到底】：早上 09:00 公司出發直奔文山/新店山區，挑戰「銀河洞越嶺/樟樹步道 2HR 有氧健行」，中午於貓空景觀餐廳品嚐鐵觀音茶餐；14:00 車子直接開進裕隆城 B3「一停到底不再移車」，15:00 閃動格子(單號 QKDPM17596) + 16:00 裕隆城休閒娛樂 + 18:00 裕隆城直接開飯(燒肉ChaCha/新馬辣/石研室)，19:45 國3直奔林口於 20:30 準時回公司大門！
+    2. 【保留 Plan A 觀音山方案】：原版觀音山 2HR 硬漢嶺攻頂 + 碧瑤山莊午餐動線完整保留於 Tab 供團隊投票比較。
+    3. 【石碇千島湖備案評估】：石碇千島湖八卦茶園路幅狹窄會車不易，已列為 Plan B 的高景觀備選選項。
+    4. 【地圖全面升級】：使用 ESRI 免授權高清圖磚（零浮水印、無 403 阻擋），整合貓空、銀河洞、千島湖、裕隆城全景節點。
+-->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 PTFW 部門秋季團建自駕指南 (v2.2 雙路線旗艦版)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Leaflet CSS & JS CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+            },
+            tech: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    #map {
+      border-radius: 1rem;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 0.75rem;
+      padding: 4px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    .tab-active {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen antialiased flex flex-col">
+
+  <!-- Top Header Navigation -->
+  <header class="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 shadow-sm transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
+          <i class="fa-solid fa-car-side text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">[PTFW 動力韌體專屬]</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">2026 旗艦雙動線 v2.2</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">PTFW 部門秋季團建自駕互動指南</h1>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 text-xs sm:text-sm font-medium">
+        <div class="hidden md:flex items-center space-x-3 bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200">
+          <span class="text-slate-700"><i class="fa-regular fa-calendar-check text-sky-600 mr-1.5"></i><strong>2026/11/13 (五)</strong></span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-700"><i class="fa-solid fa-users text-sky-600 mr-1.5"></i>5人 (4男1女 · Focus ST Wagon)</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-700"><i class="fa-solid fa-wallet text-emerald-600 mr-1.5"></i>預算 NT$ 2,000/人</span>
+        </div>
+        <button onclick="window.print()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow transition flex items-center gap-1.5 text-xs font-semibold">
+          <i class="fa-solid fa-print"></i> 列印手冊
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Plan B Innovation Banner -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 w-full">
+    <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border-l-4 border-emerald-600 rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div class="flex items-start space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
+          <i class="fa-solid fa-lightbulb text-lg"></i>
+        </div>
+        <div class="flex-1 text-sm text-slate-800">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <h3 class="font-bold text-slate-900 text-base">全新 Plan B 動線演算法：貓空茶山健行 × 裕隆城「一停到底」全包沉浸案！</h3>
+            <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">零移車 · 零吹風 · 效率極限</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2.5">
+            <div class="bg-white/90 p-3 rounded-xl border border-emerald-200">
+              <strong class="text-emerald-900 block mb-1 text-xs sm:text-sm"><i class="fa-solid fa-leaf mr-1 text-emerald-600"></i> 1. 上午新店/貓空 2HR 芬多精：</strong>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                國道3號 30 分鐘直抵新店北宜路，走<strong>「銀河洞瀑布越嶺步道 ➔ 貓空樟樹樟湖環線」</strong>（2HR 紮實有氧），下山抵達貓空景觀茶餐廳享用鐵觀音茶香土雞午餐！
+              </p>
+            </div>
+            <div class="bg-white/90 p-3 rounded-xl border border-sky-200">
+              <strong class="text-sky-900 block mb-1 text-xs sm:text-sm"><i class="fa-solid fa-square-parking mr-1 text-sky-600"></i> 2. 14:00 進裕隆城「一停到底不再動」：</strong>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                自貓空下山僅需 18 分鐘直抵裕隆城 B3！<strong>14:00~19:30 整整 5.5 小時</strong>在裕隆城室內吹冷氣，玩閃動格子、逛亞洲最大誠品、打街機，晚餐直接同棟吃大餐，完全免受塞車之苦！
+              </p>
+            </div>
+            <div class="bg-white/90 p-3 rounded-xl border border-purple-200">
+              <strong class="text-purple-900 block mb-1 text-xs sm:text-sm"><i class="fa-solid fa-moon mr-1 text-purple-600"></i> 3. 裕隆城開飯 ➔ 順暢北返林口：</strong>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                晚餐在裕隆城 3F/6F 大啖<strong>「燒肉ChaCha個人和牛 / 新馬辣經典麻辣鍋 / 石研室石頭火鍋」</strong>。吃飽 19:45 走國3安坑交流道順行林口，20:30 準時回到公司大門！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-8 flex-1">
+
+    <!-- Section 1: Dashboard Curve & Comparison -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Left: Physical Stamina vs Driving Analysis -->
+      <div class="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-sky-600"></i>
+              全日體能負荷與動線流暢度曲線 (Energy vs Schedule Analysis)
+            </h2>
+            <p class="text-xs text-slate-500">Plan B 優勢：下午 14:00 後全程室內免舟車勞頓，體力回充最快</p>
+          </div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-200">
+            裕隆城室內恆溫 22°C
+          </span>
+        </div>
+        <div class="h-64 relative mt-2">
+          <canvas id="staminaChart"></canvas>
+        </div>
+        <div class="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+            <span class="text-emerald-600 block font-medium">09:30-11:30 貓空/銀河洞</span>
+            <span class="font-bold text-emerald-950">2HR 瀑布茶園有氧</span>
+          </div>
+          <div class="p-2 rounded-lg bg-sky-50 border border-sky-100">
+            <span class="text-sky-600 block font-medium">14:00-17:30 裕隆城</span>
+            <span class="font-bold text-sky-950">閃動格子 + 誠品娛樂</span>
+          </div>
+          <div class="p-2 rounded-lg bg-amber-50 border border-amber-100">
+            <span class="text-amber-600 block font-medium">17:45-19:45 裕隆城晚餐</span>
+            <span class="font-bold text-amber-950">頂級燒肉/鍋物 ➔ 回公司</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Weather & Logistics Analysis -->
+      <div class="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between h-full">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-route text-amber-500"></i>
+              Plan A vs Plan B 決策評估矩陣
+            </h2>
+            <span class="text-xs bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded-full border border-purple-200">
+              各具特色
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                  <th class="py-2.5 px-2 font-semibold">評估維度</th>
+                  <th class="py-2.5 px-2 font-semibold text-sky-800">Plan A (觀音山+林口晚宴)</th>
+                  <th class="py-2.5 px-2 font-semibold text-emerald-800">Plan B (貓空茶山+裕隆城全包)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">健行景觀</td>
+                  <td class="py-2.5 px-2 text-slate-600">硬漢嶺俯瞰淡水河出海口</td>
+                  <td class="py-2.5 px-2 text-emerald-700 font-medium">銀河洞仙境瀑布 + 貓空茶園</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">午餐特色</td>
+                  <td class="py-2.5 px-2 text-slate-600">碧瑤山莊百年土埆厝土雞</td>
+                  <td class="py-2.5 px-2 text-emerald-700 font-medium">貓空景觀茶餐廳（鐵觀音茶餐）</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">停車次數</td>
+                  <td class="py-2.5 px-2 text-slate-600">3 次（觀音山/裕隆城/林口）</td>
+                  <td class="py-2.5 px-2 text-emerald-700 font-bold">2 次（貓空/裕隆城一停到底）★</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">晚餐時段</td>
+                  <td class="py-2.5 px-2 text-slate-600">18:00 林口藏王和牛鍋/乾杯</td>
+                  <td class="py-2.5 px-2 text-emerald-700 font-medium">17:45 裕隆城 燒肉ChaCha/新馬辣</td>
+                </tr>
+                <tr class="hover:bg-slate-50/50">
+                  <td class="py-2.5 px-2 font-bold text-slate-800">回公司時間</td>
+                  <td class="py-2.5 px-2 text-slate-600">20:00 準時抵公司大門</td>
+                  <td class="py-2.5 px-2 text-emerald-700 font-medium">20:30 準時抵公司大門</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950">
+          <i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>
+          <strong>千島湖備案說明</strong>：石碇千島湖/八卦茶園雖然水庫景觀絕美，但產業道路（塗潭道路）非常狹窄，Focus ST Wagon 會車需極度專注。若追求步道平整好走、下山順暢，<strong>貓空銀河洞樟樹步道</strong>是更流暢的 2 小時首選！
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Interactive Coordinates GPS Radar Map -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot text-sky-600"></i>
+            11/13 自駕全景 GPS 互動雷達地圖 (Full Route Radar)
+          </h2>
+          <p class="text-xs text-slate-500">已全面切換為 ESRI 高清免授權圖資（完全免 Key、零浮水印）；點選右側地點自動聚焦</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <div class="bg-slate-100 p-0.5 rounded-lg border border-slate-200 flex items-center">
+            <button onclick="changeTileLayer('street')" id="btn-layer-street" class="px-2 py-1 bg-white shadow-sm font-bold text-sky-800 rounded text-[11px] transition">
+              <i class="fa-solid fa-road"></i> 街道地圖
+            </button>
+            <button onclick="changeTileLayer('satellite')" id="btn-layer-sat" class="px-2 py-1 text-slate-600 hover:text-slate-900 font-medium rounded text-[11px] transition">
+              <i class="fa-solid fa-satellite"></i> 衛星空照
+            </button>
+          </div>
+          <button onclick="resetMapView()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold transition flex items-center gap-1">
+            <i class="fa-solid fa-arrows-rotate"></i> 重置全景
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <!-- Leaflet Map Container -->
+        <div class="lg:col-span-7 rounded-xl overflow-hidden border border-slate-200 shadow-inner h-[460px] lg:h-[520px] relative">
+          <div id="map"></div>
+        </div>
+
+        <!-- Location Node List -->
+        <div class="lg:col-span-5 h-[460px] lg:h-[520px] overflow-y-auto custom-scrollbar pr-1 space-y-2.5">
+
+          <!-- Node 1: HQ Departure & Return -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-emerald-50/50 hover:border-emerald-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">起訖總部</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-emerald-700">睿能創意 Gogoro 總部大門</h4>
+              </div>
+              <p class="text-xs text-slate-500">龜山區頂湖路33號 / 09:00 集合上車出發；晚間準時送全員回公司大門</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(25.0475, 121.3650, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=睿能創意+頂湖路33號" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-flag text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 2: Maokong & Yinhe Cave (Plan B) -->
+          <div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50/40 hover:bg-emerald-100/40 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">Plan B 健行 2HR</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-emerald-800">貓空樟樹步道 ＆ 銀河洞越嶺步道</h4>
+              </div>
+              <p class="text-xs text-slate-500">新店北宜路/文山貓空 / 走訪水濂仙境銀河洞瀑布與貓空茶園環線，健行約 2 小時，景色秀麗空氣絕佳！</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(24.9585, 121.5835, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=銀河洞越嶺步道" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-mountain-sun text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 3: Maokong Tea Restaurant (Plan B) -->
+          <div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50/40 hover:bg-emerald-100/40 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white">Plan B 茶餐午宴</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-emerald-800">貓空阿義師的大茶壺茶餐廳 / 耀瑪茶房</h4>
+              </div>
+              <p class="text-xs text-slate-500">指南路三段38巷 / 貓空最高評價茶料理名店！白斬土雞、鐵觀音燻雞、茶香豆腐與茶油拌麵，窗景可俯瞰台北盆地</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(24.9688, 121.5885, 16)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=貓空阿義師的大茶壺茶餐廳" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-mug-hot text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 4: Shiding Thousand Island Lake (Alternative Plan B) -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-teal-50/50 hover:border-teal-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800">千島湖備選</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-teal-700">石碇千島湖 ＆ 八卦茶園 (永安景觀步道)</h4>
+              </div>
+              <p class="text-xs text-slate-500">石碇區北宜路六段 / 翡翠水庫碧綠千島湖大景，永安步道來回約 2.1km，產業道路較窄適合慢速自駕</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(24.9355, 121.6580, 14)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=石碇千島湖觀景台" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-water text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 5: Xindian Yulong City (All-in-One Destination) -->
+          <div class="p-3 rounded-xl border border-purple-200 bg-purple-50/40 hover:bg-purple-100/40 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-600 text-white">核心大本營 14:00-19:30</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-purple-700">新店裕隆城（誠品生活新店 ＆ 威秀影城）</h4>
+              </div>
+              <p class="text-xs text-slate-500">中興路三段70號 / B3停車場一停到底！7F閃動格子(QKDPM17596)、誠品太極兔、湯姆熊電玩、晚餐同棟直接吃！</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(24.9782, 121.5458, 16)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=新店裕隆城" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-building text-xs"></i>
+            </div>
+          </div>
+
+          <!-- Node 6: Hard Man Ridge (Plan A) -->
+          <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50/50 hover:border-sky-300 transition group flex items-start justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800">Plan A 健行 2HR</span>
+                <h4 class="font-bold text-sm text-slate-800 group-hover:text-sky-700">觀音山硬漢嶺登山步道 ＆ 碧瑤山莊</h4>
+              </div>
+              <p class="text-xs text-slate-500">五股凌雲禪寺起登（海拔616m），來回約3.2km，2小時攻頂台北港大景，下山即吃碧瑤土雞合菜</p>
+              <div class="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+                <button onclick="focusMap(25.1378, 121.4190, 15)" class="text-sky-600 hover:text-sky-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-crosshairs"></i> 地圖定位
+                </button>
+                <span class="text-slate-300">|</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=觀音山硬漢嶺步道" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Google 導航
+                </a>
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-person-hiking text-xs"></i>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Detailed Schedule & Plan Selector Tabs -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-sky-600"></i>
+            11/13 (五) 雙動線精準時間軸配置 (Master Timetable v2.2)
+          </h2>
+          <p class="text-xs text-slate-500">點選切換：★全新 Plan B (貓空茶山×裕隆城玩到底) vs Plan A (觀音山硬漢嶺×林口晚宴)</p>
+        </div>
+        <!-- Tab Navigation Buttons -->
+        <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200" id="itineraryTabContainer">
+          <button onclick="switchPlan(1)" id="plan-btn-1" class="tab-btn active px-3.5 py-1.5 rounded-lg text-xs font-bold transition tab-active shadow-sm">
+            ★ Plan B：貓空茶山 ➔ 裕隆城玩到底 (大推)
+          </button>
+          <button onclick="switchPlan(2)" id="plan-btn-2" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            方案 A：觀音山硬漢嶺 ➔ 台64 ➔ 林口晚宴
+          </button>
+          <button onclick="switchPlan(3)" id="plan-btn-3" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            🔍 裕隆城 5.5 小時玩到底攻略 ＆ 美食清單
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan 1 Content (NEW Plan B: Maokong + Yulong City All-in-One) -->
+      <div id="plan-content-1" class="plan-panel space-y-4">
+        <div class="bg-emerald-50 border border-emerald-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-emerald-950 text-sm"><i class="fa-solid fa-car-tunnel mr-1"></i> Plan B 精準動線：09:00 公司出發 ➔ 09:40 貓空/銀河洞健行(2H) ➔ 12:00 貓空茶餐(1.5H) ➔ 14:00 進裕隆城一停到底 ➔ 15:00 閃動格子 ➔ 18:00 裕隆城晚餐 ➔ 20:30 公司大門</span>
+          <span class="bg-emerald-200 text-emerald-900 px-3 py-1 rounded-full font-bold">下午免移車 · 最舒適省時</span>
+        </div>
+
+        <div class="relative pl-6 border-l-2 border-emerald-400 space-y-6 my-4">
+          
+          <!-- Stop 1 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">09:00 - 09:40 (車程 35-40m)</span>
+              <h4 class="font-bold text-sm text-slate-900">公司總部出發 ➔ 國道3號一路向南 ➔ 直抵新店銀河路/貓空</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              09:00 頂湖路公司大門出發，上國道3號鶯歌系統直奔新店/木柵，離峰順暢僅約 35 分鐘。車行至新店銀河路（或貓空纜車站周邊停車場），準備展開 2 小時有氧山林漫步！
+            </p>
+          </div>
+
+          <!-- Stop 2 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow ring-4 ring-emerald-100"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white bg-emerald-600 px-2 py-0.5 rounded">09:40 - 11:40 (紮實健行 120m)</span>
+              <h4 class="font-bold text-sm text-slate-900">【2HR 山林有氧健行】新店銀河洞瀑布越嶺 ➔ 貓空樟樹樟湖茶園步道</h4>
+            </div>
+            <div class="mt-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-2">
+              <p class="text-slate-700 leading-relaxed">
+                結合新店最著名的瀑布古廟奇景與貓空茶園風光，成年人 2 小時運動量最充實：
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-white p-2.5 rounded-lg border border-emerald-200">
+                  <strong class="text-emerald-900 block mb-1">🌿 路線 A（仙境水濂洞）：銀河洞瀑布越嶺步道 ➔ 貓空纜車站 (約 3.5 km)</strong>
+                  <span class="text-slate-600">從新店銀河洞登山口起登，石階沿著清澈溪流緩緩爬升（約 20 分鐘抵達呂洞賓仙廟與水濂瀑布拍照打卡），續行林蔭越嶺步道約 45 分鐘抵達貓空樟湖步道，享受綠意茶園，全程約 110~120 分鐘。</span>
+                </div>
+                <div class="bg-white p-2.5 rounded-lg border border-teal-200">
+                  <strong class="text-teal-900 block mb-1">🍵 路線 B（茶香平緩環線）：貓空樟樹步道 ＋ 樟湖步道 O 型環走 (約 3.8 km)</strong>
+                  <span class="text-slate-600">若肋骨同仁想避開爬升階梯，直接將車停貓空纜車站旁，漫步環狀「樟樹步道」（魯冰花梯田、水牛明鏡池、老榖倉）接樟湖步道，坡度平緩親民，漫步 2 小時吸收滿滿茶多酚！</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stop 3 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-500 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-rose-800 bg-rose-100 px-2 py-0.5 rounded">12:00 - 13:30 (用餐 90m)</span>
+              <h4 class="font-bold text-sm text-slate-900">午餐饗宴：貓空阿義師的大茶壺茶餐廳 / 耀瑪茶房（絕美台北景觀）</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              健行結束直接入座貓空景觀第一排茶餐廳！品嚐全台唯一的「鐵觀音特色茶葉創意料理」：<strong>茶油白斬放山土雞、鐵觀音燻雞、茶香金萱豆腐、茶油拌麵線與山產野菜</strong>。一邊遠眺 101 大樓與台北盆地全景，一邊泡壺現沖木柵鐵觀音茶，休閒感滿分！
+            </p>
+          </div>
+
+          <!-- Stop 4 -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-purple-600 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white bg-purple-600 px-2 py-0.5 rounded">13:30 - 14:00 (車程僅 18m)</span>
+              <h4 class="font-bold text-sm text-slate-900">自駕下山 ➔ 直達新店裕隆城 B3 停車場【一停到底不再移車！】</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              由貓空走指南路轉新店寶橋路，<strong>僅需 18~20 分鐘即抵達新店裕隆城</strong>！14:00 車輛直停 B3/B4 專屬停車位。從下午 14:00 到晚上 19:30，全員在裕隆城享受「全室內、零移車、零風雨」的尊爵團建！
+            </p>
+          </div>
+
+          <!-- Stop 5 (Booked Event) -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-purple-600 border-2 border-white shadow ring-4 ring-purple-100"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white bg-purple-600 px-2 py-0.5 rounded">14:45 報到 / 15:00 - 16:00 開戰</span>
+              <h4 class="font-bold text-sm text-purple-950">【正式預約】閃動格子 CyberCube (新店裕隆城 7F 威秀商場)</h4>
+            </div>
+            <div class="mt-2 bg-purple-50 p-3.5 rounded-xl border border-purple-200 text-xs text-purple-900 space-y-1.5">
+              <div class="flex flex-wrap items-center justify-between gap-1">
+                <span><strong>預約項目</strong>：288 格經典挑戰（1 小時團隊電競破關）</span>
+                <span class="font-mono bg-purple-200/80 px-2 py-0.5 rounded text-purple-950 font-bold">預約單號：QKDPM17596</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed">
+                14:00 提早抵達可先在 1F-4F 誠品與「太極尼尼巨兔」合影喝咖啡。14:45 準時上 7F 櫃台報到，展開 60 分鐘刺激熱血的踩格連線競技！
+              </p>
+            </div>
+          </div>
+
+          <!-- Stop 6 (Post-Game Entertainment in Yulong City) -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-sky-600 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded">16:00 - 17:45 (同棟沉浸娛樂 105m)</span>
+              <h4 class="font-bold text-sm text-slate-900">裕隆城沉浸玩到底：誠品挑高書店、湯姆熊賽車街機、精品午茶歇腳</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              剛跳完 1 小時滿身大汗？在裕隆城更衣洗面後，直接在同樓層 <strong>7F 湯姆熊歡樂世界</strong>來場《頭文字D賽車》對決與投籃賽；接著至 4F 挑高天井書店看書、去 <strong>NxCoffee 或 星巴克</strong> 享用冰美式手沖茶點，愜意打屁聊天，完全不必吹風換場！
+            </p>
+          </div>
+
+          <!-- Stop 7 (Dinner at Yulong City) -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-rose-600 border-2 border-white shadow"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white bg-rose-600 px-2 py-0.5 rounded">17:45 - 19:45 (慶功晚宴 120m)</span>
+              <h4 class="font-bold text-sm text-rose-950">【年度慶功晚宴】裕隆城 3F 燒肉ChaCha個人和牛 / 新馬辣經典麻辣鍋</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              直接搭電梯至 3F/6F 入席開烤/開鍋！<strong>「燒肉ChaCha」</strong>提供頂級日本A5和牛個人燒肉盛宴，或是<strong>「新馬辣經典麻辣鍋」</strong>和牛海陸吃到飽。2 小時大快朵頤，慶祝整日團建圓滿成功！
+            </p>
+          </div>
+
+          <!-- Stop 8 (Return to Linkou) -->
+          <div class="relative">
+            <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-emerald-600 border-2 border-white shadow ring-4 ring-emerald-100"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white bg-emerald-600 px-2 py-0.5 rounded">19:45 - 20:30 (車程 40-45m)</span>
+              <h4 class="font-bold text-sm text-emerald-950">19:45 裕隆城 B3 取車 ➔ 國3安坑交流道 ➔ 20:30 順暢送全員回公司大門解散！</h4>
+            </div>
+            <p class="text-xs text-slate-600 mt-1">
+              週五晚間 19:45 國道3號北向車流順暢，Focus ST Wagon 一路巡航至中和轉台65接國1或走國3接林口，約 40 分鐘直抵龜山頂湖路 33 號公司大門，全員收心圓滿賦歸！
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Plan 2 Content (Original Plan A: Guanyin Mountain + Linkou Dinner) -->
+      <div id="plan-content-2" class="plan-panel space-y-4 hidden">
+        <div class="bg-sky-50 border border-sky-100 p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-bold text-sky-950 text-sm"><i class="fa-solid fa-mountain mr-1"></i> Plan A 經典動線：09:30 公司 ➔ 10:00 觀音山硬漢嶺攻頂(2H) ➔ 12:00 碧瑤山莊土雞(1.5H) ➔ 13:30 台64 ➔ 15:00 閃動格子 ➔ 18:00 林口藏王和牛鍋 ➔ 20:00 公司</span>
+          <span class="bg-sky-200 text-sky-900 px-3 py-1 rounded-full font-bold">20:00 準時下班</span>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-2">
+          <p>• <strong>上午健行 (10:00-12:00)</strong>：車停碧瑤山莊/凌雲禪寺，走硬漢嶺步道主線來回約 3.2km（上山60分+硬漢碑眺望台北港15分+下山45分），石階鋪設完善，下山走路 2 分鐘直入碧瑤山莊。</p>
+          <p>• <strong>台64高架直達 (13:30-14:00)</strong>：碧瑤山莊出發走台64線快速道路僅 30 分鐘直抵新店！14:00-14:45 先在裕隆城逛誠品太極兔喝咖啡，15:00 準時踩格子。</p>
+          <p>• <strong>林口慶功晚宴 (18:00-19:50)</strong>：16:15 提早北返林口避開塞車，18:00 在林口文化三路「藏王極上和牛鍋物 / 乾杯燒肉」大啖大餐，19:50 開車 8 分鐘，20:00 準時將同仁送回頂湖路公司大門！</p>
+        </div>
+      </div>
+
+      <!-- Plan 3 Content (Yulong City All-in-One Guide) -->
+      <div id="plan-content-3" class="plan-panel space-y-4 hidden">
+        <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-purple-950 text-sm"><i class="fa-solid fa-gamepad mr-1 text-purple-600"></i> 新店裕隆城 14:00~19:30「一停到底」沉浸玩法與樓層指南</h3>
+            <span class="bg-purple-200 text-purple-900 px-2.5 py-0.5 rounded-full font-bold">免移車 · 免日曬 · 冷氣全開</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="bg-white p-3.5 rounded-xl border border-purple-200 shadow-sm">
+              <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded">6F - 7F 娛樂動能</span>
+              <h4 class="font-bold text-slate-900 text-sm mt-1.5">閃動格子 ＆ 湯姆熊街機</h4>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                7F 威秀商場：<strong>閃動格子 CyberCube（15:00-16:00 已預約）</strong>，踩格闖關大汗淋漓！賽後同層直接玩<strong>「湯姆熊歡樂世界」</strong>，開《頭文字D》或玩冰球對決，工程師競速對決超熱血。
+              </p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+              <span class="text-[10px] font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded">1F - 4F 文化漫活</span>
+              <h4 class="font-bold text-slate-900 text-sm mt-1.5">誠品生活新店 ＆ 巨兔合影</h4>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                亞洲最大誠品！1F 朝聖 10 米高<strong>「太極尼尼巨兔」</strong>拍部門合照；4F 漫步 30 米挑高天井微光書區，找張沙發歇腳；點杯 <strong>NxCoffee 或 星巴克</strong> 冰拿鐵提神，超好消磨時光。
+              </p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-rose-200 shadow-sm">
+              <span class="text-[10px] font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded">3F / 6F 慶功晚宴</span>
+              <h4 class="font-bold text-slate-900 text-sm mt-1.5">燒肉ChaCha / 新馬辣 / 石研室</h4>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                玩到 17:45 肚子咕嚕叫？完全免移車！直接搭電梯至 3F 享用<strong>「燒肉ChaCha 個人和牛」</strong>或<strong>「新馬辣經典麻辣鍋」</strong>，19:45 滿足回 B3 取車，舒舒服服開回林口！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Budget Breakdown Dashboard Table -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-emerald-600"></i>
+            5 人精確預算透明分攤矩陣 (Budget Execution Audit)
+          </h2>
+          <p class="text-xs text-slate-500">無論選擇 Plan A 或 Plan B，嚴格執行每人 NT$ 2,000 上限（總預算 NT$ 10,000）</p>
+        </div>
+        <span class="text-xs px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold">
+          預算充裕 · 結餘 NT$ 100~150/人
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse border border-slate-200 rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+              <th class="py-3 px-3 font-bold">項目類別</th>
+              <th class="py-3 px-3 font-bold">詳細項目說明</th>
+              <th class="py-3 px-3 font-bold text-right">團隊總額 (5人)</th>
+              <th class="py-3 px-3 font-bold text-right">個人均攤</th>
+              <th class="py-3 px-3 font-bold text-center">報帳備註與票券</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">上午健行 (2HR)</td>
+              <td class="py-3 px-3 text-slate-600">貓空樟樹步道+銀河洞（或觀音山硬漢嶺）</td>
+              <td class="py-3 px-3 text-right font-medium text-emerald-600">NT$ 0</td>
+              <td class="py-3 px-3 text-right font-medium text-emerald-600">NT$ 0</td>
+              <td class="py-3 px-3 text-center text-slate-500">免門票自然步道</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">午餐饗宴 (90m)</td>
+              <td class="py-3 px-3 text-slate-600">貓空阿義師大茶壺（鐵觀音創意茶餐）/ 碧瑤山莊</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 2,500</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 500</td>
+              <td class="py-3 px-3 text-center text-slate-500">12:00-13:30 統編合菜</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">體能娛樂 (60m)</td>
+              <td class="py-3 px-3 text-slate-600">新店威秀 閃動格子 CyberCube（288格經典挑戰 1小時）</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 1,750</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 350</td>
+              <td class="py-3 px-3 text-center text-purple-700 font-medium">單號 QKDPM17596</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">裕隆城午茶/電玩</td>
+              <td class="py-3 px-3 text-slate-600">誠品咖啡茶飲 + 湯姆熊街機代幣（賽車/投籃機）</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 600</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 120</td>
+              <td class="py-3 px-3 text-center text-slate-500">16:00-17:30 娛樂補給</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">慶功晚餐 (120m)</td>
+              <td class="py-3 px-3 text-slate-600">裕隆城 燒肉ChaCha個人和牛 / 新馬辣 / 林口藏王極上鍋物</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 4,100</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 820</td>
+              <td class="py-3 px-3 text-center text-slate-500">17:45-19:45 豐盛慶功</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">交通停車</td>
+              <td class="py-3 px-3 text-slate-600">自駕 Focus ST Wagon（國道高速 ETC 通行費 + 停車費）</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 400</td>
+              <td class="py-3 px-3 text-right font-medium text-slate-800">NT$ 80</td>
+              <td class="py-3 px-3 text-center text-slate-500">裕隆城消費可抵停車</td>
+            </tr>
+            <tr class="bg-emerald-50/70 font-bold border-t-2 border-emerald-300">
+              <td class="py-3.5 px-3 text-emerald-950 text-sm">總預算結算</td>
+              <td class="py-3.5 px-3 text-emerald-950">全日 5 人自駕團建大滿貫（含茶餐+閃動格子+和牛晚餐）</td>
+              <td class="py-3.5 px-3 text-right text-emerald-700 text-sm">NT$ 9,350</td>
+              <td class="py-3.5 px-3 text-right text-emerald-700 text-sm">NT$ 1,870</td>
+              <td class="py-3.5 px-3 text-center text-emerald-800">未超支（每人結餘 NT$ 130）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section 5: Fine Dining Recommendation Comparison -->
+    <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-utensils text-rose-500"></i>
+          午餐與晚餐精選指標餐廳評析 (Dining Experience Specs)
+        </h2>
+        <p class="text-xs text-slate-500">精選好停車、環境舒適、通風良好且餐點頂級之代表名店</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse border border-slate-200 rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+              <th class="py-3 px-3 font-bold">餐廳名稱與場域</th>
+              <th class="py-3 px-3 font-bold">招牌必點料理</th>
+              <th class="py-3 px-3 font-bold">推薦指數</th>
+              <th class="py-3 px-3 font-bold">預估人均</th>
+              <th class="py-3 px-3 font-bold">特色與聚餐優勢</th>
+              <th class="py-3 px-3 font-bold text-center">地圖導航</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">
+                <span class="block text-emerald-700 text-[10px] font-black">[Plan B 午宴 12:00]</span>
+                貓空 阿義師的大茶壺茶餐廳
+              </td>
+              <td class="py-3 px-3 text-slate-600">茶油白斬土雞、鐵觀音燻雞、金萱茶豆腐、茶油麵線、翠玉茶湯</td>
+              <td class="py-3 px-3 text-amber-500 font-bold">★★★★★ (編輯推薦)</td>
+              <td class="py-3 px-3 text-slate-800 font-medium">NT$ 480 - 550</td>
+              <td class="py-3 px-3 text-slate-600">曾受 Discovery 報導，全台頂級茶料理！窗外飽覽台北盆地景緻</td>
+              <td class="py-3 px-3 text-center">
+                <a href="https://www.google.com/maps/search/?api=1&query=貓空阿義師的大茶壺茶餐廳" target="_blank" class="text-sky-600 hover:text-sky-800 font-bold inline-flex items-center gap-1">
+                  導航 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">
+                <span class="block text-purple-700 text-[10px] font-black">[Plan B 晚宴 17:45]</span>
+                燒肉ChaCha 個人和牛燒肉 (新店裕隆城 3F)
+              </td>
+              <td class="py-3 px-3 text-slate-600">日本 A5 和牛雪花盛合、特上安格斯牛、鹽蔥厚切牛舌、極上松阪豬</td>
+              <td class="py-3 px-3 text-amber-500 font-bold">★★★★★ (編輯推薦)</td>
+              <td class="py-3 px-3 text-slate-800 font-medium">NT$ 650 - 850</td>
+              <td class="py-3 px-3 text-slate-600">裕隆城同棟免移車！一人一爐自由開烤，肉質鮮美、沙拉吧自助無限</td>
+              <td class="py-3 px-3 text-center">
+                <a href="https://www.google.com/maps/search/?api=1&query=燒肉ChaCha+新店裕隆城店" target="_blank" class="text-sky-600 hover:text-sky-800 font-bold inline-flex items-center gap-1">
+                  導航 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">
+                <span class="block text-rose-700 text-[10px] font-black">[Plan B 晚宴火鍋備選]</span>
+                新馬辣經典麻辣鍋 (新店裕隆城 3F)
+              </td>
+              <td class="py-3 px-3 text-slate-600">澳洲黑毛和牛、美國 Prime 霜降牛、阿拉伯藍鑽蝦、哈根達斯16種</td>
+              <td class="py-3 px-3 text-amber-500 font-bold">★★★★☆ (編輯推薦)</td>
+              <td class="py-3 px-3 text-slate-800 font-medium">NT$ 798 - 898</td>
+              <td class="py-3 px-3 text-slate-600">大口吃肉最過癮！裕隆城同棟電梯直達，全體舉杯慶功氣氛極佳</td>
+              <td class="py-3 px-3 text-center">
+                <a href="https://www.google.com/maps/search/?api=1&query=新馬辣+新店裕隆城" target="_blank" class="text-sky-600 hover:text-sky-800 font-bold inline-flex items-center gap-1">
+                  導航 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="py-3 px-3 font-bold text-slate-800">
+                <span class="block text-sky-700 text-[10px] font-black">[Plan A 晚宴 18:00]</span>
+                藏王 極上鍋物 (林口昕境店)
+              </td>
+              <td class="py-3 px-3 text-slate-600">日本 A5 極上和牛肋眼、野生海大蝦個人盛宴</td>
+              <td class="py-3 px-3 text-amber-500 font-bold">★★★★★ (編輯推薦)</td>
+              <td class="py-3 px-3 text-slate-800 font-medium">NT$ 800 - 950</td>
+              <td class="py-3 px-3 text-slate-600">個人鍋一人一鍋衛生極佳，距公司大門僅 8 分鐘車程！</td>
+              <td class="py-3 px-3 text-center">
+                <a href="https://www.google.com/maps/search/?api=1&query=藏王極上鍋物+林口店" target="_blank" class="text-sky-600 hover:text-sky-800 font-bold inline-flex items-center gap-1">
+                  導航 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer with Project Versioning Info -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-md bg-emerald-500 text-white flex items-center justify-center font-bold text-xs">
+          P
+        </div>
+        <span class="text-slate-300 font-semibold">Gogoro 睿能創意 PTFW 動力系統韌體部門</span>
+        <span class="text-slate-500">| 2026 年度秋季團建自駕企劃</span>
+      </div>
+      <p class="text-slate-500">版本：v2.2 (雙路線旗艦版 · ESRI 零浮水印) · 專案檔案：20261113_PTFW部門團建企劃_v2.0.html</p>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Interactive Script -->
+  <script>
+    // 1. Tab Switching Engine for Plans
+    function switchPlan(planIndex) {
+      const panels = document.querySelectorAll('.plan-panel');
+      panels.forEach(p => p.classList.add('hidden'));
+
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('text-slate-600');
+      });
+
+      const targetPanel = document.getElementById(`plan-content-${planIndex}`);
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+      }
+
+      const targetBtn = document.getElementById(`plan-btn-${planIndex}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('text-slate-600');
+        targetBtn.classList.add('tab-active');
+      }
+    }
+
+    // 2. Leaflet Radar Coordinates Map Engine (Using ESRI Clean Open Tiles)
+    let map;
+    let markers = {};
+    let currentTileLayer;
+
+    // ESRI Open Geo Tiles: 100% Free, NO API Key Required, Clean & No Watermark
+    const tileLayers = {
+      street: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom'
+      }),
+      satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA'
+      })
+    };
+
+    const locations = [
+      { id: 'gogoro_hq', name: '起訖點：睿能創意 Gogoro 總部大門', lat: 25.0475, lng: 121.3650, cat: 'hq', note: '09:00 集合出發 / 晚間準時送全員回公司大門解散' },
+      { id: 'maokong_trail', name: 'Plan B 健行：貓空樟樹步道 / 銀河洞瀑布', lat: 24.9585, lng: 121.5835, cat: 'trail', note: '09:40-11:40 水濂洞瀑布 + 貓空茶園環線 (2HR 紮實有氧)' },
+      { id: 'maokong_food', name: 'Plan B 午宴：貓空阿義師大茶壺茶餐廳', lat: 24.9688, lng: 121.5885, cat: 'food', note: '12:00-13:30 鐵觀音創意茶餐、茶油土雞、俯瞰台北景觀' },
+      { id: 'shiding_lake', name: 'Plan B 備選：石碇千島湖 ＆ 八卦茶園', lat: 24.9355, lng: 121.6580, cat: 'trail', note: '翡翠水庫碧綠山水，產業道路狹窄，可作為遠眺備案' },
+      { id: 'cybercube', name: '核心據點：新店裕隆城 (閃動格子 / 誠品 / 晚餐)', lat: 24.9782, lng: 121.5458, cat: 'cyber', note: '14:00一停到底！15:00閃動格子 (QKDPM17596) + 17:45和牛晚餐' },
+      { id: 'yinghanling', name: 'Plan A 健行：觀音山硬漢嶺登山步道', lat: 25.1378, lng: 121.4190, cat: 'trail', note: '10:00-12:00 凌雲禪寺起登 / 海拔616m 270度海景' },
+      { id: 'biyao', name: 'Plan A 午宴：碧瑤山莊庭園餐廳', lat: 25.1275, lng: 121.4310, cat: 'food', note: '12:00-13:30 百年古厝白斬土雞、觀音山綠竹筍湯' },
+      { id: 'linkou_dinner', name: 'Plan A 晚宴：林口藏王極上鍋物 / 乾杯燒肉', lat: 25.0715, lng: 121.3655, cat: 'dinner', note: '18:00-19:50 和牛慶功宴 (距公司僅8分鐘車程)' }
+    ];
+
+    function initMap() {
+      const mapEl = document.getElementById('map');
+      if (!mapEl || typeof L === 'undefined') return;
+
+      try {
+        map = L.map('map', {
+          scrollWheelZoom: false
+        }).setView([25.0200, 121.5000], 11);
+
+        currentTileLayer = tileLayers.street;
+        currentTileLayer.addTo(map);
+
+        locations.forEach(loc => {
+          let pinColor = '#0284c7';
+          if (loc.cat === 'hq') pinColor = '#10b981';
+          if (loc.cat === 'trail') pinColor = '#059669';
+          if (loc.cat === 'cyber') pinColor = '#9333ea';
+          if (loc.cat === 'food' || loc.cat === 'dinner') pinColor = '#e11d48';
+
+          const customPin = L.divIcon({
+            className: 'custom-pin',
+            html: `<div style="background-color: ${pinColor}; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4);"></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+          });
+
+          const marker = L.marker([loc.lat, loc.lng], { icon: customPin }).addTo(map);
+
+          const popupMarkup = `
+            <div class="p-1 font-sans">
+              <h5 class="font-bold text-xs text-slate-900 mb-0.5">${loc.name}</h5>
+              <p class="text-[11px] text-slate-600 mb-1.5">${loc.note}</p>
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.name)}" target="_blank" 
+                 class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-600 hover:text-sky-800">
+                 開啟 Google 導航 ➔
+              </a>
+            </div>
+          `;
+          marker.bindPopup(popupMarkup);
+          markers[loc.id] = marker;
+        });
+
+        const bounds = L.latLngBounds(locations.map(l => [l.lat, l.lng]));
+        map.fitBounds(bounds, { padding: [30, 30] });
+
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 300);
+
+      } catch (err) {
+        console.warn('Map initialization notice:', err);
+      }
+    }
+
+    function changeTileLayer(type) {
+      if (!map) return;
+      if (currentTileLayer) {
+        map.removeLayer(currentTileLayer);
+      }
+
+      const btnStreet = document.getElementById('btn-layer-street');
+      const btnSat = document.getElementById('btn-layer-sat');
+
+      if (type === 'satellite') {
+        currentTileLayer = tileLayers.satellite;
+        currentTileLayer.addTo(map);
+        if (btnSat) btnSat.className = 'px-2 py-1 bg-white shadow-sm font-bold text-sky-800 rounded text-[11px] transition';
+        if (btnStreet) btnStreet.className = 'px-2 py-1 text-slate-600 hover:text-slate-900 font-medium rounded text-[11px] transition';
+      } else {
+        currentTileLayer = tileLayers.street;
+        currentTileLayer.addTo(map);
+        if (btnStreet) btnStreet.className = 'px-2 py-1 bg-white shadow-sm font-bold text-sky-800 rounded text-[11px] transition';
+        if (btnSat) btnSat.className = 'px-2 py-1 text-slate-600 hover:text-slate-900 font-medium rounded text-[11px] transition';
+      }
+    }
+
+    function focusMap(lat, lng, zoomLevel = 15) {
+      if (!map) return;
+      map.flyTo([lat, lng], zoomLevel, {
+        animate: true,
+        duration: 1.2
+      });
+
+      locations.forEach(l => {
+        if (Math.abs(l.lat - lat) < 0.002 && Math.abs(l.lng - lng) < 0.002) {
+          if (markers[l.id]) {
+            setTimeout(() => {
+              markers[l.id].openPopup();
+            }, 600);
+          }
+        }
+      });
+    }
+
+    function resetMapView() {
+      if (!map) return;
+      const bounds = L.latLngBounds(locations.map(l => [l.lat, l.lng]));
+      map.fitBounds(bounds, { padding: [30, 30] });
+    }
+
+    // 3. Chart.js Energy & Stamina Engine
+    function initStaminaChart() {
+      const chartCanvas = document.getElementById('staminaChart');
+      if (!chartCanvas || typeof Chart === 'undefined') return;
+
+      const ctx = chartCanvas.getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['09:00 出發', '10:00 貓空2HR健行', '12:00 貓空茶餐', '14:00 進裕隆城', '15:00 閃動格子', '16:30 誠品休閒', '18:00 裕隆城晚餐', '20:30 回公司'],
+          datasets: [
+            {
+              label: 'Plan B 體能活力曲線 (%)',
+              data: [100, 68, 92, 90, 65, 82, 98, 95],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#10b981',
+              pointRadius: 4
+            },
+            {
+              label: '行程動線流暢度指標 (%)',
+              data: [90, 95, 95, 100, 100, 95, 100, 100],
+              borderColor: '#0284c7',
+              backgroundColor: 'rgba(2, 132, 199, 0.08)',
+              borderWidth: 2.5,
+              borderDash: [4, 4],
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#0284c7',
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                font: { size: 11, family: 'Inter' }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + ' %';
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 50,
+              max: 100,
+              ticks: {
+                stepSize: 10,
+                font: { size: 10 }
+              },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              ticks: { font: { size: 10 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // Unified DOM Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      initStaminaChart();
+    });
+  </script>
+</body>
+</html>
